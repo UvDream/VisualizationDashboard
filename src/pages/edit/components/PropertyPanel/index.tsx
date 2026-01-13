@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio } from 'antd'
 import { useEditor } from '../../context/EditorContext'
+import { getMapRegionOptions } from '../../utils/mapData'
 import JsonEditor from './JsonEditor'
 import './index.less'
 
@@ -948,6 +949,28 @@ export default function PropertyPanel() {
                         placeholder='[{"value":1048,"name":"Search Engine"}]'
                     />
                 </Form.Item>
+            )}
+            {selectedComponent.type === 'mapChart' && (
+                <>
+                    <Form.Item label="地图区域">
+                        <Select
+                            value={selectedComponent.props.mapRegion || 'china'}
+                            onChange={(v) => handleChange('props.mapRegion', v)}
+                            options={getMapRegionOptions()}
+                            showSearch
+                            filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                            }
+                        />
+                    </Form.Item>
+                    <Form.Item label="地图数据">
+                        <JsonEditor
+                            value={selectedComponent.props.mapData || []}
+                            onChange={(v) => handleChange('props.mapData', v)}
+                            placeholder='[{"name":"北京","value":100}]'
+                        />
+                    </Form.Item>
+                </>
             )}
             {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
                 <Form.Item label="数值">

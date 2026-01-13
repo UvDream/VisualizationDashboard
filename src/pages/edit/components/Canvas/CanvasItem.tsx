@@ -1,4 +1,4 @@
-import { useRef, Suspense } from 'react'
+import { useRef, Suspense, lazy } from 'react'
 import { useDrag } from 'react-dnd'
 import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card, Table } from 'antd'
 import ReactECharts from 'echarts-for-react'
@@ -18,6 +18,9 @@ import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
 import './index.less'
+
+// 懒加载地图组件
+const MapChart = lazy(() => import('./MapChart'))
 
 interface CanvasItemProps {
     item: ComponentItem
@@ -465,6 +468,17 @@ export default function CanvasItem({ item, onContextMenu }: CanvasItemProps) {
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
                     />
+                )
+            
+            case 'mapChart':
+                return (
+                    <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载地图...</div>}>
+                        <MapChart
+                            mapRegion={item.props.mapRegion || 'china'}
+                            mapData={item.props.mapData}
+                            chartTitle={item.props.chartTitle}
+                        />
+                    </Suspense>
                 )
             // ... (Antd components continue)
 

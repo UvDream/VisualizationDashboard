@@ -71,6 +71,19 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    mapChart: {
+        props: {
+            mapRegion: 'china',
+            mapData: [
+                { name: '北京', value: 100 },
+                { name: '上海', value: 90 },
+                { name: '广东', value: 85 },
+                { name: '浙江', value: 75 },
+                { name: '江苏', value: 70 },
+            ]
+        },
+        style: { width: 500, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // Antd 组件
     text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },
