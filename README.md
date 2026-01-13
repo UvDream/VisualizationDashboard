@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# 大屏可视化编辑器
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个基于 React 的可视化大屏编辑器，支持拖拽式组件布局、实时预览和丰富的图表组件。
 
-Currently, two official plugins are available:
+## 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + TypeScript
+- Vite (Rolldown)
+- Ant Design 6
+- ECharts 6
+- React DnD (拖拽)
+- React Three Fiber (3D 组件)
 
-## React Compiler
+## 功能特性
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- 🎨 拖拽式组件编辑，支持自由布局
+- 📊 丰富的图表组件（折线图、柱状图、饼图、仪表盘、雷达图、散点图）
+- 🧩 Antd 组件库（文本、按钮、输入框、表格等）
+- 🖼️ 装饰边框和小组件
+- 🌍 3D 组件（地球、粒子背景）
+- 📐 智能吸附对齐
+- 📋 图层管理（排序、显示/隐藏、锁定）
+- ↩️ 撤销/重做
+- 📄 复制组件
+- ⚙️ 画布配置（尺寸、背景色）
+- 🔍 缩放控制
 
-## Expanding the ESLint configuration
+## 快速开始
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# 安装依赖
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# 启动开发服务器
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 构建生产版本
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 项目结构
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── pages/edit/
+│   ├── components/
+│   │   ├── Canvas/          # 画布区域
+│   │   ├── ComponentPanel/  # 组件面板
+│   │   ├── PropertyPanel/   # 属性面板
+│   │   ├── LayerPanel/      # 图层面板
+│   │   ├── Toolbar/         # 工具栏
+│   │   └── Ruler/           # 标尺
+│   ├── context/             # 状态管理
+│   ├── types/               # 类型定义
+│   └── utils/               # 工具函数
+```
+
+## License
+
+MIT
