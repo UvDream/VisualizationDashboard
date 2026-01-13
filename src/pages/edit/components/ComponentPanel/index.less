@@ -1,0 +1,58 @@
+.component-panel {
+    width: 200px;
+    height: 100%;
+    background: #1f1f1f;
+    border-right: 1px solid #303030;
+    display: flex;
+    flex-direction: column;
+
+    .component-panel-header {
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        border-bottom: 1px solid #303030;
+    }
+
+    .component-panel-list {
+        padding: 12px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        overflow-y: auto;
+    }
+}
+
+.draggable-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #3a3a3a;
+        border-color: #1890ff;
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+    }
+
+    .draggable-item-icon {
+        font-size: 24px;
+        color: #1890ff;
+        margin-bottom: 6px;
+    }
+
+    .draggable-item-name {
+        font-size: 12px;
+        color: #999;
+    }
+}
