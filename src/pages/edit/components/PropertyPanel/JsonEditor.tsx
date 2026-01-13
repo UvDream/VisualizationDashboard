@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import { Input } from 'antd'
 
 const { TextArea } = Input
@@ -9,22 +10,31 @@ interface JsonEditorProps {
 }
 
 export default function JsonEditor({ value, onChange, placeholder }: JsonEditorProps) {
+    const [text, setText] = useState('')
 
+    // 当外部value变化时，同步到内部text
+    useEffect(() => {
+        const newText = typeof value === 'string' ? value : JSON.stringify(value, null, 2)
+        setText(newText)
+    }, [value])
+
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setText(e.target.value)
+    }
 
     const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
         try {
             const parsedValue = JSON.parse(e.target.value)
             onChange(parsedValue)
         } catch (error) {
-            console.error("Invalid JSON")
+            // console.error("Invalid JSON")
         }
     }
 
-    const textValue = typeof value === 'string' ? value : JSON.stringify(value, null, 2)
-
     return (
         <TextArea
-            defaultValue={textValue}
+            value={text}
+            onChange={handleChange}
             onBlur={handleBlur}
             style={{ fontFamily: 'monospace', minHeight: 200 }}
             placeholder={placeholder || '请输入 JSON 数据'}

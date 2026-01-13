@@ -76,7 +76,17 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
     text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },
     button: { props: { content: '点击按钮', buttonType: 'primary' }, style: { width: 100, height: 40 } },
     input: { props: { content: '' }, style: { width: 200, height: 40 } },
-    select: { props: {}, style: { width: 200, height: 40 } },
+    select: {
+        props: {
+            selectOptions: [
+                { value: '1', label: '全部' },
+                { value: '2', label: '已完成' },
+                { value: '3', label: '进行中' },
+            ],
+            content: '1'
+        },
+        style: { width: 200, height: 40 }
+    },
     switch: { props: { checked: true }, style: { width: 60, height: 30 } },
     progress: { props: { percent: 70 }, style: { width: 200, height: 30 } },
     tag: { props: { content: 'Project A', tagColor: 'green' }, style: { width: 80, height: 30 } },
@@ -98,6 +108,16 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
             ]
         },
         style: { width: 450, height: 250, backgroundColor: 'rgba(255,255,255,0.05)' }
+    },
+
+    // 3D 组件
+    threeEarth: {
+        props: {},
+        style: { width: 400, height: 400, backgroundColor: 'rgba(0,0,0,0.5)' }
+    },
+    threeParticles: {
+        props: {},
+        style: { width: 500, height: 300, backgroundColor: '#000000' }
     },
 
     // 小组件

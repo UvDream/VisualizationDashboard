@@ -226,6 +226,25 @@ export default function PropertyPanel() {
                             </Form.Item>
                         </>
                     )}
+                    {selectedComponent.type === 'select' && (
+                        <>
+                            <Form.Item label="选项配置">
+                                <JsonEditor
+                                    value={selectedComponent.props.selectOptions || []}
+                                    onChange={(v) => handleChange('props.selectOptions', v)}
+                                    placeholder='[{"label":"Option 1","value":"1"}]'
+                                />
+                            </Form.Item>
+                            <Form.Item label="默认选中">
+                                <Select
+                                    value={selectedComponent.props.content}
+                                    onChange={(v) => handleChange('props.content', v)}
+                                    options={selectedComponent.props.selectOptions}
+                                    allowClear
+                                />
+                            </Form.Item>
+                        </>
+                    )}
                     {selectedComponent.type === 'pieChart' && (
                         <Form.Item label="饼图数据">
                             <JsonEditor

@@ -10,6 +10,8 @@ import {
     InfoCircleOutlined,
     UserOutlined,
 } from '@ant-design/icons'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Stars, Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
@@ -120,7 +122,7 @@ const iconMap: Record<string, React.ReactNode> = {
 }
 
 export default function CanvasItem({ item }: CanvasItemProps) {
-    const { state, selectComponent, moveComponent, setSnapLines } = useEditor()
+    const { state, selectComponent, moveComponent, updateComponent, setSnapLines } = useEditor()
     const isSelected = state.selectedId === item.id
     const ref = useRef<HTMLDivElement>(null)
 
@@ -182,6 +184,75 @@ export default function CanvasItem({ item }: CanvasItemProps) {
         document.addEventListener('mouseup', handleMouseUp)
     }
 
+
+
+    const handleResizeMouseDown = (e: React.MouseEvent, direction: string) => {
+        e.stopPropagation()
+        if (item.locked) return
+
+        const startX = e.clientX
+        const startY = e.clientY
+        const startItemX = item.style.x
+        const startItemY = item.style.y
+        const startWidth = item.style.width
+        const startHeight = item.style.height
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+            moveEvent.preventDefault()
+            const deltaX = (moveEvent.clientX - startX) / state.scale
+            const deltaY = (moveEvent.clientY - startY) / state.scale
+
+            let newX = startItemX
+            let newY = startItemY
+            let newWidth = startWidth
+            let newHeight = startHeight
+
+            if (direction.includes('top')) {
+                const h = startHeight - deltaY
+                if (h > 10) {
+                    newHeight = h
+                    newY = startItemY + deltaY
+                }
+            }
+            if (direction.includes('bottom')) {
+                newHeight = Math.max(10, startHeight + deltaY)
+            }
+            if (direction.includes('left')) {
+                const w = startWidth - deltaX
+                if (w > 10) {
+                    newWidth = w
+                    newX = startItemX + deltaX
+                }
+            }
+            if (direction.includes('right')) {
+                newWidth = Math.max(10, startWidth + deltaX)
+            }
+
+            updateComponent(item.id, {
+                style: {
+                    ...item.style,
+                    x: newX,
+                    y: newY,
+                    width: newWidth,
+                    height: newHeight,
+                }
+            })
+        }
+
+        const handleMouseUp = () => {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+        }
+
+        document.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mouseup', handleMouseUp)
+    }
+
+
+    // I need to implement handleResizeMouseDown fully.
+    // Re-writing the block below correctly.
+
+
     // 渲染组件内容
     const renderContent = () => {
         switch (item.type) {
@@ -239,8 +310,47 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                     <Select
                         placeholder="请选择"
                         style={{ width: '100%' }}
-                        options={[{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
+                        value={item.props.content}
+                        options={item.props.selectOptions || [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
                     />
+                )
+            // 3D 组件
+            case 'threeEarth':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+                        <Canvas camera={{ position: [0, 0, 3] }}>
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <Sphere args={[1.2, 32, 32]} visible>
+                                <MeshDistortMaterial
+                                    color="#00f"
+                                    attach="material"
+                                    distort={0.3} // 扭曲度
+                                    speed={1.5} // 动画速度
+                                    roughness={0.5}
+                                />
+                            </Sphere>
+                            <OrbitControls enableZoom={false} autoRotate />
+                            <Stars />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            3D 组件示例
+                        </div>
+                    </div>
+                )
+            case 'threeParticles':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+                        <Canvas camera={{ position: [0, 0, 5] }}>
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+                            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+                        </Canvas>
+                    </div>
                 )
             case 'switch':
                 return <Switch checked={item.props.checked} />
@@ -343,10 +453,10 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             {renderContent()}
             {isSelected && (
                 <>
-                    <div className="resize-handle top-left" />
-                    <div className="resize-handle top-right" />
-                    <div className="resize-handle bottom-left" />
-                    <div className="resize-handle bottom-right" />
+                    <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />
+                    <div className="resize-handle top-right" onMouseDown={(e) => handleResizeMouseDown(e, 'top-right')} />
+                    <div className="resize-handle bottom-left" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-left')} />
+                    <div className="resize-handle bottom-right" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-right')} />
                 </>
             )}
         </div>

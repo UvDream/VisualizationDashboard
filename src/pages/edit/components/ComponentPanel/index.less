@@ -34,42 +34,65 @@
         }
     }
 
-    .component-panel-tabs {
-        padding: 0 8px;
+    .component-panel-body {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
 
-        .ant-tabs-nav {
-            margin-bottom: 0;
+        .component-panel-sidebar {
+            width: 70px;
+            background: #252525;
+            border-right: 1px solid #303030;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
 
-            &::before {
-                border-color: #303030;
-            }
-        }
+            .sidebar-tab {
+                padding: 12px 4px;
+                text-align: center;
+                cursor: pointer;
+                color: #999;
+                font-size: 12px;
+                transition: all 0.2s;
+                border-bottom: 1px solid transparent;
+                border-left: 3px solid transparent;
 
-        .ant-tabs-tab {
-            padding: 8px 6px;
-            font-size: 12px;
-            color: #999;
+                &:hover {
+                    color: #fff;
+                    background: #2a2a2a;
+                }
 
-            &.ant-tabs-tab-active {
-                .ant-tabs-tab-btn {
+                &.active {
                     color: #1890ff;
+                    background: #2a2a2a;
+                    border-left-color: #1890ff;
+                }
+
+                .sidebar-tab-text {
+                    writing-mode: horizontal-tb;
+                    /* 保持文字水平 */
                 }
             }
         }
 
-        .ant-tabs-ink-bar {
-            background: #1890ff;
-        }
-    }
+        .component-panel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #1f1f1f;
 
-    .component-panel-list {
-        flex: 1;
-        padding: 12px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        overflow-y: auto;
-        align-content: start;
+            .component-panel-list {
+                flex: 1;
+                padding: 12px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                /* 变窄了，可能改成2列更合适，或者自动适应 */
+                gap: 8px;
+                overflow-y: auto;
+                align-content: start;
+            }
+        }
     }
 
     .component-panel-empty {

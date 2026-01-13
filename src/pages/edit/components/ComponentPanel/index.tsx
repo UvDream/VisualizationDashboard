@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Input, Tabs } from 'antd'
+import { Input } from 'antd'
 import {
     SearchOutlined,
     LineChartOutlined,
@@ -20,15 +20,16 @@ import {
     CreditCardOutlined,
     TableOutlined,
     BorderOuterOutlined,
-    GatewayOutlined,
     StarOutlined,
     PictureOutlined,
     PlaySquareOutlined,
     SmileOutlined,
     HeartOutlined,
     CheckCircleOutlined,
-    WarningOutlined,
     InfoCircleOutlined,
+    GlobalOutlined,
+    GatewayOutlined,
+    WarningOutlined,
 } from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
 import type { ComponentType, ComponentCategory } from '../../types'
@@ -92,17 +93,25 @@ const iconComponents: ComponentConfig[] = [
     { type: 'icon', name: '用户', icon: <UserOutlined />, category: 'icon' },
 ]
 
+// 3D组件
+const threeComponents: ComponentConfig[] = [
+    { type: 'threeEarth', name: '3D地球', icon: <GlobalOutlined />, category: '3d' },
+    { type: 'threeParticles', name: '粒子背景', icon: <GatewayOutlined />, category: '3d' },
+]
+
 const allComponents = {
     chart: chartComponents,
     component: antdComponents,
     widget: widgetComponents,
     image: imageComponents,
     icon: iconComponents,
+    '3d': threeComponents,
 }
 
 const categoryTabs = [
     { key: 'chart', label: '图表' },
     { key: 'component', label: '组件库' },
+    { key: '3d', label: '3D' },
     { key: 'widget', label: '小组件' },
     { key: 'image', label: '图片' },
     { key: 'icon', label: '图标' },
@@ -132,25 +141,40 @@ export default function ComponentPanel() {
                     allowClear
                 />
             </div>
-            <Tabs
-                activeKey={activeCategory}
-                onChange={(key) => setActiveCategory(key as ComponentCategory)}
-                items={categoryTabs}
-                size="small"
-                className="component-panel-tabs"
-            />
-            <div className="component-panel-list">
-                {filteredComponents.map((item, index) => (
-                    <DraggableItem
-                        key={`${item.type}-${index}`}
-                        type={item.type}
-                        name={item.name}
-                        icon={item.icon}
-                    />
-                ))}
-                {filteredComponents.length === 0 && (
-                    <div className="component-panel-empty">暂无组件</div>
-                )}
+
+            <div className="component-panel-body">
+                {/* 左侧分类导航 */}
+                <div className="component-panel-sidebar">
+                    {categoryTabs.map((tab) => (
+                        <div
+                            key={tab.key}
+                            className={`sidebar-tab ${activeCategory === tab.key ? 'active' : ''}`}
+                            onClick={() => setActiveCategory(tab.key as ComponentCategory)}
+                            title={tab.label}
+                        >
+                            {/* 这里如果 categoryTabs 有 icon 就显示 icon，暂时显示首字或者简化样式 */}
+                            <div className="sidebar-tab-text">{tab.label}</div>
+                            {/* 如需显示 Icon，则在 categoryTabs 中添加 icon 字段并在 TYPES 中对应 */}
+                        </div>
+                    ))}
+                </div>
+
+                {/* 右侧组件列表 */}
+                <div className="component-panel-content">
+                    <div className="component-panel-list">
+                        {filteredComponents.map((item, index) => (
+                            <DraggableItem
+                                key={`${item.type}-${index}`}
+                                type={item.type}
+                                name={item.name}
+                                icon={item.icon}
+                            />
+                        ))}
+                        {filteredComponents.length === 0 && (
+                            <div className="component-panel-empty">暂无组件</div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     )

@@ -12,9 +12,11 @@ export type ComponentType =
     | 'icon'
     // 容器
     | 'container'
+    // 3D组件
+    | 'threeEarth' | 'threeParticles'
 
 // 组件分类
-export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon'
+export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
 
 // 组件样式
 export interface ComponentStyle {
@@ -71,6 +73,9 @@ export interface ComponentProps {
     seriesData?: Array<{ name: string; data: any[] }>
     pieData?: Array<{ name: string; value: number }>
     singleData?: number
+
+    // 下拉选择选项
+    selectOptions?: Array<{ label: string; value: string }>
 
     // 开关
     checked?: boolean
