@@ -46,8 +46,8 @@ export default function Ruler({ type }: RulerProps) {
 
         ctx.clearRect(0, 0, rect.width, rect.height)
         ctx.beginPath()
-        ctx.fillStyle = '#999'
-        ctx.strokeStyle = '#999'
+        ctx.fillStyle = '#e0e0e0' // 更亮的文字颜色
+        ctx.strokeStyle = '#666' // 线条颜色
         ctx.lineWidth = 1
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'

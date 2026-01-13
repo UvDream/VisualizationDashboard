@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react'
 import type { ReactNode } from 'react'
-import type { EditorState, EditorAction, ComponentItem, SnapLine } from '../types'
+import type { EditorState, EditorAction, ComponentItem, SnapLine, CanvasConfig } from '../types'
 
 // 初始状态
 const initialState: EditorState = {
@@ -8,6 +8,12 @@ const initialState: EditorState = {
     selectedId: null,
     scale: 1,
     snapLines: [],
+    canvasConfig: {
+        width: 1920,
+        height: 1080,
+        backgroundColor: '#000000',
+        name: '大屏可视化'
+    }
 }
 
 // Reducer
@@ -94,6 +100,15 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 snapLines: action.payload,
             }
 
+        case 'SET_CANVAS_CONFIG':
+            return {
+                ...state,
+                canvasConfig: {
+                    ...state.canvasConfig,
+                    ...action.payload,
+                },
+            }
+
         default:
             return state
     }
@@ -121,6 +136,7 @@ const HISTORY_ACTIONS = [
     'REORDER_LAYERS',
     'TOGGLE_VISIBILITY',
     'TOGGLE_LOCK',
+    'SET_CANVAS_CONFIG',
 ]
 
 // History Reducer
@@ -184,6 +200,7 @@ interface EditorContextType {
     toggleLock: (id: string) => void
     setScale: (scale: number) => void
     setSnapLines: (lines: SnapLine[]) => void
+    setCanvasConfig: (config: Partial<CanvasConfig>) => void
     getSelectedComponent: () => ComponentItem | undefined
     undo: () => void
     redo: () => void
@@ -247,6 +264,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'SET_SNAP_LINES', payload: lines })
     }, [dispatch])
 
+    const setCanvasConfig = React.useCallback((config: Partial<CanvasConfig>) => {
+        dispatch({ type: 'SET_CANVAS_CONFIG', payload: config })
+    }, [dispatch])
+
     const getSelectedComponent = React.useCallback(() => {
         return state.components.find((comp) => comp.id === state.selectedId)
     }, [state.components, state.selectedId])
@@ -264,6 +285,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         toggleLock,
         setScale,
         setSnapLines,
+        setCanvasConfig,
         getSelectedComponent,
         undo,
         redo,
@@ -282,6 +304,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         toggleLock,
         setScale,
         setSnapLines,
+        setCanvasConfig,
         getSelectedComponent,
         undo,
         redo,

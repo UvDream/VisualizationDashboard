@@ -196,8 +196,10 @@ export default function Canvas() {
                 ref={setRefs}
                 className={`canvas-area ${isOver ? 'drag-over' : ''}`}
                 style={{
-                    transform: `scale(${state.scale}) translate(0px, 0px)`, // 注意: 先Scale再Translate，这里简化处理，实际可能需要更复杂的平移
-                    // 实际上为了滚动正常，scale应该应用在内部容器或者使用 transform-origin
+                    width: state.canvasConfig?.width || 1920,
+                    height: state.canvasConfig?.height || 1080,
+                    backgroundColor: state.canvasConfig?.backgroundColor || '#000000',
+                    transform: `scale(${state.scale}) translate(0px, 0px)`,
                 }}
                 onClick={handleCanvasClick}
             >

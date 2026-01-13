@@ -98,12 +98,20 @@ export interface SnapLine {
     position: number // 位置坐标
 }
 
+export interface CanvasConfig {
+    width: number
+    height: number
+    backgroundColor: string
+    name: string
+}
+
 // 编辑器状态
 export interface EditorState {
     components: ComponentItem[]
     selectedId: string | null
     scale: number // 画布缩放比例
     snapLines: SnapLine[] // 当前显示的吸附辅助线
+    canvasConfig: CanvasConfig // 画布配置
 }
 
 // 编辑器 Action 类型
@@ -118,6 +126,7 @@ export type EditorAction =
     | { type: 'TOGGLE_LOCK'; payload: string }
     | { type: 'SET_SCALE'; payload: number }
     | { type: 'SET_SNAP_LINES'; payload: SnapLine[] }
+    | { type: 'SET_CANVAS_CONFIG'; payload: Partial<CanvasConfig> }
 
 // 拖拽项类型
 export interface DragItem {

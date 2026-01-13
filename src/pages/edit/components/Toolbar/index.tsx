@@ -1,4 +1,5 @@
-import { Button, Tooltip, Space, Slider } from 'antd'
+import { useState } from 'react'
+import { Button, Tooltip, Space, Slider, Modal, Form, Input, InputNumber, ColorPicker } from 'antd'
 import {
     SaveOutlined,
     EyeOutlined,
@@ -9,12 +10,15 @@ import {
     ZoomInOutlined,
     ZoomOutOutlined,
     ReloadOutlined,
+    SettingOutlined,
 } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
 import './index.less'
 
 export default function Toolbar() {
-    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo } = useEditor()
+    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo, setCanvasConfig } = useEditor()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [form] = Form.useForm()
 
     const handleDelete = () => {
         if (state.selectedId) {
@@ -36,9 +40,36 @@ export default function Toolbar() {
         setScale(1.0)
     }
 
+    const handleOpenSettings = () => {
+        form.setFieldsValue({
+            name: state.canvasConfig?.name,
+            width: state.canvasConfig?.width,
+            height: state.canvasConfig?.height,
+            backgroundColor: state.canvasConfig?.backgroundColor,
+        })
+        setIsModalOpen(true)
+    }
+
+    const handleSaveSettings = () => {
+        form.validateFields().then((values) => {
+            const { name, width, height, backgroundColor } = values
+            const bgStr = typeof backgroundColor === 'string' ? backgroundColor : backgroundColor?.toHexString()
+
+            setCanvasConfig({
+                name,
+                width,
+                height,
+                backgroundColor: bgStr,
+            })
+            setIsModalOpen(false)
+        })
+    }
+
     return (
         <div className="toolbar">
-            {/* ... */}
+            <div className="toolbar-left">
+                <span className="toolbar-title">{state.canvasConfig?.name || '可视化大屏编辑器'}</span>
+            </div>
             <div className="toolbar-center">
                 <Space size="large">
                     <Space>
@@ -90,6 +121,9 @@ export default function Toolbar() {
             </div>
             <div className="toolbar-right">
                 <Space>
+                    <Tooltip title="设置">
+                        <Button icon={<SettingOutlined />} onClick={handleOpenSettings}>设置</Button>
+                    </Tooltip>
                     <Tooltip title="预览">
                         <Button icon={<EyeOutlined />}>预览</Button>
                     </Tooltip>
@@ -98,6 +132,32 @@ export default function Toolbar() {
                     </Button>
                 </Space>
             </div>
+
+            <Modal
+                title="画布设置"
+                open={isModalOpen}
+                onOk={handleSaveSettings}
+                onCancel={() => setIsModalOpen(false)}
+                okText="确认"
+                cancelText="取消"
+            >
+                <Form form={form} layout="vertical">
+                    <Form.Item name="name" label="大屏名称" rules={[{ required: true, message: '请输入大屏名称' }]}>
+                        <Input placeholder="请输入大屏名称" />
+                    </Form.Item>
+                    <Space>
+                        <Form.Item name="width" label="宽度 (px)" rules={[{ required: true }]}>
+                            <InputNumber min={100} max={10000} />
+                        </Form.Item>
+                        <Form.Item name="height" label="高度 (px)" rules={[{ required: true }]}>
+                            <InputNumber min={100} max={10000} />
+                        </Form.Item>
+                    </Space>
+                    <Form.Item name="backgroundColor" label="背景颜色" rules={[{ required: true }]}>
+                        <ColorPicker showText format="hex" />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     )
 }
