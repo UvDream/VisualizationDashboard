@@ -196,6 +196,10 @@ interface EditorContextType {
     selectComponent: (id: string | null) => void
     moveComponent: (id: string, x: number, y: number) => void
     reorderLayers: (components: ComponentItem[]) => void
+    bringForward: (id: string) => void
+    sendBackward: (id: string) => void
+    bringToFront: (id: string) => void
+    sendToBack: (id: string) => void
     toggleVisibility: (id: string) => void
     toggleLock: (id: string) => void
     setScale: (scale: number) => void
@@ -269,6 +273,77 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'SET_CANVAS_CONFIG', payload: config })
     }, [dispatch])
 
+    // 图层操作方法
+    const bringForward = React.useCallback((id: string) => {
+        const components = [...state.components]
+        const index = components.findIndex(c => c.id === id)
+        if (index < components.length - 1) {
+            // 交换位置
+            const temp = components[index]
+            components[index] = components[index + 1]
+            components[index + 1] = temp
+            
+            // 更新z-index
+            components.forEach((comp, idx) => {
+                comp.style.zIndex = idx + 1
+            })
+            
+            reorderLayers(components)
+        }
+    }, [state.components, reorderLayers])
+
+    const sendBackward = React.useCallback((id: string) => {
+        const components = [...state.components]
+        const index = components.findIndex(c => c.id === id)
+        if (index > 0) {
+            // 交换位置
+            const temp = components[index]
+            components[index] = components[index - 1]
+            components[index - 1] = temp
+            
+            // 更新z-index
+            components.forEach((comp, idx) => {
+                comp.style.zIndex = idx + 1
+            })
+            
+            reorderLayers(components)
+        }
+    }, [state.components, reorderLayers])
+
+    const bringToFront = React.useCallback((id: string) => {
+        const components = [...state.components]
+        const index = components.findIndex(c => c.id === id)
+        if (index < components.length - 1) {
+            // 移除并添加到末尾
+            const [removed] = components.splice(index, 1)
+            components.push(removed)
+            
+            // 更新z-index
+            components.forEach((comp, idx) => {
+                comp.style.zIndex = idx + 1
+            })
+            
+            reorderLayers(components)
+        }
+    }, [state.components, reorderLayers])
+
+    const sendToBack = React.useCallback((id: string) => {
+        const components = [...state.components]
+        const index = components.findIndex(c => c.id === id)
+        if (index > 0) {
+            // 移除并添加到开头
+            const [removed] = components.splice(index, 1)
+            components.unshift(removed)
+            
+            // 更新z-index
+            components.forEach((comp, idx) => {
+                comp.style.zIndex = idx + 1
+            })
+            
+            reorderLayers(components)
+        }
+    }, [state.components, reorderLayers])
+
     const getSelectedComponent = React.useCallback(() => {
         return state.components.find((comp) => comp.id === state.selectedId)
     }, [state.components, state.selectedId])
@@ -300,6 +375,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         selectComponent,
         moveComponent,
         reorderLayers,
+        bringForward,
+        sendBackward,
+        bringToFront,
+        sendToBack,
         toggleVisibility,
         toggleLock,
         setScale,
@@ -320,6 +399,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         selectComponent,
         moveComponent,
         reorderLayers,
+        bringForward,
+        sendBackward,
+        bringToFront,
+        sendToBack,
         toggleVisibility,
         toggleLock,
         setScale,

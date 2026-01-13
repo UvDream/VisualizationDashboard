@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../../context/EditorContext'
@@ -137,8 +137,13 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
 }
 
 export default function Canvas() {
-    const { state, addComponent, selectComponent } = useEditor()
+    const { state, addComponent, selectComponent, deleteComponent, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
+    
+    // 右键菜单状态
+    const [menuVisible, setMenuVisible] = useState(false)
+    const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 })
+    const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'NEW_COMPONENT',
@@ -178,6 +183,57 @@ export default function Canvas() {
 
     const handleCanvasClick = () => {
         selectComponent(null)
+        // 点击画布关闭右键菜单
+        setMenuVisible(false)
+    }
+    
+    // 右键菜单事件处理
+    const handleContextMenu = (e: React.MouseEvent, componentId: string) => {
+        e.preventDefault()
+        e.stopPropagation()
+        
+        // 设置菜单位置
+        setMenuPosition({ x: e.clientX, y: e.clientY })
+        setSelectedComponentId(componentId)
+        setMenuVisible(true)
+        
+        // 点击外部关闭菜单
+        document.addEventListener('click', handleClickOutside)
+    }
+    
+    const handleClickOutside = () => {
+        setMenuVisible(false)
+        document.removeEventListener('click', handleClickOutside)
+    }
+    
+    // 关闭菜单
+    const closeMenu = () => {
+        setMenuVisible(false)
+        document.removeEventListener('click', handleClickOutside)
+    }
+    
+    // 菜单项点击处理
+    const handleMenuClick = (action: string) => {
+        closeMenu()
+        if (!selectedComponentId) return
+        
+        switch (action) {
+            case 'bringForward':
+                bringForward(selectedComponentId)
+                break
+            case 'sendBackward':
+                sendBackward(selectedComponentId)
+                break
+            case 'bringToFront':
+                bringToFront(selectedComponentId)
+                break
+            case 'sendToBack':
+                sendToBack(selectedComponentId)
+                break
+            case 'delete':
+                deleteComponent(selectedComponentId)
+                break
+        }
     }
 
     // 合并 refs
@@ -204,7 +260,11 @@ export default function Canvas() {
                 onClick={handleCanvasClick}
             >
                 {state.components.map((item) => (
-                    <CanvasItem key={item.id} item={item} />
+                    <CanvasItem 
+                        key={item.id} 
+                        item={item} 
+                        onContextMenu={(e) => handleContextMenu(e, item.id)} 
+                    />
                 ))}
 
                 {/* 渲染吸附辅助线 */}
@@ -219,6 +279,49 @@ export default function Canvas() {
                     />
                 ))}
             </div>
+            
+            {/* 右键菜单 */}
+            {menuVisible && (
+                <div
+                    className="canvas-context-menu"
+                    style={{
+                        left: menuPosition.x,
+                        top: menuPosition.y,
+                    }}
+                >
+                    <div
+                        className="context-menu-item"
+                        onClick={() => handleMenuClick('bringForward')}
+                    >
+                        上移一层
+                    </div>
+                    <div
+                        className="context-menu-item"
+                        onClick={() => handleMenuClick('sendBackward')}
+                    >
+                        下移一层
+                    </div>
+                    <div
+                        className="context-menu-item"
+                        onClick={() => handleMenuClick('bringToFront')}
+                    >
+                        置顶
+                    </div>
+                    <div
+                        className="context-menu-item"
+                        onClick={() => handleMenuClick('sendToBack')}
+                    >
+                        置底
+                    </div>
+                    <div className="context-menu-divider" />
+                    <div
+                        className="context-menu-item context-menu-item-delete"
+                        onClick={() => handleMenuClick('delete')}
+                    >
+                        删除
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

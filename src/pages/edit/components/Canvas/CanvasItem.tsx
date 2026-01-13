@@ -21,6 +21,7 @@ import './index.less'
 
 interface CanvasItemProps {
     item: ComponentItem
+    onContextMenu: (e: React.MouseEvent) => void
 }
 
 // ECharts 默认配置
@@ -270,7 +271,7 @@ const iconMap: Record<string, React.ReactNode> = {
     user: <UserOutlined />,
 }
 
-export default function CanvasItem({ item }: CanvasItemProps) {
+export default function CanvasItem({ item, onContextMenu }: CanvasItemProps) {
     const { state, selectComponent, moveComponent, updateComponent, setSnapLines } = useEditor()
     const isSelected = state.selectedId === item.id
     const ref = useRef<HTMLDivElement>(null)
@@ -708,6 +709,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             }}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
+            onContextMenu={onContextMenu}
         >
             {renderContent()}
             {isSelected && (
