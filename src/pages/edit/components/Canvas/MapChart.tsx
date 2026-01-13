@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import ReactECharts from 'echarts-for-react'
 import * as echarts from 'echarts'
-import { getMapRegionByName, getMapGeoJsonUrl } from '../../utils/mapData'
+import { getMapRegionByName, getMapGeoJsonUrls } from '../../utils/mapData'
 
 interface MapChartProps {
     mapRegion: string
@@ -37,25 +37,45 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
                 return
             }
 
-            try {
-                const url = getMapGeoJsonUrl(regionConfig.adcode)
-                const response = await fetch(url)
-                if (!response.ok) {
-                    throw new Error('地图数据加载失败')
-                }
-                const geoJson = await response.json()
-                
-                if (cancelled) return
+            // 获取所有可能的 URL
+            const urls = getMapGeoJsonUrls(regionConfig.adcode)
+            let geoJson: any = null
+            let lastError: Error | null = null
 
+            // 依次尝试每个 URL
+            for (const url of urls) {
+                if (cancelled) return
+                
+                try {
+                    const response = await fetch(url)
+                    if (response.ok) {
+                        geoJson = await response.json()
+                        break
+                    }
+                } catch (err) {
+                    lastError = err instanceof Error ? err : new Error('Unknown error')
+                }
+            }
+
+            if (cancelled) return
+
+            if (!geoJson) {
+                console.error('所有地图源加载失败:', lastError)
+                setError('地图数据加载失败')
+                setLoading(false)
+                return
+            }
+
+            try {
                 // 注册地图
                 echarts.registerMap(mapRegion, geoJson)
                 loadedMapsRef.current.add(mapRegion)
-                
+
                 setMapReady(true)
                 setLoading(false)
             } catch (err) {
-                if (cancelled) return
-                setError(err instanceof Error ? err.message : '加载失败')
+                console.error('地图注册失败:', err)
+                setError('地图注册失败')
                 setLoading(false)
             }
         }
@@ -69,7 +89,7 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
 
     const getOption = () => {
         const regionConfig = getMapRegionByName(mapRegion)
-        
+
         return {
             backgroundColor: 'transparent',
             title: chartTitle ? {
@@ -146,14 +166,13 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
         )
     }
 
-    // 只有地图准备好了才渲染 ECharts
     if (!mapReady) {
         return null
     }
 
     return (
         <ReactECharts
-            key={mapRegion} // 切换地图时强制重新创建实例
+            key={mapRegion}
             option={getOption()}
             style={{ width: '100%', height: '100%' }}
             opts={{ renderer: 'svg' }}

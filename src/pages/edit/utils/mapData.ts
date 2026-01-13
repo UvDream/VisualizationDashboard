@@ -44,9 +44,17 @@ export const mapRegions: MapRegionConfig[] = [
     { name: 'macao', label: '澳门', adcode: '820000' },
 ]
 
-// 获取地图 GeoJSON 数据的 URL
-export function getMapGeoJsonUrl(adcode: string): string {
-    return `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`
+// 获取地图 GeoJSON 数据的 URL 列表（按优先级）
+export function getMapGeoJsonUrls(adcode: string): string[] {
+    return [
+        // 阿里云 DataV - 带 _full（包含子区域）
+        `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`,
+        // 阿里云 DataV - 不带 _full（仅边界）
+        `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}.json`,
+        // 备用源 - areas_v2
+        `https://geo.datav.aliyun.com/areas/bound/${adcode}_full.json`,
+        `https://geo.datav.aliyun.com/areas/bound/${adcode}.json`,
+    ]
 }
 
 // 根据区域名称获取配置
