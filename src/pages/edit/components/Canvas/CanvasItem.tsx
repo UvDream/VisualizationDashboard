@@ -28,8 +28,24 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
     const baseOption = {
         backgroundColor: 'transparent',
         title: props.chartTitle ? { text: props.chartTitle, left: 'center', textStyle: { color: '#fff' } } : undefined,
-        grid: { top: props.chartTitle ? 40 : 30, right: 20, bottom: 30, left: 40 },
+        grid: {
+            top: props.chartTitle ? 40 : 30,
+            right: props.legend?.show && props.legend.orient === 'vertical' && props.legend.left === 'right' ? 100 : 20,
+            bottom: props.legend?.show && props.legend.top === 'bottom' ? 60 : 30,
+            left: props.legend?.show && props.legend.orient === 'vertical' && props.legend.left === 'left' ? 100 : 40,
+        },
         tooltip: { trigger: 'axis' },
+        legend: props.legend?.show ? {
+            show: true,
+            orient: props.legend.orient || 'horizontal',
+            left: props.legend.left || 'center',
+            top: props.legend.top || 'top',
+            textStyle: {
+                color: props.legend.textStyle?.color || '#fff',
+                fontSize: props.legend.textStyle?.fontSize || 12,
+                fontWeight: props.legend.textStyle?.fontWeight || 'normal',
+            },
+        } : { show: false },
     }
 
     const xAxis = { type: 'category', data: props.xAxisData || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }

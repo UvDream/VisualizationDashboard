@@ -34,6 +34,27 @@ export interface ComponentStyle {
     zIndex?: number
 }
 
+// 图表图例配置
+export interface ChartLegendConfig {
+    show?: boolean
+    orient?: 'horizontal' | 'vertical' // 布局方向
+    position?: 'top' | 'bottom' | 'left' | 'right' // 简化版位置
+    align?: 'left' | 'center' | 'right' // 对齐方式 (alignment within the position) -> ECharts uses left/top/right/bottom combination. 
+    // Let's simplify for user: Position (Top/Bottom/Left/Right) + Alignment (Start/Center/End) is complex to map directly.
+    // ECharts has left/top/right/bottom. 
+    // Let's use:
+    // left: 'left' | 'center' | 'right' | number
+    // top: 'top' | 'middle' | 'bottom' | number
+    left?: string
+    top?: string
+    textStyle?: {
+        color?: string
+        fontSize?: number
+        fontWeight?: string
+    }
+}
+
+
 // 组件属性（根据类型不同有不同属性）
 export interface ComponentProps {
     // 通用属性
@@ -73,6 +94,7 @@ export interface ComponentProps {
     seriesData?: Array<{ name: string; data: any[] }>
     pieData?: Array<{ name: string; value: number }>
     singleData?: number
+    legend?: ChartLegendConfig
 
     // 下拉选择选项
     selectOptions?: Array<{ label: string; value: string }>

@@ -1,4 +1,4 @@
-import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker } from 'antd'
+import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import JsonEditor from './JsonEditor'
 import './index.less'
@@ -98,6 +98,94 @@ export default function PropertyPanel() {
                 </Form>
             ),
         },
+        // 图例配置 - 仅对图表有效
+        ...(['lineChart', 'barChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+            key: 'legend',
+            label: '图例配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示图例" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.legend?.show}
+                            onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, show: v })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.legend?.show && (
+                        <>
+                            <Form.Item label="布局方向">
+                                <Radio.Group
+                                    value={selectedComponent.props.legend?.orient || 'horizontal'}
+                                    onChange={(e) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: e.target.value })}
+                                    optionType="button"
+                                    size="small"
+                                >
+                                    <Radio value="horizontal">水平</Radio>
+                                    <Radio value="vertical">垂直</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="水平位置">
+                                    <Select
+                                        value={selectedComponent.props.legend?.left || 'center'}
+                                        onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, left: v })}
+                                        options={[
+                                            { value: 'left', label: '左' },
+                                            { value: 'center', label: '中' },
+                                            { value: 'right', label: '右' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="垂直位置">
+                                    <Select
+                                        value={selectedComponent.props.legend?.top || 'top'}
+                                        onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, top: v })}
+                                        options={[
+                                            { value: 'top', label: '上' },
+                                            { value: 'middle', label: '中' },
+                                            { value: 'bottom', label: '下' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="文字颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.legend?.textStyle?.color || '#fff'}
+                                    onChange={(color) => handleChange('props.legend', {
+                                        ...selectedComponent.props.legend,
+                                        textStyle: { ...selectedComponent.props.legend?.textStyle, color: color.toHexString() }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="字体大小">
+                                    <InputNumber
+                                        value={selectedComponent.props.legend?.textStyle?.fontSize || 12}
+                                        onChange={(v) => handleChange('props.legend', {
+                                            ...selectedComponent.props.legend,
+                                            textStyle: { ...selectedComponent.props.legend?.textStyle, fontSize: v }
+                                        })}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="字体粗细">
+                                    <Select
+                                        value={selectedComponent.props.legend?.textStyle?.fontWeight || 'normal'}
+                                        onChange={(v) => handleChange('props.legend', {
+                                            ...selectedComponent.props.legend,
+                                            textStyle: { ...selectedComponent.props.legend?.textStyle, fontWeight: v }
+                                        })}
+                                        options={[
+                                            { value: 'normal', label: '正常' },
+                                            { value: 'bold', label: '加粗' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
         {
             key: 'style',
             label: '样式',
