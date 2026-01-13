@@ -29,6 +29,30 @@
         overflow-y: auto;
         padding: 8px;
 
+        // Tabs custom style
+        .ant-tabs {
+            .ant-tabs-nav {
+                margin: 0;
+                margin-bottom: 8px;
+
+                &::before {
+                    border-bottom: 1px solid #303030;
+                }
+            }
+
+            .ant-tabs-tab {
+                color: #999;
+
+                &:hover {
+                    color: #fff;
+                }
+
+                &.ant-tabs-tab-active .ant-tabs-tab-btn {
+                    color: #1890ff;
+                }
+            }
+        }
+
         .ant-collapse {
             background: transparent;
 
