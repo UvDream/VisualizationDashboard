@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useReducer } from 'react'
 import type { ReactNode } from 'react'
-import type { EditorState, EditorAction, ComponentItem } from '../types'
+import type { EditorState, EditorAction, ComponentItem, SnapLine } from '../types'
 
 // 初始状态
 const initialState: EditorState = {
     components: [],
     selectedId: null,
+    scale: 1,
+    snapLines: [],
 }
 
 // Reducer
@@ -80,6 +82,18 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 ),
             }
 
+        case 'SET_SCALE':
+            return {
+                ...state,
+                scale: action.payload,
+            }
+
+        case 'SET_SNAP_LINES':
+            return {
+                ...state,
+                snapLines: action.payload,
+            }
+
         default:
             return state
     }
@@ -97,6 +111,8 @@ interface EditorContextType {
     reorderLayers: (components: ComponentItem[]) => void
     toggleVisibility: (id: string) => void
     toggleLock: (id: string) => void
+    setScale: (scale: number) => void
+    setSnapLines: (lines: SnapLine[]) => void
     getSelectedComponent: () => ComponentItem | undefined
 }
 
@@ -139,6 +155,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'TOGGLE_LOCK', payload: id })
     }
 
+    const setScale = (scale: number) => {
+        dispatch({ type: 'SET_SCALE', payload: scale })
+    }
+
+    const setSnapLines = (lines: SnapLine[]) => {
+        dispatch({ type: 'SET_SNAP_LINES', payload: lines })
+    }
+
     const getSelectedComponent = () => {
         return state.components.find((comp) => comp.id === state.selectedId)
     }
@@ -156,6 +180,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
                 reorderLayers,
                 toggleVisibility,
                 toggleLock,
+                setScale,
+                setSnapLines,
                 getSelectedComponent,
             }}
         >

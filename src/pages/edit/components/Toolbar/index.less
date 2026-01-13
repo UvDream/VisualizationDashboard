@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
+    z-index: 1000;
 
     .toolbar-left {
         .toolbar-title {
@@ -20,10 +21,24 @@
     }
 
     .toolbar-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #303030;
+            margin: 0 16px;
+        }
+
         .ant-btn {
             color: #999;
             border-color: #303030;
             background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             &:hover:not(:disabled) {
                 color: #1890ff;
@@ -32,6 +47,19 @@
 
             &:disabled {
                 opacity: 0.4;
+            }
+        }
+
+        .ant-slider {
+            width: 100%;
+            margin: 0 8px;
+
+            .ant-slider-rail {
+                background-color: #303030;
+            }
+
+            .ant-slider-track {
+                background-color: #1890ff;
             }
         }
     }

@@ -1,5 +1,20 @@
 // 组件类型枚举
-export type ComponentType = 'text' | 'button' | 'image' | 'chart' | 'container'
+export type ComponentType =
+    // 图表类 - ECharts
+    | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart'
+    // 组件库 - Antd
+    | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table'
+    // 小组件 - 装饰
+    | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2'
+    // 图片
+    | 'image' | 'carousel'
+    // 图标
+    | 'icon'
+    // 容器
+    | 'container'
+
+// 组件分类
+export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon'
 
 // 组件样式
 export interface ComponentStyle {
@@ -31,6 +46,23 @@ export interface ComponentProps {
 
     // 图表属性
     chartType?: 'line' | 'bar' | 'pie'
+    chartData?: unknown
+    chartOption?: unknown
+
+    // 图标属性
+    iconType?: string
+
+    // 装饰边框属性
+    borderStyle?: number
+
+    // 进度条
+    percent?: number
+
+    // 标签
+    tagColor?: string
+
+    // 开关
+    checked?: boolean
 }
 
 // 画布上的组件项
@@ -44,10 +76,18 @@ export interface ComponentItem {
     locked: boolean
 }
 
+// 吸附线
+export interface SnapLine {
+    type: 'v' | 'h'  // 垂直或水平
+    position: number // 位置坐标
+}
+
 // 编辑器状态
 export interface EditorState {
     components: ComponentItem[]
     selectedId: string | null
+    scale: number // 画布缩放比例
+    snapLines: SnapLine[] // 当前显示的吸附辅助线
 }
 
 // 编辑器 Action 类型
@@ -60,6 +100,8 @@ export type EditorAction =
     | { type: 'REORDER_LAYERS'; payload: ComponentItem[] }
     | { type: 'TOGGLE_VISIBILITY'; payload: string }
     | { type: 'TOGGLE_LOCK'; payload: string }
+    | { type: 'SET_SCALE'; payload: number }
+    | { type: 'SET_SNAP_LINES'; payload: SnapLine[] }
 
 // 拖拽项类型
 export interface DragItem {
@@ -72,7 +114,8 @@ export interface DragItem {
 export interface ComponentConfig {
     type: ComponentType
     name: string
-    icon: string
+    icon: React.ReactNode
+    category: ComponentCategory
     defaultProps: ComponentProps
     defaultStyle: Partial<ComponentStyle>
 }

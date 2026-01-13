@@ -189,15 +189,18 @@ export default function PropertyPanel() {
                             </Form.Item>
                         </>
                     )}
-                    {selectedComponent.type === 'chart' && (
+                    {['lineChart', 'barChart', 'pieChart', 'gaugeChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) && (
                         <Form.Item label="图表类型">
                             <Select
-                                value={selectedComponent.props.chartType || 'bar'}
-                                onChange={(v) => handleChange('props.chartType', v)}
+                                value={selectedComponent.type}
+                                disabled
                                 options={[
-                                    { value: 'line', label: '折线图' },
-                                    { value: 'bar', label: '柱状图' },
-                                    { value: 'pie', label: '饼图' },
+                                    { value: 'lineChart', label: '折线图' },
+                                    { value: 'barChart', label: '柱状图' },
+                                    { value: 'pieChart', label: '饼图' },
+                                    { value: 'gaugeChart', label: '仪表盘' },
+                                    { value: 'radarChart', label: '雷达图' },
+                                    { value: 'scatterChart', label: '散点图' },
                                 ]}
                             />
                         </Form.Item>

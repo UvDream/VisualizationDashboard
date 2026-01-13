@@ -7,17 +7,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    /* 为 Ruler 定位 */
+}
+
+/* 覆盖 padding 确保 Ruler 从左上角开始 */
+.canvas-wrapper {
+    padding: 0;
+    display: block;
+    /* 必须 block 才能滚动 */
+    overflow: auto;
 }
 
 .canvas-area {
-    width: 1200px;
-    height: 800px;
+    width: 1920px;
+    height: 1080px;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border: 2px solid #303030;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
+    border-radius: 4px;
+    position: absolute;
+    top: 40px;
+    /* 留出 Ruler 空间 */
+    left: 40px;
+    transform-origin: 0 0;
+    /* 从左上角缩放 */
     transition: border-color 0.2s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    margin-right: 400px;
+    /* 预留滚动空间 */
+    margin-bottom: 400px;
 
     &.drag-over {
         border-color: #1890ff;
@@ -33,11 +51,15 @@
     cursor: move;
     border: 2px solid transparent;
     box-sizing: border-box;
-    transition: border-color 0.2s;
+    transition: border-color 0.1s;
+    /* 加快响应 */
+    overflow: hidden;
 
     &.selected {
         border-color: #1890ff;
         box-shadow: 0 0 0 1px #1890ff;
+        z-index: 1000 !important;
+        /* 确保选中时在最上层 */
     }
 
     &.locked {
@@ -55,7 +77,9 @@
         background: #1890ff;
         border: 1px solid #fff;
         border-radius: 2px;
+        z-index: 1001;
 
+        /* ... handles ... */
         &.top-left {
             top: -4px;
             left: -4px;
@@ -82,9 +106,32 @@
     }
 }
 
+/* 吸附辅助线 */
+.snap-line {
+    position: absolute;
+    background-color: #ff00cc;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.snap-line-v {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+}
+
+.snap-line-h {
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+/* ... existing styles for placeholders ... */
 .canvas-item-image-placeholder,
 .canvas-item-chart-placeholder,
-.canvas-item-container-placeholder {
+.canvas-item-container-placeholder,
+.canvas-item-carousel-placeholder,
+.canvas-item-table-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
@@ -95,10 +142,102 @@
     border: 1px dashed #444;
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.02);
+    user-select: none;
 
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+}
+
+.canvas-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* 装饰边框样式 ... (保持不变) */
+.border-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+
+    .border-box-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+}
+
+.border-box-1 {
+    border: 2px solid #1890ff;
+    background: linear-gradient(135deg, rgba(24, 144, 255, 0.1) 0%, transparent 100%);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #1890ff;
+    }
+
+    &::before {
+        top: -5px;
+        left: -5px;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    &::after {
+        bottom: -5px;
+        right: -5px;
+        border-left: none;
+        border-top: none;
+    }
+}
+
+.border-box-2 {
+    border: 2px solid #52c41a;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, transparent 100%);
+}
+
+.border-box-3 {
+    border: 2px solid #faad14;
+    background: linear-gradient(135deg, rgba(250, 173, 20, 0.1) 0%, transparent 100%);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.decoration {
+    width: 100%;
+    height: 100%;
+}
+
+.decoration-1 {
+    background: linear-gradient(90deg, transparent, #1890ff, transparent);
+    opacity: 0.6;
+    animation: decorationFlow 2s linear infinite;
+}
+
+.decoration-2 {
+    background: repeating-linear-gradient(90deg, #1890ff 0px, #1890ff 10px, transparent 10px, transparent 20px);
+    opacity: 0.6;
+}
+
+@keyframes decorationFlow {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
     }
 }

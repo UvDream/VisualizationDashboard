@@ -25,11 +25,9 @@ export default function Edit() {
                         <Toolbar />
                         <div className="editor-main">
                             <ComponentPanel />
+                            <LayerPanel />
                             <Canvas />
-                            <div className="editor-right-panel">
-                                <PropertyPanel />
-                                <LayerPanel />
-                            </div>
+                            <PropertyPanel />
                         </div>
                     </div>
                 </EditorProvider>
