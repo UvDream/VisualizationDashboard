@@ -25,6 +25,93 @@ interface CanvasItemProps {
 
 // ECharts 默认配置
 const getChartOption = (type: string, props: ComponentItem['props']) => {
+    // 构建X轴配置
+    const buildAxisConfig = (axisConfig: any, defaultType: string, defaultData?: any[]) => {
+        const config: any = {
+            type: axisConfig?.type || defaultType,
+            show: axisConfig?.show !== false,
+            name: axisConfig?.name,
+            nameLocation: axisConfig?.nameLocation,
+            nameGap: axisConfig?.nameGap,
+            position: axisConfig?.position,
+        }
+
+        // 名称文本样式
+        if (axisConfig?.nameTextStyle) {
+            config.nameTextStyle = {
+                color: axisConfig.nameTextStyle.color || '#fff',
+                fontSize: axisConfig.nameTextStyle.fontSize || 12,
+                fontWeight: axisConfig.nameTextStyle.fontWeight || 'normal',
+            }
+        }
+
+        // 轴线
+        if (axisConfig?.axisLine) {
+            config.axisLine = {
+                show: axisConfig.axisLine.show !== false,
+                lineStyle: {
+                    color: axisConfig.axisLine.lineStyle?.color || '#ccc',
+                    width: axisConfig.axisLine.lineStyle?.width || 1,
+                    type: axisConfig.axisLine.lineStyle?.type || 'solid',
+                }
+            }
+        }
+
+        // 刻度线
+        if (axisConfig?.axisTick) {
+            config.axisTick = {
+                show: axisConfig.axisTick.show !== false,
+                lineStyle: {
+                    color: axisConfig.axisTick.lineStyle?.color || '#ccc',
+                    width: axisConfig.axisTick.lineStyle?.width || 1,
+                }
+            }
+        }
+
+        // 轴标签
+        if (axisConfig?.axisLabel) {
+            config.axisLabel = {
+                show: axisConfig.axisLabel.show !== false,
+                color: axisConfig.axisLabel.color || '#fff',
+                fontSize: axisConfig.axisLabel.fontSize || 12,
+                fontWeight: axisConfig.axisLabel.fontWeight || 'normal',
+                rotate: axisConfig.axisLabel.rotate || 0,
+                margin: axisConfig.axisLabel.margin || 8,
+            }
+        }
+
+        // 分割线
+        if (axisConfig?.splitLine) {
+            config.splitLine = {
+                show: axisConfig.splitLine.show !== false,
+                lineStyle: {
+                    color: axisConfig.splitLine.lineStyle?.color || '#333',
+                    width: axisConfig.splitLine.lineStyle?.width || 1,
+                    type: axisConfig.splitLine.lineStyle?.type || 'solid',
+                    opacity: axisConfig.splitLine.lineStyle?.opacity || 1,
+                }
+            }
+        }
+
+        // 分割区域
+        if (axisConfig?.splitArea) {
+            config.splitArea = {
+                show: axisConfig.splitArea.show !== false,
+                areaStyle: {
+                    color: axisConfig.splitArea.areaStyle?.color || ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)'],
+                    opacity: axisConfig.splitArea.areaStyle?.opacity || 0.3,
+                }
+            }
+        }
+
+        // 数据
+        if (defaultData) {
+            config.data = defaultData
+        }
+
+        return config
+    }
+
     const baseOption = {
         backgroundColor: 'transparent',
         title: props.chartTitle ? { text: props.chartTitle, left: 'center', textStyle: { color: '#fff' } } : undefined,
@@ -48,16 +135,60 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
         } : { show: false },
     }
 
-    const xAxis = { type: 'category', data: props.xAxisData || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
-    const yAxis = { type: 'value' }
+    const xAxis = buildAxisConfig(props.xAxisConfig, 'category', props.xAxisData || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
+    const yAxis = buildAxisConfig(props.yAxisConfig, 'value')
     // 为不同图表类型生成 series
-    const commonSeries = props.seriesData?.map(s => ({
-        ...s,
-        type: type === 'lineChart' ? 'line' :
-            type === 'barChart' ? 'bar' :
-                type === 'scatterChart' ? 'scatter' :
-                    type === 'radarChart' ? 'radar' : 'line'
-    })) || []
+    const commonSeries = props.seriesData?.map(s => {
+        const baseSeries = {
+            ...s,
+            type: type === 'lineChart' ? 'line' :
+                type === 'barChart' ? 'bar' :
+                    type === 'scatterChart' ? 'scatter' :
+                        type === 'radarChart' ? 'radar' : 'line'
+        }
+
+        // 为折线图添加符号配置
+        if (type === 'lineChart') {
+            // 优先使用系列自身的符号配置，否则使用全局配置
+            const symbolConfig = s.symbolConfig || props.symbolConfig;
+            if (symbolConfig) {
+                return {
+                    ...baseSeries,
+                    showSymbol: symbolConfig.show !== false,
+                    symbol: symbolConfig.type || 'circle',
+                    symbolSize: symbolConfig.size || 4,
+                    symbolRotate: symbolConfig.type === 'arrow' ? 0 : undefined,
+                    itemStyle: {
+                        color: symbolConfig.color || '#c23531',
+                        borderColor: symbolConfig.borderColor || '#fff',
+                        borderWidth: symbolConfig.borderWidth || 1,
+                        opacity: symbolConfig.opacity || 1
+                    }
+                }
+            }
+        }
+
+        // 为散点图也支持符号配置
+        if (type === 'scatterChart') {
+            // 优先使用系列自身的符号配置，否则使用全局配置
+            const symbolConfig = s.symbolConfig || props.symbolConfig;
+            if (symbolConfig) {
+                return {
+                    ...baseSeries,
+                    symbol: symbolConfig.type && symbolConfig.type !== 'none' ? symbolConfig.type : 'circle',
+                    symbolSize: symbolConfig.size || 10,
+                    itemStyle: {
+                        color: symbolConfig.color || '#c23531',
+                        borderColor: symbolConfig.borderColor || '#fff',
+                        borderWidth: symbolConfig.borderWidth || 0,
+                        opacity: symbolConfig.opacity || 1
+                    }
+                }
+            }
+        }
+
+        return baseSeries;
+    }) || []
 
     if (commonSeries.length === 0) {
         // Fallback demos if no data provided (should be overridden by defaultConfigs usually)

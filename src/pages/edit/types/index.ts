@@ -34,6 +34,76 @@ export interface ComponentStyle {
     zIndex?: number
 }
 
+// 图表轴配置
+export interface ChartAxisConfig {
+    show?: boolean
+    type?: 'value' | 'category' | 'time' | 'log'
+    name?: string
+    nameLocation?: 'start' | 'middle' | 'end'
+    nameTextStyle?: {
+        color?: string
+        fontSize?: number
+        fontWeight?: string
+    }
+    nameGap?: number
+    position?: 'top' | 'bottom' | 'left' | 'right'
+    // 轴线
+    axisLine?: {
+        show?: boolean
+        lineStyle?: {
+            color?: string
+            width?: number
+            type?: 'solid' | 'dashed' | 'dotted'
+        }
+    }
+    // 刻度线
+    axisTick?: {
+        show?: boolean
+        lineStyle?: {
+            color?: string
+            width?: number
+        }
+    }
+    // 轴标签
+    axisLabel?: {
+        show?: boolean
+        color?: string
+        fontSize?: number
+        fontWeight?: string
+        rotate?: number
+        margin?: number
+    }
+    // 分割线
+    splitLine?: {
+        show?: boolean
+        lineStyle?: {
+            color?: string
+            width?: number
+            type?: 'solid' | 'dashed' | 'dotted'
+            opacity?: number
+        }
+    }
+    // 分割区域
+    splitArea?: {
+        show?: boolean
+        areaStyle?: {
+            color?: string[]
+            opacity?: number
+        }
+    }
+}
+
+// 图表系列符号配置
+export interface ChartSymbolConfig {
+    show?: boolean
+    type?: 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none'
+    size?: number
+    color?: string
+    borderColor?: string
+    borderWidth?: number
+    opacity?: number
+}
+
 // 图表图例配置
 export interface ChartLegendConfig {
     show?: boolean
@@ -71,6 +141,11 @@ export interface ComponentProps {
     chartType?: 'line' | 'bar' | 'pie'
     chartData?: unknown
     chartOption?: unknown
+    // 图表轴配置
+    xAxisConfig?: ChartAxisConfig
+    yAxisConfig?: ChartAxisConfig
+    // 折线图符号配置
+    symbolConfig?: ChartSymbolConfig
 
     // 图标属性
     iconType?: string
@@ -91,7 +166,12 @@ export interface ComponentProps {
     // 图表数据
     chartTitle?: string
     xAxisData?: string[]
-    seriesData?: Array<{ name: string; data: any[] }>
+    seriesData?: Array<{ 
+        name: string; 
+        data: any[];
+        // 系列特定的符号配置
+        symbolConfig?: ChartSymbolConfig;
+    }>
     pieData?: Array<{ name: string; value: number }>
     singleData?: number
     legend?: ChartLegendConfig
