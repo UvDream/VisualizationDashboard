@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart'
+    | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table'
     // 小组件 - 装饰
@@ -181,6 +181,10 @@ export interface ComponentProps {
 
     // 开关
     checked?: boolean
+
+    // 地图属性
+    mapRegion?: string // 地图区域：china, beijing, shanghai 等
+    mapData?: Array<{ name: string; value: number }> // 地图数据
 }
 
 // 画布上的组件项

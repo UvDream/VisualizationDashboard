@@ -25,6 +25,7 @@ import {
     PlaySquareOutlined,
     GlobalOutlined,
     GatewayOutlined,
+    HeatMapOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -46,6 +47,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'gaugeChart', name: '仪表盘', icon: <DashboardOutlined />, category: 'chart' },
     { type: 'radarChart', name: '雷达图', icon: <RadarChartOutlined />, category: 'chart' },
     { type: 'scatterChart', name: '散点图', icon: <DotChartOutlined />, category: 'chart' },
+    { type: 'mapChart', name: '地图', icon: <HeatMapOutlined />, category: 'chart' },
 ]
 
 // Antd 组件
