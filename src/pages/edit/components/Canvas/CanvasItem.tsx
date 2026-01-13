@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useDrag } from 'react-dnd'
 import { Button } from 'antd'
 import { useEditor } from '../../context/EditorContext'
-import { ComponentItem } from '../../types'
+import type { ComponentItem } from '../../types'
 import './index.less'
 
 interface CanvasItemProps {
@@ -14,7 +14,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
     const isSelected = state.selectedId === item.id
     const ref = useRef<HTMLDivElement>(null)
 
-    const [{ isDragging }, drag] = useDrag(() => ({
+    const [{ isDragging }] = useDrag(() => ({
         type: 'CANVAS_COMPONENT',
         item: { id: item.id, type: 'CANVAS_COMPONENT' },
         canDrag: !item.locked,
@@ -22,8 +22,6 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             isDragging: monitor.isDragging(),
         }),
     }), [item.id, item.locked])
-
-    drag(ref)
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation()

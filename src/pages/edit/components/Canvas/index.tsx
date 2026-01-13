@@ -1,7 +1,8 @@
+import { useRef } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../../context/EditorContext'
-import { ComponentType, ComponentItem } from '../../types'
+import type { ComponentType, ComponentItem } from '../../types'
 import CanvasItem from './CanvasItem'
 import './index.less'
 
@@ -31,12 +32,13 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
 
 export default function Canvas() {
     const { state, addComponent, selectComponent } = useEditor()
+    const canvasRef = useRef<HTMLDivElement>(null)
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'NEW_COMPONENT',
         drop: (item: { componentType: ComponentType }, monitor) => {
             const offset = monitor.getClientOffset()
-            const canvasRect = document.querySelector('.canvas-area')?.getBoundingClientRect()
+            const canvasRect = canvasRef.current?.getBoundingClientRect()
 
             if (offset && canvasRect) {
                 const x = offset.x - canvasRect.left
@@ -71,10 +73,16 @@ export default function Canvas() {
         selectComponent(null)
     }
 
+    // 合并 refs
+    const setRefs = (el: HTMLDivElement | null) => {
+        (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+        drop(el)
+    }
+
     return (
         <div className="canvas-wrapper">
             <div
-                ref={drop}
+                ref={setRefs}
                 className={`canvas-area ${isOver ? 'drag-over' : ''}`}
                 onClick={handleCanvasClick}
             >

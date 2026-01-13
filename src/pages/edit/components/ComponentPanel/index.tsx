@@ -6,7 +6,7 @@ import {
     ContainerOutlined,
 } from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
-import { ComponentType } from '../../types'
+import type { ComponentType } from '../../types'
 import './index.less'
 
 interface ComponentConfig {

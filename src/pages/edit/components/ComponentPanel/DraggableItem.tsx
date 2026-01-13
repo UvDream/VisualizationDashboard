@@ -1,5 +1,5 @@
 import { useDrag } from 'react-dnd'
-import { ComponentType } from '../../types'
+import type { ComponentType } from '../../types'
 import './index.less'
 
 interface DraggableItemProps {
@@ -19,7 +19,7 @@ export default function DraggableItem({ type, name, icon }: DraggableItemProps) 
 
     return (
         <div
-            ref={drag}
+            ref={drag as unknown as React.Ref<HTMLDivElement>}
             className={`draggable-item ${isDragging ? 'dragging' : ''}`}
         >
             <span className="draggable-item-icon">{icon}</span>

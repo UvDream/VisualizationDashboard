@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react'
-import { EditorState, EditorAction, ComponentItem } from '../types'
+import React, { createContext, useContext, useReducer } from 'react'
+import type { ReactNode } from 'react'
+import type { EditorState, EditorAction, ComponentItem } from '../types'
 
 // 初始状态
 const initialState: EditorState = {
