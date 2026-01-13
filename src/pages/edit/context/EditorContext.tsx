@@ -202,6 +202,7 @@ interface EditorContextType {
     setSnapLines: (lines: SnapLine[]) => void
     setCanvasConfig: (config: Partial<CanvasConfig>) => void
     getSelectedComponent: () => ComponentItem | undefined
+    copyComponent: (id: string) => void
     undo: () => void
     redo: () => void
     canUndo: boolean
@@ -272,6 +273,24 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         return state.components.find((comp) => comp.id === state.selectedId)
     }, [state.components, state.selectedId])
 
+    const copyComponent = React.useCallback((id: string) => {
+        const component = state.components.find((comp) => comp.id === id)
+        if (!component) return
+
+        const newComponent: ComponentItem = {
+            ...component,
+            id: `${component.type}_${Date.now()}`,
+            name: `${component.name} 副本`,
+            style: {
+                ...component.style,
+                x: component.style.x + 20,
+                y: component.style.y + 20,
+            },
+            props: JSON.parse(JSON.stringify(component.props)), // 深拷贝 props
+        }
+        addComponent(newComponent)
+    }, [state.components, addComponent])
+
     const contextValue = React.useMemo(() => ({
         state,
         dispatch,
@@ -287,6 +306,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setSnapLines,
         setCanvasConfig,
         getSelectedComponent,
+        copyComponent,
         undo,
         redo,
         canUndo: history.past.length > 0,
@@ -306,6 +326,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setSnapLines,
         setCanvasConfig,
         getSelectedComponent,
+        copyComponent,
         undo,
         redo,
         history.past.length,

@@ -16,13 +16,19 @@ import { useEditor } from '../../context/EditorContext'
 import './index.less'
 
 export default function Toolbar() {
-    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo, setCanvasConfig } = useEditor()
+    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form] = Form.useForm()
 
     const handleDelete = () => {
         if (state.selectedId) {
             deleteComponent(state.selectedId)
+        }
+    }
+
+    const handleCopy = () => {
+        if (state.selectedId) {
+            copyComponent(state.selectedId)
         }
     }
 
@@ -80,7 +86,7 @@ export default function Toolbar() {
                             <Button icon={<RedoOutlined />} disabled={!canRedo} onClick={redo} />
                         </Tooltip>
                         <Tooltip title="复制">
-                            <Button icon={<CopyOutlined />} disabled={!state.selectedId} />
+                            <Button icon={<CopyOutlined />} disabled={!state.selectedId} onClick={handleCopy} />
                         </Tooltip>
                         <Tooltip title="删除">
                             <Button
