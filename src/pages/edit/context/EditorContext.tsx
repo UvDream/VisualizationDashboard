@@ -3,18 +3,32 @@ import type { ReactNode } from 'react'
 import type { EditorState, EditorAction, ComponentItem, SnapLine, CanvasConfig } from '../types'
 
 // 初始状态
-const initialState: EditorState = {
-    components: [],
-    selectedId: null,
-    scale: 1,
-    snapLines: [],
-    canvasConfig: {
-        width: 1920,
-        height: 1080,
-        backgroundColor: '#000000',
-        name: '大屏可视化'
+const getInitialState = (): EditorState => {
+    // 尝试从 localStorage 加载状态
+    const savedState = localStorage.getItem('editorState')
+    if (savedState) {
+        try {
+            return JSON.parse(savedState)
+        } catch (error) {
+            console.error('Failed to load state from localStorage:', error)
+        }
+    }
+    // 默认初始状态
+    return {
+        components: [],
+        selectedId: null,
+        scale: 1,
+        snapLines: [],
+        canvasConfig: {
+            width: 1920,
+            height: 1080,
+            backgroundColor: '#000000',
+            name: '大屏可视化'
+        }
     }
 }
+
+const initialState: EditorState = getInitialState()
 
 // Reducer
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -148,21 +162,27 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
             if (past.length === 0) return state
             const previous = past[past.length - 1]
             const newPast = past.slice(0, -1)
-            return {
+            const newUndoState = {
                 past: newPast,
                 present: previous,
                 future: [present, ...future],
             }
+            // 保存到 localStorage
+            localStorage.setItem('editorState', JSON.stringify(newUndoState.present))
+            return newUndoState
 
         case 'REDO':
             if (future.length === 0) return state
             const next = future[0]
             const newFuture = future.slice(1)
-            return {
+            const newRedoState = {
                 past: [...past, present],
                 present: next,
                 future: newFuture,
             }
+            // 保存到 localStorage
+            localStorage.setItem('editorState', JSON.stringify(newRedoState.present))
+            return newRedoState
 
         default:
             const newPresent = editorReducer(present, action as EditorAction)
@@ -171,18 +191,24 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
 
             // 如果是需要记录历史的操作，推入 past
             if (HISTORY_ACTIONS.includes(action.type)) {
-                return {
+                const newHistoryState = {
                     past: [...past, present],
                     present: newPresent,
                     future: [],
                 }
+                // 保存到 localStorage
+                localStorage.setItem('editorState', JSON.stringify(newHistoryState.present))
+                return newHistoryState
             }
 
             // 其他操作（如选中、缩放）只更新当前状态，不记录历史
-            return {
+            const newOtherState = {
                 ...state,
                 present: newPresent,
             }
+            // 保存到 localStorage
+            localStorage.setItem('editorState', JSON.stringify(newOtherState.present))
+            return newOtherState
     }
 }
 

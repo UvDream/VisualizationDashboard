@@ -12,10 +12,13 @@ import {
     ReloadOutlined,
     SettingOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
 import './index.less'
 
 export default function Toolbar() {
+    const navigate = useNavigate()
+
     const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form] = Form.useForm()
@@ -131,7 +134,7 @@ export default function Toolbar() {
                         <Button icon={<SettingOutlined />} onClick={handleOpenSettings}>设置</Button>
                     </Tooltip>
                     <Tooltip title="预览">
-                        <Button icon={<EyeOutlined />}>预览</Button>
+                        <Button icon={<EyeOutlined />} onClick={() => navigate('/preview')}>预览</Button>
                     </Tooltip>
                     <Button type="primary" icon={<SaveOutlined />}>
                         保存
