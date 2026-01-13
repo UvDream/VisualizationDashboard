@@ -23,14 +23,10 @@ import {
     StarOutlined,
     PictureOutlined,
     PlaySquareOutlined,
-    SmileOutlined,
-    HeartOutlined,
-    CheckCircleOutlined,
-    InfoCircleOutlined,
     GlobalOutlined,
     GatewayOutlined,
-    WarningOutlined,
 } from '@ant-design/icons'
+import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
 import type { ComponentType, ComponentCategory } from '../../types'
 import './index.less'
@@ -83,15 +79,19 @@ const imageComponents: ComponentConfig[] = [
     { type: 'carousel', name: '轮播图', icon: <PlaySquareOutlined />, category: 'image' },
 ]
 
-// 图标组件
-const iconComponents: ComponentConfig[] = [
-    { type: 'icon', name: '笑脸', icon: <SmileOutlined />, category: 'icon' },
-    { type: 'icon', name: '爱心', icon: <HeartOutlined />, category: 'icon' },
-    { type: 'icon', name: '成功', icon: <CheckCircleOutlined />, category: 'icon' },
-    { type: 'icon', name: '警告', icon: <WarningOutlined />, category: 'icon' },
-    { type: 'icon', name: '信息', icon: <InfoCircleOutlined />, category: 'icon' },
-    { type: 'icon', name: '用户', icon: <UserOutlined />, category: 'icon' },
-]
+// 自动生成图标列表
+// 过滤 Outlined 图标，排除非组件导出
+const allIconKeys = Object.keys(AntdIcons).filter(key => key.endsWith('Outlined'))
+const iconComponents: ComponentConfig[] = allIconKeys.map(key => {
+    const IconComp = (AntdIcons as any)[key]
+    return {
+        type: 'icon',
+        name: key.replace('Outlined', ''), // 简化名称显示
+        icon: <IconComp />,
+        category: 'icon',
+        data: { iconType: key } // 传递真实图标类型
+    }
+})
 
 // 3D组件
 const threeComponents: ComponentConfig[] = [
@@ -168,6 +168,7 @@ export default function ComponentPanel() {
                                 type={item.type}
                                 name={item.name}
                                 icon={item.icon}
+                                data={(item as any).data} // 传递额外数据
                             />
                         ))}
                         {filteredComponents.length === 0 && (

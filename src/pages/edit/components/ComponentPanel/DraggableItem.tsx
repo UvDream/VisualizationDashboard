@@ -6,12 +6,13 @@ interface DraggableItemProps {
     type: ComponentType
     name: string
     icon: React.ReactNode
+    data?: any // 额外数据，如 iconType
 }
 
-export default function DraggableItem({ type, name, icon }: DraggableItemProps) {
+export default function DraggableItem({ type, name, icon, data }: DraggableItemProps) {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: 'NEW_COMPONENT',
-        item: { componentType: type },
+        item: { componentType: type, data },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),

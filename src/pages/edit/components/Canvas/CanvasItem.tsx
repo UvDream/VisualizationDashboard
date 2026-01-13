@@ -10,6 +10,7 @@ import {
     InfoCircleOutlined,
     UserOutlined,
 } from '@ant-design/icons'
+import * as AntdIcons from '@ant-design/icons'
 import { Canvas, useLoader } from '@react-three/fiber'
 import { OrbitControls, Stars, Sphere } from '@react-three/drei'
 import { TextureLoader } from 'three'
@@ -447,11 +448,28 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                     </div>
                 )
 
-            // 图标
+            // 图标 (Updated)
             case 'icon':
+                const iconType = item.props.iconType
+                let IconComp: React.ComponentType | React.ReactNode = null
+
+                // 1. Try AntdIcons by name (e.g. "SearchOutlined")
+                if (iconType && (AntdIcons as any)[iconType]) {
+                    const AntIcon = (AntdIcons as any)[iconType]
+                    IconComp = <AntIcon />
+                }
+                // 2. Fallback to legacy map (e.g. "smile")
+                else if (iconType && iconMap[iconType]) {
+                    IconComp = iconMap[iconType]
+                }
+                // 3. Default
+                else {
+                    IconComp = <SmileOutlined />
+                }
+
                 return (
                     <div className="canvas-item-icon" style={{ fontSize: item.style.fontSize || 32, color: item.style.color || '#1890ff' }}>
-                        {iconMap[item.props.iconType || 'smile'] || <SmileOutlined />}
+                        {IconComp}
                     </div>
                 )
 

@@ -142,7 +142,7 @@ export default function Canvas() {
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'NEW_COMPONENT',
-        drop: (item: { componentType: ComponentType }, monitor) => {
+        drop: (item: { componentType: ComponentType; data?: any }, monitor) => {
             const offset = monitor.getClientOffset()
             const canvasRect = customCanvasRef.current?.getBoundingClientRect()
 
@@ -156,7 +156,7 @@ export default function Canvas() {
                     id: uuidv4(),
                     type: item.componentType,
                     name: `${item.componentType}_${Date.now()}`,
-                    props: config.props,
+                    props: { ...config.props, ...item.data }, // 合并拖拽携带的数据
                     style: {
                         x,
                         y,
