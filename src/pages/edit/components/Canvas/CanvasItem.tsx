@@ -164,7 +164,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             const newRawX = startPosX + deltaX
             const newRawY = startPosY + deltaY
 
-            // 计算吸附
+            // 计算吸附 (Snap calculation stays same)
             const { x: snappedX, y: snappedY, snapLines } = calculateSnap(
                 item.id,
                 newRawX,
@@ -172,14 +172,35 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                 state.components
             )
 
-            moveComponent(item.id, snappedX, snappedY)
+            // OPTIMIZATION: Update DOM directly to avoid re-renders and history flood
+            if (ref.current) {
+                ref.current.style.left = `${snappedX}px`
+                ref.current.style.top = `${snappedY}px`
+            }
+
+            // Only update snap lines in global state (transient)
             setSnapLines(snapLines)
         }
 
-        const handleMouseUp = () => {
+        const handleMouseUp = (upEvent: MouseEvent) => {
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
             setSnapLines([])
+
+            // Commit final position to history
+            // Re-calculate final position to be sure (or store in a ref)
+            // For simplicity, we recalculate using same logic as last move
+            // Better: store lastSnapped in a variable closure
+            const deltaX = (upEvent.clientX - startX) / state.scale
+            const deltaY = (upEvent.clientY - startY) / state.scale
+            const newRawX = startPosX + deltaX
+            const newRawY = startPosY + deltaY
+            const { x: finalX, y: finalY } = calculateSnap(item.id, newRawX, newRawY, state.components)
+
+            // Only update if changed
+            if (finalX !== item.style.x || finalY !== item.style.y) {
+                moveComponent(item.id, finalX, finalY)
+            }
         }
 
         document.addEventListener('mousemove', handleMouseMove)
@@ -188,6 +209,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
 
 
 
+    // Resize Handler
     const handleResizeMouseDown = (e: React.MouseEvent, direction: string) => {
         e.stopPropagation()
         if (item.locked) return
@@ -198,6 +220,12 @@ export default function CanvasItem({ item }: CanvasItemProps) {
         const startItemY = item.style.y
         const startWidth = item.style.width
         const startHeight = item.style.height
+
+        // Closure variables to track final state
+        let currentX = startItemX
+        let currentY = startItemY
+        let currentWidth = startWidth
+        let currentHeight = startHeight
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
             moveEvent.preventDefault()
@@ -230,20 +258,37 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                 newWidth = Math.max(10, startWidth + deltaX)
             }
 
-            updateComponent(item.id, {
-                style: {
-                    ...item.style,
-                    x: newX,
-                    y: newY,
-                    width: newWidth,
-                    height: newHeight,
-                }
-            })
+            // Update closure vars
+            currentX = newX
+            currentY = newY
+            currentWidth = newWidth
+            currentHeight = newHeight
+
+            // Direct DOM update
+            if (ref.current) {
+                ref.current.style.left = `${newX}px`
+                ref.current.style.top = `${newY}px`
+                ref.current.style.width = `${newWidth}px`
+                ref.current.style.height = `${newHeight}px`
+            }
         }
 
         const handleMouseUp = () => {
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
+
+            // Commit final state
+            if (currentX !== startItemX || currentY !== startItemY || currentWidth !== startWidth || currentHeight !== startHeight) {
+                updateComponent(item.id, {
+                    style: {
+                        ...item.style,
+                        x: currentX,
+                        y: currentY,
+                        width: currentWidth,
+                        height: currentHeight,
+                    }
+                })
+            }
         }
 
         document.addEventListener('mousemove', handleMouseMove)

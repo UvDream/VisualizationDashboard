@@ -14,7 +14,7 @@ import { useEditor } from '../../context/EditorContext'
 import './index.less'
 
 export default function Toolbar() {
-    const { state, deleteComponent, setScale } = useEditor()
+    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo } = useEditor()
 
     const handleDelete = () => {
         if (state.selectedId) {
@@ -38,17 +38,15 @@ export default function Toolbar() {
 
     return (
         <div className="toolbar">
-            <div className="toolbar-left">
-                <span className="toolbar-title">可视化大屏编辑器</span>
-            </div>
+            {/* ... */}
             <div className="toolbar-center">
                 <Space size="large">
                     <Space>
                         <Tooltip title="撤销">
-                            <Button icon={<UndoOutlined />} disabled />
+                            <Button icon={<UndoOutlined />} disabled={!canUndo} onClick={undo} />
                         </Tooltip>
                         <Tooltip title="重做">
-                            <Button icon={<RedoOutlined />} disabled />
+                            <Button icon={<RedoOutlined />} disabled={!canRedo} onClick={redo} />
                         </Tooltip>
                         <Tooltip title="复制">
                             <Button icon={<CopyOutlined />} disabled={!state.selectedId} />
