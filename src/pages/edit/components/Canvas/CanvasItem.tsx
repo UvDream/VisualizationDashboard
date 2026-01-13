@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, Suspense } from 'react'
 import { useDrag } from 'react-dnd'
 import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card, Table } from 'antd'
 import ReactECharts from 'echarts-for-react'
@@ -10,8 +10,9 @@ import {
     InfoCircleOutlined,
     UserOutlined,
 } from '@ant-design/icons'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Stars, Sphere, MeshDistortMaterial } from '@react-three/drei'
+import { Canvas, useLoader } from '@react-three/fiber'
+import { OrbitControls, Stars, Sphere } from '@react-three/drei'
+import { TextureLoader } from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
@@ -314,6 +315,28 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                         options={item.props.selectOptions || [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
                     />
                 )
+                // 地球组件
+                function Earth() {
+                    const [colorMap, normalMap, specularMap] = useLoader(TextureLoader, [
+                        'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
+                        'https://unpkg.com/three-globe/example/img/earth-topology.png',
+                        'https://unpkg.com/three-globe/example/img/earth-water.png'
+                    ])
+
+                    return (
+                        <mesh>
+                            <sphereGeometry args={[1.2, 64, 64]} />
+                            <meshPhongMaterial
+                                map={colorMap}
+                                normalMap={normalMap}
+                                specularMap={specularMap}
+                                shininess={5}
+                            />
+                        </mesh>
+                    )
+                }
+
+            // ... inside renderContent ...
             // 3D 组件
             case 'threeEarth':
                 return (
@@ -325,15 +348,13 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                         >
                             <ambientLight intensity={0.5} />
                             <pointLight position={[10, 10, 10]} />
-                            <Sphere args={[1.2, 32, 32]} visible>
-                                <MeshDistortMaterial
-                                    color="#00f"
-                                    attach="material"
-                                    distort={0.3} // 扭曲度
-                                    speed={1.5} // 动画速度
-                                    roughness={0.5}
-                                />
-                            </Sphere>
+                            <Suspense fallback={
+                                <Sphere args={[1.2, 32, 32]} visible>
+                                    <meshStandardMaterial color="#1E90FF" wireframe />
+                                </Sphere>
+                            }>
+                                <Earth />
+                            </Suspense>
                             <OrbitControls enableZoom={false} autoRotate makeDefault />
                             <Stars />
                         </Canvas>
@@ -341,9 +362,9 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                             position: 'absolute', top: 10, left: 10, color: 'white',
                             pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
                         }}>
-                            3D 组件示例
+                            3D 地球 (加载中...)
                         </div>
-                    </div >
+                    </div>
                 )
             case 'threeParticles':
                 return (
