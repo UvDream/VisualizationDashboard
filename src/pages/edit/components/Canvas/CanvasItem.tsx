@@ -625,11 +625,31 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             // 图片
             case 'image':
                 return (
-                    <div className="canvas-item-image-placeholder">
+                    <div className="canvas-item-image-placeholder" style={{ width: '100%', height: '100%' }}>
                         {item.props.src ? (
-                            <img src={item.props.src} alt={item.props.alt || ''} />
+                            <img 
+                                src={item.props.src} 
+                                alt={item.props.alt || ''} 
+                                style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover',
+                                    display: 'block',
+                                    pointerEvents: 'none'
+                                }}
+                            />
                         ) : (
-                            <span>图片占位</span>
+                            <div style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                backgroundColor: '#2a2a2a',
+                                color: '#aaa'
+                            }}>
+                                <span>图片占位</span>
+                            </div>
                         )}
                     </div>
                 )
