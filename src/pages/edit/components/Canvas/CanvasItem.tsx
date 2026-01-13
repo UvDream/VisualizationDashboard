@@ -314,8 +314,10 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                         options={item.props.selectOptions || [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
                     />
                 )
-                    < div style = {{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }
-        }>
+            // 3D 组件
+            case 'threeEarth':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
                         <Canvas
                             camera={{ position: [0, 0, 3] }}
                             style={{ width: '100%', height: '100%' }}
@@ -344,127 +346,127 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                     </div >
                 )
             case 'threeParticles':
-    return (
-        <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
-            <Canvas
-                camera={{ position: [0, 0, 5] }}
-                style={{ width: '100%', height: '100%' }}
-                resize={{ scroll: false }}
-            >
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} />
-                <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} makeDefault />
-            </Canvas>
-        </div>
-    )
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+                            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} makeDefault />
+                        </Canvas>
+                    </div>
+                )
             case 'switch':
-    return <Switch checked={item.props.checked} />
+                return <Switch checked={item.props.checked} />
             case 'progress':
-    return <Progress percent={item.props.percent || 50} style={{ width: '100%' }} />
+                return <Progress percent={item.props.percent || 50} style={{ width: '100%' }} />
             case 'tag':
-    return <Tag color={item.props.tagColor || 'blue'}>{item.props.content || '标签'}</Tag>
+                return <Tag color={item.props.tagColor || 'blue'}>{item.props.content || '标签'}</Tag>
             case 'badge':
-    return <Badge count={5}><Avatar shape="square" /></Badge>
+                return <Badge count={5}><Avatar shape="square" /></Badge>
             case 'avatar':
-    return <Avatar size={64} icon={<UserOutlined />} />
+                return <Avatar size={64} icon={<UserOutlined />} />
             case 'card':
-    return (
-        <Card size="small" title="卡片标题" style={{ width: '100%', height: '100%' }}>
-            {item.props.content || '卡片内容'}
-        </Card>
-    )
+                return (
+                    <Card size="small" title="卡片标题" style={{ width: '100%', height: '100%' }}>
+                        {item.props.content || '卡片内容'}
+                    </Card>
+                )
 
 
             // 小组件 - 装饰边框
             case 'borderBox1':
-    return (
-        <div className="border-box border-box-1">
-            <div className="border-box-content">{item.props.content || ''}</div>
-        </div>
-    )
+                return (
+                    <div className="border-box border-box-1">
+                        <div className="border-box-content">{item.props.content || ''}</div>
+                    </div>
+                )
             case 'borderBox2':
-    return (
-        <div className="border-box border-box-2">
-            <div className="border-box-content">{item.props.content || ''}</div>
-        </div>
-    )
+                return (
+                    <div className="border-box border-box-2">
+                        <div className="border-box-content">{item.props.content || ''}</div>
+                    </div>
+                )
             case 'borderBox3':
-    return (
-        <div className="border-box border-box-3">
-            <div className="border-box-content">{item.props.content || ''}</div>
-        </div>
-    )
+                return (
+                    <div className="border-box border-box-3">
+                        <div className="border-box-content">{item.props.content || ''}</div>
+                    </div>
+                )
             case 'decoration1':
-    return <div className="decoration decoration-1" />
+                return <div className="decoration decoration-1" />
             case 'decoration2':
-    return <div className="decoration decoration-2" />
+                return <div className="decoration decoration-2" />
             case 'container':
-    return (
-        <div className="canvas-item-container-placeholder">
-            <span>容器</span>
-        </div>
-    )
+                return (
+                    <div className="canvas-item-container-placeholder">
+                        <span>容器</span>
+                    </div>
+                )
 
             // 图片
             case 'image':
-    return (
-        <div className="canvas-item-image-placeholder">
-            {item.props.src ? (
-                <img src={item.props.src} alt={item.props.alt || ''} />
-            ) : (
-                <span>图片占位</span>
-            )}
-        </div>
-    )
+                return (
+                    <div className="canvas-item-image-placeholder">
+                        {item.props.src ? (
+                            <img src={item.props.src} alt={item.props.alt || ''} />
+                        ) : (
+                            <span>图片占位</span>
+                        )}
+                    </div>
+                )
             case 'carousel':
-    return (
-        <div className="canvas-item-carousel-placeholder">
-            <span>轮播图</span>
-        </div>
-    )
+                return (
+                    <div className="canvas-item-carousel-placeholder">
+                        <span>轮播图</span>
+                    </div>
+                )
 
             // 图标
             case 'icon':
-    return (
-        <div className="canvas-item-icon" style={{ fontSize: item.style.fontSize || 32, color: item.style.color || '#1890ff' }}>
-            {iconMap[item.props.iconType || 'smile'] || <SmileOutlined />}
-        </div>
-    )
+                return (
+                    <div className="canvas-item-icon" style={{ fontSize: item.style.fontSize || 32, color: item.style.color || '#1890ff' }}>
+                        {iconMap[item.props.iconType || 'smile'] || <SmileOutlined />}
+                    </div>
+                )
 
             default:
-    return null
-}
+                return null
+        }
     }
 
-if (!item.visible) return null
+    if (!item.visible) return null
 
-return (
-    <div
-        ref={ref}
-        className={`canvas-item ${isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''}`}
-        style={{
-            left: item.style.x,
-            top: item.style.y,
-            width: item.style.width,
-            height: item.style.height,
-            backgroundColor: item.style.backgroundColor,
-            borderRadius: item.style.borderRadius,
-            opacity: isDragging ? 0.5 : (item.style.opacity ?? 1),
-            zIndex: item.style.zIndex,
-        }}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
-    >
-        {renderContent()}
-        {isSelected && (
-            <>
-                <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />
-                <div className="resize-handle top-right" onMouseDown={(e) => handleResizeMouseDown(e, 'top-right')} />
-                <div className="resize-handle bottom-left" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-left')} />
-                <div className="resize-handle bottom-right" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-right')} />
-            </>
-        )}
-    </div>
-)
+    return (
+        <div
+            ref={ref}
+            className={`canvas-item ${isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''}`}
+            style={{
+                left: item.style.x,
+                top: item.style.y,
+                width: item.style.width,
+                height: item.style.height,
+                backgroundColor: item.style.backgroundColor,
+                borderRadius: item.style.borderRadius,
+                opacity: isDragging ? 0.5 : (item.style.opacity ?? 1),
+                zIndex: item.style.zIndex,
+            }}
+            onClick={handleClick}
+            onMouseDown={handleMouseDown}
+        >
+            {renderContent()}
+            {isSelected && (
+                <>
+                    <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />
+                    <div className="resize-handle top-right" onMouseDown={(e) => handleResizeMouseDown(e, 'top-right')} />
+                    <div className="resize-handle bottom-left" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-left')} />
+                    <div className="resize-handle bottom-right" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-right')} />
+                </>
+            )}
+        </div>
+    )
 }
