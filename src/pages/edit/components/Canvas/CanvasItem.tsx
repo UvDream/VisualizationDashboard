@@ -21,7 +21,8 @@ import './index.less'
 
 interface CanvasItemProps {
     item: ComponentItem
-    onContextMenu: (e: React.MouseEvent) => void
+    onContextMenu?: (e: React.MouseEvent) => void
+    previewMode?: boolean
 }
 
 // ECharts 默认配置
@@ -271,31 +272,39 @@ const iconMap: Record<string, React.ReactNode> = {
     user: <UserOutlined />,
 }
 
-export default function CanvasItem({ item, onContextMenu }: CanvasItemProps) {
+export default function CanvasItem({ item, onContextMenu, previewMode = false }: CanvasItemProps) {
     const { state, selectComponent, moveComponent, updateComponent, setSnapLines } = useEditor()
     const isSelected = state.selectedId === item.id
     const ref = useRef<HTMLDivElement>(null)
 
-    const [{ isDragging }] = useDrag(() => ({
-        type: 'CANVAS_COMPONENT',
-        item: { id: item.id, type: 'CANVAS_COMPONENT' },
-        canDrag: !item.locked,
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-        end: () => {
-            // 拖拽结束，清除吸附线
-            setSnapLines([])
-        }
-    }), [item.id, item.locked])
+    // 只有在非预览模式下才使用useDrag
+    const [isDragging] = !previewMode ? (() => {
+        const [{ isDragging }] = useDrag(() => ({
+            type: 'CANVAS_COMPONENT',
+            item: { id: item.id, type: 'CANVAS_COMPONENT' },
+            canDrag: !item.locked && !previewMode,
+            collect: (monitor) => ({
+                isDragging: monitor.isDragging(),
+            }),
+            end: () => {
+                // 拖拽结束，清除吸附线
+                if (!previewMode) {
+                    setSnapLines([])
+                }
+            }
+        }), [item.id, item.locked, previewMode])
+        return [isDragging]
+    })() : [false]
 
     const handleClick = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        selectComponent(item.id)
+        if (!previewMode) {
+            e.stopPropagation()
+            selectComponent(item.id)
+        }
     }
 
     const handleMouseDown = (e: React.MouseEvent) => {
-        if (item.locked) return
+        if (item.locked || previewMode) return
         e.stopPropagation()
 
         const startX = e.clientX
@@ -696,7 +705,7 @@ export default function CanvasItem({ item, onContextMenu }: CanvasItemProps) {
     return (
         <div
             ref={ref}
-            className={`canvas-item ${isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''}`}
+            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''}`}
             style={{
                 left: item.style.x,
                 top: item.style.y,
@@ -704,15 +713,16 @@ export default function CanvasItem({ item, onContextMenu }: CanvasItemProps) {
                 height: item.style.height,
                 backgroundColor: item.style.backgroundColor,
                 borderRadius: item.style.borderRadius,
-                opacity: isDragging ? 0.5 : (item.style.opacity ?? 1),
+                opacity: isDragging && !previewMode ? 0.5 : (item.style.opacity ?? 1),
                 zIndex: item.style.zIndex,
+                cursor: !previewMode && !item.locked ? 'move' : 'default',
             }}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
             onContextMenu={onContextMenu}
         >
             {renderContent()}
-            {isSelected && (
+            {!previewMode && isSelected && (
                 <>
                     <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />
                     <div className="resize-handle top-right" onMouseDown={(e) => handleResizeMouseDown(e, 'top-right')} />

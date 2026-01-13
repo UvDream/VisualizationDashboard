@@ -136,7 +136,11 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
     icon: { props: { iconType: 'smile' }, style: { width: 60, height: 60, fontSize: 32, color: '#1890ff' } },
 }
 
-export default function Canvas() {
+interface CanvasProps {
+    previewMode?: boolean
+}
+
+export default function Canvas({ previewMode = false }: CanvasProps) {
     const { state, addComponent, selectComponent, deleteComponent, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
     
@@ -145,50 +149,58 @@ export default function Canvas() {
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 })
     const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
 
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: 'NEW_COMPONENT',
-        drop: (item: { componentType: ComponentType; data?: any }, monitor) => {
-            const offset = monitor.getClientOffset()
-            const canvasRect = customCanvasRef.current?.getBoundingClientRect()
+    // 只有在非预览模式下才使用useDrop
+    const [dropRef, isOver] = !previewMode ? (() => {
+        const [{ isOver }, drop] = useDrop(() => ({
+            accept: 'NEW_COMPONENT',
+            drop: (item: { componentType: ComponentType; data?: any }, monitor) => {
+                const offset = monitor.getClientOffset()
+                const canvasRect = customCanvasRef.current?.getBoundingClientRect()
 
-            if (offset && canvasRect) {
-                // 计算缩放后的坐标 [Logic X = (Screen X - Canvas Left) / Scale]
-                const x = (offset.x - canvasRect.left) / state.scale
-                const y = (offset.y - canvasRect.top) / state.scale
+                if (offset && canvasRect) {
+                    // 计算缩放后的坐标 [Logic X = (Screen X - Canvas Left) / Scale]
+                    const x = (offset.x - canvasRect.left) / state.scale
+                    const y = (offset.y - canvasRect.top) / state.scale
 
-                const config = defaultConfigs[item.componentType] || { props: {}, style: { width: 100, height: 100 } }
-                const newComponent: ComponentItem = {
-                    id: uuidv4(),
-                    type: item.componentType,
-                    name: `${item.componentType}_${Date.now()}`,
-                    props: { ...config.props, ...item.data }, // 合并拖拽携带的数据
-                    style: {
-                        x,
-                        y,
-                        width: config.style.width || 100,
-                        height: config.style.height || 100,
-                        ...config.style,
-                    },
-                    visible: true,
-                    locked: false,
+                    const config = defaultConfigs[item.componentType] || { props: {}, style: { width: 100, height: 100 } }
+                    const newComponent: ComponentItem = {
+                        id: uuidv4(),
+                        type: item.componentType,
+                        name: `${item.componentType}_${Date.now()}`,
+                        props: { ...config.props, ...item.data }, // 合并拖拽携带的数据
+                        style: {
+                            x,
+                            y,
+                            width: config.style.width || 100,
+                            height: config.style.height || 100,
+                            ...config.style,
+                        },
+                        visible: true,
+                        locked: false,
+                    }
+
+                    addComponent(newComponent)
                 }
-
-                addComponent(newComponent)
-            }
-        },
-        collect: (monitor) => ({
-            isOver: monitor.isOver(),
-        }),
-    }))
+            },
+            collect: (monitor) => ({
+                isOver: monitor.isOver(),
+            }),
+        }))
+        return [drop, isOver]
+    })() : [undefined, false]
 
     const handleCanvasClick = () => {
-        selectComponent(null)
-        // 点击画布关闭右键菜单
-        setMenuVisible(false)
+        if (!previewMode) {
+            selectComponent(null)
+            // 点击画布关闭右键菜单
+            setMenuVisible(false)
+        }
     }
     
     // 右键菜单事件处理
     const handleContextMenu = (e: React.MouseEvent, componentId: string) => {
+        if (previewMode) return
+        
         e.preventDefault()
         e.stopPropagation()
         
@@ -239,23 +251,31 @@ export default function Canvas() {
     // 合并 refs
     const setRefs = (el: HTMLDivElement | null) => {
         (customCanvasRef as React.MutableRefObject<HTMLDivElement | null>).current = el
-        drop(el)
+        if (dropRef && el) {
+            dropRef(el)
+        }
     }
 
     return (
         <div className="canvas-wrapper">
-            <div className="ruler-corner" />
-            <Ruler type="horizontal" />
-            <Ruler type="vertical" />
+            {!previewMode && (
+                <>
+                    <div className="ruler-corner" />
+                    <Ruler type="horizontal" />
+                    <Ruler type="vertical" />
+                </>
+            )}
 
             <div
-                ref={setRefs}
-                className={`canvas-area ${isOver ? 'drag-over' : ''}`}
+                ref={!previewMode ? setRefs : undefined}
+                className={`canvas-area ${isOver && !previewMode ? 'drag-over' : ''}`}
                 style={{
                     width: state.canvasConfig?.width || 1920,
                     height: state.canvasConfig?.height || 1080,
                     backgroundColor: state.canvasConfig?.backgroundColor || '#000000',
                     transform: `scale(${state.scale}) translate(0px, 0px)`,
+                    top: !previewMode ? 40 : 0,
+                    left: !previewMode ? 40 : 0,
                 }}
                 onClick={handleCanvasClick}
             >
@@ -263,12 +283,13 @@ export default function Canvas() {
                     <CanvasItem 
                         key={item.id} 
                         item={item} 
-                        onContextMenu={(e) => handleContextMenu(e, item.id)} 
+                        onContextMenu={!previewMode ? (e) => handleContextMenu(e, item.id) : undefined} 
+                        previewMode={previewMode}
                     />
                 ))}
 
                 {/* 渲染吸附辅助线 */}
-                {state.snapLines.map((line, index) => (
+                {!previewMode && state.snapLines.map((line, index) => (
                     <div
                         key={index}
                         className={`snap-line snap-line-${line.type}`}
@@ -281,7 +302,7 @@ export default function Canvas() {
             </div>
             
             {/* 右键菜单 */}
-            {menuVisible && (
+            {!previewMode && menuVisible && (
                 <div
                     className="canvas-context-menu"
                     style={{
