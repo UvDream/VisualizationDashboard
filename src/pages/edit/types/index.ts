@@ -61,6 +61,17 @@ export interface ComponentProps {
     // 标签
     tagColor?: string
 
+    // 表格属性
+    tableColumns?: Array<{ title: string; dataIndex: string; key: string }>
+    tableData?: Array<Record<string, any>>
+
+    // 图表数据
+    chartTitle?: string
+    xAxisData?: string[]
+    seriesData?: Array<{ name: string; data: any[] }>
+    pieData?: Array<{ name: string; value: number }>
+    singleData?: number
+
     // 开关
     checked?: boolean
 }

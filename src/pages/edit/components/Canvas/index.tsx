@@ -10,25 +10,95 @@ import './index.less'
 // 默认组件配置
 const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; style: Partial<ComponentItem['style']> }> = {
     // 图表类
-    lineChart: { props: {}, style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
-    barChart: { props: {}, style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
-    pieChart: { props: {}, style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
-    gaugeChart: { props: {}, style: { width: 300, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
-    radarChart: { props: {}, style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
-    scatterChart: { props: {}, style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' } },
+    lineChart: {
+        props: {
+            xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+            seriesData: [
+                { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210] },
+                { name: '订单量', data: [220, 182, 191, 234, 290, 330, 310] },
+            ]
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    barChart: {
+        props: {
+            xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
+            seriesData: [
+                { name: '销售额', data: [500, 300, 400, 600, 250] }
+            ]
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    pieChart: {
+        props: {
+            pieData: [
+                { value: 1048, name: '搜索引擎' },
+                { value: 735, name: '直接访问' },
+                { value: 580, name: '邮件营销' },
+                { value: 484, name: '联盟广告' },
+                { value: 300, name: '视频广告' }
+            ]
+        },
+        style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    gaugeChart: {
+        props: {
+            singleData: 75,
+            chartTitle: '完成率'
+        },
+        style: { width: 300, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    radarChart: {
+        props: {
+            // 雷达图稍复杂，暂时简化默认数据，后续可支持 indicator 编辑
+            seriesData: [
+                { name: '预算 vs 开销', data: [[80, 50, 90, 40, 60, 70]] } // Radar data is array of arrays
+            ]
+        },
+        style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    scatterChart: {
+        props: {
+            seriesData: [
+                {
+                    name: '样本A',
+                    data: [
+                        [10.0, 8.04], [8.0, 6.95], [13.0, 7.58], [9.0, 8.81], [11.0, 8.33],
+                        [14.0, 9.96], [6.0, 7.24], [4.0, 4.26], [12.0, 10.84], [7.0, 4.82], [5.0, 5.68]
+                    ]
+                }
+            ]
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // Antd 组件
-    text: { props: { content: '文本内容' }, style: { width: 120, height: 40, color: '#ffffff', fontSize: 14 } },
-    button: { props: { content: '按钮', buttonType: 'primary' }, style: { width: 100, height: 40 } },
-    input: { props: {}, style: { width: 200, height: 40 } },
+    text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },
+    button: { props: { content: '点击按钮', buttonType: 'primary' }, style: { width: 100, height: 40 } },
+    input: { props: { content: '' }, style: { width: 200, height: 40 } },
     select: { props: {}, style: { width: 200, height: 40 } },
-    switch: { props: { checked: false }, style: { width: 60, height: 30 } },
-    progress: { props: { percent: 50 }, style: { width: 200, height: 30 } },
-    tag: { props: { content: '标签', tagColor: 'blue' }, style: { width: 60, height: 30 } },
-    badge: { props: {}, style: { width: 60, height: 60 } },
+    switch: { props: { checked: true }, style: { width: 60, height: 30 } },
+    progress: { props: { percent: 70 }, style: { width: 200, height: 30 } },
+    tag: { props: { content: 'Project A', tagColor: 'green' }, style: { width: 80, height: 30 } },
+    badge: { props: { content: '99+' }, style: { width: 60, height: 60 } },
     avatar: { props: {}, style: { width: 64, height: 64 } },
-    card: { props: { content: '卡片内容' }, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.1)' } },
-    table: { props: {}, style: { width: 400, height: 200, backgroundColor: 'rgba(255,255,255,0.05)' } },
+    card: { props: { content: '这是一个卡片容器，可以展示详细信息。' }, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.1)' } },
+    table: {
+        props: {
+            tableColumns: [
+                { title: '姓名', dataIndex: 'name', key: 'name' },
+                { title: '部门', dataIndex: 'dept', key: 'dept' },
+                { title: '销售额', dataIndex: 'sales', key: 'sales' },
+            ],
+            tableData: [
+                { key: '1', name: '张三', dept: '销售一部', sales: 12000 },
+                { key: '2', name: '李四', dept: '销售二部', sales: 15000 },
+                { key: '3', name: '王五', dept: '市场部', sales: 9000 },
+                { key: '4', name: '赵六', dept: '技术部', sales: 18000 },
+            ]
+        },
+        style: { width: 450, height: 250, backgroundColor: 'rgba(255,255,255,0.05)' }
+    },
 
     // 小组件
     borderBox1: { props: {}, style: { width: 300, height: 200 } },

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useDrag } from 'react-dnd'
-import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card } from 'antd'
+import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card, Table } from 'antd'
 import ReactECharts from 'echarts-for-react'
 import {
     SmileOutlined,
@@ -20,35 +20,72 @@ interface CanvasItemProps {
 }
 
 // ECharts 默认配置
-const getChartOption = (type: string) => {
+const getChartOption = (type: string, props: ComponentItem['props']) => {
     const baseOption = {
         backgroundColor: 'transparent',
-        grid: { top: 30, right: 20, bottom: 30, left: 40 },
+        title: props.chartTitle ? { text: props.chartTitle, left: 'center', textStyle: { color: '#fff' } } : undefined,
+        grid: { top: props.chartTitle ? 40 : 30, right: 20, bottom: 30, left: 40 },
+        tooltip: { trigger: 'axis' },
     }
 
-    // ... (保持原有的 getChartOption 内容不变)
+    const xAxis = { type: 'category', data: props.xAxisData || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
+    const yAxis = { type: 'value' }
+    // 为不同图表类型生成 series
+    const commonSeries = props.seriesData?.map(s => ({
+        ...s,
+        type: type === 'lineChart' ? 'line' :
+            type === 'barChart' ? 'bar' :
+                type === 'scatterChart' ? 'scatter' :
+                    type === 'radarChart' ? 'radar' : 'line'
+    })) || []
+
+    if (commonSeries.length === 0) {
+        // Fallback demos if no data provided (should be overridden by defaultConfigs usually)
+        if (type === 'lineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
+        if (type === 'barChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
+    }
+
     switch (type) {
         case 'lineChart':
-            return {
-                ...baseOption,
-                xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-                yAxis: { type: 'value' },
-                series: [{ data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true }],
-            }
+            return { ...baseOption, xAxis, yAxis, series: commonSeries }
         case 'barChart':
+            return { ...baseOption, xAxis, yAxis, series: commonSeries }
+        case 'scatterChart':
             return {
                 ...baseOption,
-                xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-                yAxis: { type: 'value' },
-                series: [{ data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' }],
+                xAxis: {},
+                yAxis: {},
+                series: commonSeries.length ? commonSeries : [{
+                    type: 'scatter',
+                    data: [[10, 20], [20, 30], [30, 50], [40, 60], [50, 80], [60, 90]],
+                }],
+            }
+        case 'radarChart':
+            return {
+                ...baseOption,
+                radar: {
+                    // Radar needs indicator config too, usually in options. For now simplified.
+                    indicator: [
+                        { name: 'Sales', max: 100 },
+                        { name: 'Admin', max: 100 },
+                        { name: 'Tech', max: 100 },
+                        { name: 'Support', max: 100 },
+                        { name: 'Dev', max: 100 },
+                    ],
+                },
+                series: commonSeries.length ? commonSeries : [{
+                    type: 'radar',
+                    data: [{ value: [80, 60, 90, 70, 85] }],
+                }],
             }
         case 'pieChart':
             return {
                 ...baseOption,
+                tooltip: { trigger: 'item' },
                 series: [{
                     type: 'pie',
                     radius: '60%',
-                    data: [
+                    data: props.pieData || [
                         { value: 1048, name: 'A' },
                         { value: 735, name: 'B' },
                         { value: 580, name: 'C' },
@@ -63,36 +100,10 @@ const getChartOption = (type: string) => {
                     type: 'gauge',
                     progress: { show: true },
                     detail: { formatter: '{value}%' },
-                    data: [{ value: 70 }],
+                    data: [{ value: props.singleData ?? 70 }],
                 }],
             }
-        case 'radarChart':
-            return {
-                ...baseOption,
-                radar: {
-                    indicator: [
-                        { name: 'Sales', max: 100 },
-                        { name: 'Admin', max: 100 },
-                        { name: 'Tech', max: 100 },
-                        { name: 'Support', max: 100 },
-                        { name: 'Dev', max: 100 },
-                    ],
-                },
-                series: [{
-                    type: 'radar',
-                    data: [{ value: [80, 60, 90, 70, 85] }],
-                }],
-            }
-        case 'scatterChart':
-            return {
-                ...baseOption,
-                xAxis: {},
-                yAxis: {},
-                series: [{
-                    type: 'scatter',
-                    data: [[10, 20], [20, 30], [30, 50], [40, 60], [50, 80], [60, 90]],
-                }],
-            }
+
         default:
             return baseOption
     }
@@ -175,6 +186,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
     const renderContent = () => {
         switch (item.type) {
             // 图表类
+            // 图表类
             case 'lineChart':
             case 'barChart':
             case 'pieChart':
@@ -183,13 +195,31 @@ export default function CanvasItem({ item }: CanvasItemProps) {
             case 'scatterChart':
                 return (
                     <ReactECharts
-                        option={item.props.chartOption || getChartOption(item.type)}
+                        option={item.props.chartOption || getChartOption(item.type, item.props)}
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
                     />
                 )
+            // ... (Antd components continue)
 
-            // Antd 组件
+            case 'table':
+                return (
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+                        {/* @ts-ignore */}
+                        <Table
+                            columns={item.props.tableColumns || [
+                                { title: '姓名', dataIndex: 'name', key: 'name' },
+                                { title: '年龄', dataIndex: 'age', key: 'age' },
+                            ]}
+                            dataSource={item.props.tableData || [
+                                { key: '1', name: '张三', age: 32 },
+                                { key: '2', name: '李四', age: 42 },
+                            ]}
+                            pagination={false}
+                            size="small"
+                        />
+                    </div>
+                )
             case 'text':
                 return (
                     <div style={{ color: item.style.color || '#fff', fontSize: item.style.fontSize || 14 }}>
@@ -228,12 +258,7 @@ export default function CanvasItem({ item }: CanvasItemProps) {
                         {item.props.content || '卡片内容'}
                     </Card>
                 )
-            case 'table':
-                return (
-                    <div className="canvas-item-table-placeholder">
-                        <span>📊 表格组件</span>
-                    </div>
-                )
+
 
             // 小组件 - 装饰边框
             case 'borderBox1':

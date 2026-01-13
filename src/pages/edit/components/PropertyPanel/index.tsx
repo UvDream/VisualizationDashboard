@@ -1,5 +1,6 @@
 import { Form, Input, InputNumber, Select, Collapse, ColorPicker } from 'antd'
 import { useEditor } from '../../context/EditorContext'
+import JsonEditor from './JsonEditor'
 import './index.less'
 
 export default function PropertyPanel() {
@@ -189,19 +190,60 @@ export default function PropertyPanel() {
                             </Form.Item>
                         </>
                     )}
-                    {['lineChart', 'barChart', 'pieChart', 'gaugeChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) && (
-                        <Form.Item label="图表类型">
-                            <Select
-                                value={selectedComponent.type}
-                                disabled
-                                options={[
-                                    { value: 'lineChart', label: '折线图' },
-                                    { value: 'barChart', label: '柱状图' },
-                                    { value: 'pieChart', label: '饼图' },
-                                    { value: 'gaugeChart', label: '仪表盘' },
-                                    { value: 'radarChart', label: '雷达图' },
-                                    { value: 'scatterChart', label: '散点图' },
-                                ]}
+                    {selectedComponent.type === 'table' && (
+                        <>
+                            <Form.Item label="表头配置">
+                                <JsonEditor
+                                    value={selectedComponent.props.tableColumns || []}
+                                    onChange={(v) => handleChange('props.tableColumns', v)}
+                                    placeholder='[{"title":"Name","dataIndex":"name","key":"name"}]'
+                                />
+                            </Form.Item>
+                            <Form.Item label="表格数据">
+                                <JsonEditor
+                                    value={selectedComponent.props.tableData || []}
+                                    onChange={(v) => handleChange('props.tableData', v)}
+                                    placeholder='[{"key":"1","name":"John Brown"}]'
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                    {['lineChart', 'barChart'].includes(selectedComponent.type) && (
+                        <>
+                            <Form.Item label="X轴数据">
+                                <JsonEditor
+                                    value={selectedComponent.props.xAxisData || []}
+                                    onChange={(v) => handleChange('props.xAxisData', v)}
+                                    placeholder='["Mon", "Tue", "Wed"]'
+                                />
+                            </Form.Item>
+                            <Form.Item label="系列数据">
+                                <JsonEditor
+                                    value={selectedComponent.props.seriesData || []}
+                                    onChange={(v) => handleChange('props.seriesData', v)}
+                                    placeholder='[{"name":"Series A","data":[120, 132, 101]}]'
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                    {selectedComponent.type === 'pieChart' && (
+                        <Form.Item label="饼图数据">
+                            <JsonEditor
+                                value={selectedComponent.props.pieData || []}
+                                onChange={(v) => handleChange('props.pieData', v)}
+                                placeholder='[{"value":1048,"name":"Search Engine"}]'
+                            />
+                        </Form.Item>
+                    )}
+                    {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
+                        <Form.Item label="数值">
+                            <InputNumber
+                                value={selectedComponent.props.singleData ?? selectedComponent.props.percent ?? 0}
+                                onChange={(v) => {
+                                    handleChange('props.singleData', v)
+                                    handleChange('props.percent', v)
+                                }}
+                                style={{ width: '100%' }}
                             />
                         </Form.Item>
                     )}
