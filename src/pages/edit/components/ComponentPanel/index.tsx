@@ -26,6 +26,7 @@ import {
     GlobalOutlined,
     GatewayOutlined,
     HeatMapOutlined,
+    CalendarOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -48,6 +49,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'radarChart', name: '雷达图', icon: <RadarChartOutlined />, category: 'chart' },
     { type: 'scatterChart', name: '散点图', icon: <DotChartOutlined />, category: 'chart' },
     { type: 'mapChart', name: '地图', icon: <HeatMapOutlined />, category: 'chart' },
+    { type: 'calendarChart', name: '日历热力图', icon: <CalendarOutlined />, category: 'chart' },
 ]
 
 // Antd 组件

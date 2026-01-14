@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart'
+    | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table'
     // 小组件 - 装饰
@@ -185,6 +185,29 @@ export interface ComponentProps {
     // 地图属性
     mapRegion?: string // 地图区域：china, beijing, shanghai 等
     mapData?: Array<{ name: string; value: number }> // 地图数据
+
+    // 日历热力图属性
+    calendarYear?: number // 年份
+    calendarData?: Array<[string, number]> // 日历数据 [['2024-01-01', 100], ...]
+    calendarColors?: string[] // 热力颜色数组，从浅到深
+    calendarCellSize?: number // 单元格大小
+    calendarLang?: 'zh' | 'en' // 语言
+    calendarMonthLabel?: {
+        show?: boolean
+        color?: string
+        fontSize?: number
+    }
+    calendarDayLabel?: {
+        show?: boolean
+        color?: string
+        fontSize?: number
+        firstDay?: number // 0-周日开始，1-周一开始
+    }
+    calendarYearLabel?: {
+        show?: boolean
+        color?: string
+        fontSize?: number
+    }
 }
 
 // 画布上的组件项

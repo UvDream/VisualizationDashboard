@@ -265,6 +265,148 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
     }
 }
 
+// 日历热力图配置
+const getCalendarOption = (props: ComponentItem['props']) => {
+    const year = props.calendarYear || new Date().getFullYear()
+    const data = props.calendarData || []
+    const colors = props.calendarColors || ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
+    const cellSize = props.calendarCellSize || 15
+    const lang = props.calendarLang || 'zh'
+    
+    // 中英文月份名称
+    const monthNameMap: Record<string, string[]> = {
+        zh: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+    
+    // 中英文星期名称
+    const dayNameMap: Record<string, string[]> = {
+        zh: ['日', '一', '二', '三', '四', '五', '六'],
+        en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    }
+
+    const showLegend = props.legend?.show !== false
+    const legendOrient = props.legend?.orient || 'horizontal'
+    const legendLeft = props.legend?.left || 'center'
+    const legendTop = props.legend?.top || 'bottom'
+    
+    // 根据图例位置调整日历位置
+    let calendarTop = 40
+    let calendarBottom = 20
+    let calendarLeft = 50
+    let calendarRight = 30
+    
+    if (showLegend) {
+        if (legendTop === 'top') {
+            calendarTop = 70
+        } else if (legendTop === 'bottom') {
+            calendarBottom = 50
+        }
+        
+        if (legendOrient === 'vertical') {
+            if (legendLeft === 'left') {
+                calendarLeft = 100
+            } else if (legendLeft === 'right') {
+                calendarRight = 100
+            }
+        }
+    }
+    
+    // 构建 visualMap 配置
+    const visualMapConfig: any = showLegend ? {
+        min: 0,
+        max: 100,
+        calculable: true,
+        orient: legendOrient,
+        inRange: {
+            color: colors
+        },
+        textStyle: { 
+            color: props.legend?.textStyle?.color || '#fff',
+            fontSize: props.legend?.textStyle?.fontSize || 12,
+            fontWeight: props.legend?.textStyle?.fontWeight || 'normal'
+        }
+    } : { show: false }
+    
+    // 设置图例位置
+    if (showLegend) {
+        if (legendOrient === 'horizontal') {
+            visualMapConfig.left = legendLeft
+            if (legendTop === 'top') {
+                visualMapConfig.top = 10
+            } else if (legendTop === 'bottom') {
+                visualMapConfig.bottom = 10
+            } else {
+                visualMapConfig.top = 'middle'
+            }
+        } else {
+            visualMapConfig.top = legendTop === 'middle' ? 'center' : legendTop
+            if (legendLeft === 'left') {
+                visualMapConfig.left = 10
+            } else if (legendLeft === 'right') {
+                visualMapConfig.right = 10
+            } else {
+                visualMapConfig.left = 'center'
+            }
+        }
+    }
+    
+    return {
+        backgroundColor: 'transparent',
+        title: props.chartTitle ? {
+            text: props.chartTitle,
+            left: 'center',
+            textStyle: { color: '#fff', fontSize: 16 }
+        } : undefined,
+        tooltip: {
+            formatter: (params: any) => {
+                return `${params.value[0]}: ${params.value[1]}`
+            }
+        },
+        visualMap: visualMapConfig,
+        calendar: {
+            top: calendarTop,
+            left: calendarLeft,
+            right: calendarRight,
+            bottom: calendarBottom,
+            cellSize: ['auto', cellSize],
+            range: year,
+            itemStyle: {
+                borderWidth: 2,
+                borderColor: '#1a1a1a'
+            },
+            yearLabel: {
+                show: props.calendarYearLabel?.show !== false,
+                color: props.calendarYearLabel?.color || '#fff',
+                fontSize: props.calendarYearLabel?.fontSize || 14
+            },
+            monthLabel: {
+                show: props.calendarMonthLabel?.show !== false,
+                color: props.calendarMonthLabel?.color || '#fff',
+                fontSize: props.calendarMonthLabel?.fontSize || 12,
+                nameMap: monthNameMap[lang]
+            },
+            dayLabel: {
+                show: props.calendarDayLabel?.show !== false,
+                color: props.calendarDayLabel?.color || '#fff',
+                fontSize: props.calendarDayLabel?.fontSize || 12,
+                firstDay: props.calendarDayLabel?.firstDay ?? 1,
+                nameMap: dayNameMap[lang]
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#333'
+                }
+            }
+        },
+        series: [{
+            type: 'heatmap',
+            coordinateSystem: 'calendar',
+            data: data
+        }]
+    }
+}
+
 // 图标映射
 const iconMap: Record<string, React.ReactNode> = {
     smile: <SmileOutlined />,
@@ -488,6 +630,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             chartTitle={item.props.chartTitle}
                         />
                     </Suspense>
+                )
+            
+            case 'calendarChart':
+                return (
+                    <ReactECharts
+                        option={getCalendarOption(item.props)}
+                        style={{ width: '100%', height: '100%' }}
+                        opts={{ renderer: 'svg' }}
+                    />
                 )
             // ... (Antd components continue)
 

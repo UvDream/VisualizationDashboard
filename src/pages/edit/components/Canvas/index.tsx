@@ -84,6 +84,23 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 500, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    calendarChart: {
+        props: {
+            calendarYear: 2025,
+            calendarData: (() => {
+                // 生成示例数据
+                const data: Array<[string, number]> = []
+                const start = new Date('2025-01-01')
+                const end = new Date('2025-12-31')
+                for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0]
+                    data.push([dateStr, Math.floor(Math.random() * 100)])
+                }
+                return data
+            })()
+        },
+        style: { width: 900, height: 220, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // Antd 组件
     text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },

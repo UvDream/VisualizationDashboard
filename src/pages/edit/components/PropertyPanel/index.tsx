@@ -788,6 +788,249 @@ export default function PropertyPanel() {
                 </Form>
             ),
         },
+        // 日历热力图配置
+        ...(selectedComponent.type === 'calendarChart' ? [{
+            key: 'calendar',
+            label: '日历配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <div className="form-row">
+                        <Form.Item label="年份">
+                            <InputNumber
+                                value={selectedComponent.props.calendarYear || new Date().getFullYear()}
+                                onChange={(v) => handleChange('props.calendarYear', v)}
+                                min={2000}
+                                max={2100}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="语言">
+                            <Select
+                                value={selectedComponent.props.calendarLang || 'zh'}
+                                onChange={(v) => handleChange('props.calendarLang', v)}
+                                options={[
+                                    { value: 'zh', label: '中文' },
+                                    { value: 'en', label: 'English' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="单元格大小">
+                        <InputNumber
+                            value={selectedComponent.props.calendarCellSize || 15}
+                            onChange={(v) => handleChange('props.calendarCellSize', v)}
+                            min={8}
+                            max={30}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="热力颜色">
+                        <JsonEditor
+                            value={selectedComponent.props.calendarColors || ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']}
+                            onChange={(v) => handleChange('props.calendarColors', v)}
+                            placeholder='["#ebedf0", "#c6e48b", "#7bc96f"]'
+                        />
+                    </Form.Item>
+                    <Form.Item label="每周起始日">
+                        <Select
+                            value={selectedComponent.props.calendarDayLabel?.firstDay ?? 1}
+                            onChange={(v) => handleChange('props.calendarDayLabel', {
+                                ...selectedComponent.props.calendarDayLabel,
+                                firstDay: v
+                            })}
+                            options={[
+                                { value: 0, label: '周日' },
+                                { value: 1, label: '周一' },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
+        // 日历图例配置
+        ...(selectedComponent.type === 'calendarChart' ? [{
+            key: 'calendarLegend',
+            label: '图例配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示图例" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.legend?.show !== false}
+                            onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, show: v })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.legend?.show !== false && (
+                        <>
+                            <Form.Item label="布局方向">
+                                <Radio.Group
+                                    value={selectedComponent.props.legend?.orient || 'horizontal'}
+                                    onChange={(e) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: e.target.value })}
+                                    optionType="button"
+                                    size="small"
+                                >
+                                    <Radio value="horizontal">水平</Radio>
+                                    <Radio value="vertical">垂直</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="水平位置">
+                                    <Select
+                                        value={selectedComponent.props.legend?.left || 'center'}
+                                        onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, left: v })}
+                                        options={[
+                                            { value: 'left', label: '左' },
+                                            { value: 'center', label: '中' },
+                                            { value: 'right', label: '右' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="垂直位置">
+                                    <Select
+                                        value={selectedComponent.props.legend?.top || 'bottom'}
+                                        onChange={(v) => handleChange('props.legend', { ...selectedComponent.props.legend, top: v })}
+                                        options={[
+                                            { value: 'top', label: '上' },
+                                            { value: 'middle', label: '中' },
+                                            { value: 'bottom', label: '下' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="文字颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.legend?.textStyle?.color || '#fff'}
+                                    onChange={(color) => handleChange('props.legend', {
+                                        ...selectedComponent.props.legend,
+                                        textStyle: { ...selectedComponent.props.legend?.textStyle, color: color.toHexString() }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="字体大小">
+                                    <InputNumber
+                                        value={selectedComponent.props.legend?.textStyle?.fontSize || 12}
+                                        onChange={(v) => handleChange('props.legend', {
+                                            ...selectedComponent.props.legend,
+                                            textStyle: { ...selectedComponent.props.legend?.textStyle, fontSize: v }
+                                        })}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="字体粗细">
+                                    <Select
+                                        value={selectedComponent.props.legend?.textStyle?.fontWeight || 'normal'}
+                                        onChange={(v) => handleChange('props.legend', {
+                                            ...selectedComponent.props.legend,
+                                            textStyle: { ...selectedComponent.props.legend?.textStyle, fontWeight: v }
+                                        })}
+                                        options={[
+                                            { value: 'normal', label: '正常' },
+                                            { value: 'bold', label: '加粗' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
+        // 日历标签配置
+        ...(selectedComponent.type === 'calendarChart' ? [{
+            key: 'calendarLabels',
+            label: '标签配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示年份" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.calendarYearLabel?.show !== false}
+                            onChange={(v) => handleChange('props.calendarYearLabel', { ...selectedComponent.props.calendarYearLabel, show: v })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.calendarYearLabel?.show !== false && (
+                        <div className="form-row">
+                            <Form.Item label="年份颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.calendarYearLabel?.color || '#fff'}
+                                    onChange={(c) => handleChange('props.calendarYearLabel', {
+                                        ...selectedComponent.props.calendarYearLabel,
+                                        color: c.toHexString()
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="年份字号">
+                                <InputNumber
+                                    value={selectedComponent.props.calendarYearLabel?.fontSize || 14}
+                                    onChange={(v) => handleChange('props.calendarYearLabel', {
+                                        ...selectedComponent.props.calendarYearLabel,
+                                        fontSize: v
+                                    })}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </div>
+                    )}
+                    <Form.Item label="显示月份" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.calendarMonthLabel?.show !== false}
+                            onChange={(v) => handleChange('props.calendarMonthLabel', { ...selectedComponent.props.calendarMonthLabel, show: v })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.calendarMonthLabel?.show !== false && (
+                        <div className="form-row">
+                            <Form.Item label="月份颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.calendarMonthLabel?.color || '#fff'}
+                                    onChange={(c) => handleChange('props.calendarMonthLabel', {
+                                        ...selectedComponent.props.calendarMonthLabel,
+                                        color: c.toHexString()
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="月份字号">
+                                <InputNumber
+                                    value={selectedComponent.props.calendarMonthLabel?.fontSize || 12}
+                                    onChange={(v) => handleChange('props.calendarMonthLabel', {
+                                        ...selectedComponent.props.calendarMonthLabel,
+                                        fontSize: v
+                                    })}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </div>
+                    )}
+                    <Form.Item label="显示星期" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.calendarDayLabel?.show !== false}
+                            onChange={(v) => handleChange('props.calendarDayLabel', { ...selectedComponent.props.calendarDayLabel, show: v })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.calendarDayLabel?.show !== false && (
+                        <div className="form-row">
+                            <Form.Item label="星期颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.calendarDayLabel?.color || '#fff'}
+                                    onChange={(c) => handleChange('props.calendarDayLabel', {
+                                        ...selectedComponent.props.calendarDayLabel,
+                                        color: c.toHexString()
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="星期字号">
+                                <InputNumber
+                                    value={selectedComponent.props.calendarDayLabel?.fontSize || 12}
+                                    onChange={(v) => handleChange('props.calendarDayLabel', {
+                                        ...selectedComponent.props.calendarDayLabel,
+                                        fontSize: v
+                                    })}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </div>
+                    )}
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -971,6 +1214,15 @@ export default function PropertyPanel() {
                         />
                     </Form.Item>
                 </>
+            )}
+            {selectedComponent.type === 'calendarChart' && (
+                <Form.Item label="热力数据">
+                    <JsonEditor
+                        value={selectedComponent.props.calendarData || []}
+                        onChange={(v) => handleChange('props.calendarData', v)}
+                        placeholder='[["2025-01-01", 50], ["2025-01-02", 80]]'
+                    />
+                </Form.Item>
             )}
             {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
                 <Form.Item label="数值">
