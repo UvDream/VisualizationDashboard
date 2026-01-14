@@ -8,7 +8,12 @@ const getInitialState = (): EditorState => {
     const savedState = localStorage.getItem('editorState')
     if (savedState) {
         try {
-            return JSON.parse(savedState)
+            const parsed = JSON.parse(savedState)
+            // 确保 selectedIds 存在
+            return {
+                ...parsed,
+                selectedIds: parsed.selectedIds || []
+            }
         } catch (error) {
             console.error('Failed to load state from localStorage:', error)
         }
@@ -17,6 +22,7 @@ const getInitialState = (): EditorState => {
     return {
         components: [],
         selectedId: null,
+        selectedIds: [],
         scale: 1,
         snapLines: [],
         canvasConfig: {
@@ -55,12 +61,29 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 ...state,
                 components: state.components.filter((comp) => comp.id !== action.payload),
                 selectedId: state.selectedId === action.payload ? null : state.selectedId,
+                selectedIds: state.selectedIds.filter(id => id !== action.payload),
+            }
+
+        case 'DELETE_COMPONENTS':
+            return {
+                ...state,
+                components: state.components.filter((comp) => !action.payload.includes(comp.id)),
+                selectedId: action.payload.includes(state.selectedId || '') ? null : state.selectedId,
+                selectedIds: [],
             }
 
         case 'SELECT_COMPONENT':
             return {
                 ...state,
                 selectedId: action.payload,
+                selectedIds: action.payload ? [action.payload] : [],
+            }
+
+        case 'SELECT_COMPONENTS':
+            return {
+                ...state,
+                selectedId: action.payload.length === 1 ? action.payload[0] : null,
+                selectedIds: action.payload,
             }
 
         case 'MOVE_COMPONENT':
@@ -146,6 +169,7 @@ const HISTORY_ACTIONS = [
     'ADD_COMPONENT',
     'UPDATE_COMPONENT',
     'DELETE_COMPONENT',
+    'DELETE_COMPONENTS',
     'MOVE_COMPONENT',
     'REORDER_LAYERS',
     'TOGGLE_VISIBILITY',
@@ -219,7 +243,9 @@ interface EditorContextType {
     addComponent: (component: ComponentItem) => void
     updateComponent: (id: string, updates: Partial<ComponentItem>) => void
     deleteComponent: (id: string) => void
+    deleteComponents: (ids: string[]) => void
     selectComponent: (id: string | null) => void
+    selectComponents: (ids: string[]) => void
     moveComponent: (id: string, x: number, y: number) => void
     reorderLayers: (components: ComponentItem[]) => void
     bringForward: (id: string) => void
@@ -267,8 +293,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'DELETE_COMPONENT', payload: id })
     }, [dispatch])
 
+    const deleteComponents = React.useCallback((ids: string[]) => {
+        dispatch({ type: 'DELETE_COMPONENTS', payload: ids })
+    }, [dispatch])
+
     const selectComponent = React.useCallback((id: string | null) => {
         dispatch({ type: 'SELECT_COMPONENT', payload: id })
+    }, [dispatch])
+
+    const selectComponents = React.useCallback((ids: string[]) => {
+        dispatch({ type: 'SELECT_COMPONENTS', payload: ids })
     }, [dispatch])
 
     const moveComponent = React.useCallback((id: string, x: number, y: number) => {
@@ -398,7 +432,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         addComponent,
         updateComponent,
         deleteComponent,
+        deleteComponents,
         selectComponent,
+        selectComponents,
         moveComponent,
         reorderLayers,
         bringForward,
@@ -422,7 +458,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         addComponent,
         updateComponent,
         deleteComponent,
+        deleteComponents,
         selectComponent,
+        selectComponents,
         moveComponent,
         reorderLayers,
         bringForward,

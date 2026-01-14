@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../../context/EditorContext'
@@ -360,13 +360,44 @@ interface CanvasProps {
 }
 
 export default function Canvas({ previewMode = false }: CanvasProps) {
-    const { state, addComponent, selectComponent, deleteComponent, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
+    const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
     
     // 右键菜单状态
     const [menuVisible, setMenuVisible] = useState(false)
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 })
     const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
+
+    // 框选状态
+    const [isSelecting, setIsSelecting] = useState(false)
+    const [selectionStart, setSelectionStart] = useState({ x: 0, y: 0 })
+    const [selectionEnd, setSelectionEnd] = useState({ x: 0, y: 0 })
+    const [hasSelectedByBox, setHasSelectedByBox] = useState(false) // 标记是否通过框选选中了组件
+
+    // 键盘事件监听 - 删除选中组件
+    useEffect(() => {
+        if (previewMode) return
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Delete 或 Backspace 键删除选中组件
+            if ((e.key === 'Delete' || e.key === 'Backspace') && !e.repeat) {
+                // 检查焦点是否在输入框等元素上
+                const target = e.target as HTMLElement
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+                    return
+                }
+
+                const selectedIds = state.selectedIds || []
+                if (selectedIds.length > 0) {
+                    e.preventDefault()
+                    deleteComponents(selectedIds)
+                }
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [previewMode, state.selectedIds, deleteComponents])
 
     // 只有在非预览模式下才使用useDrop
     const [dropRef, isOver] = !previewMode ? (() => {
@@ -408,11 +439,82 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
         return [drop, isOver]
     })() : [undefined, false]
 
-    const handleCanvasClick = () => {
-        if (!previewMode) {
-            selectComponent(null)
+    const handleCanvasClick = (e: React.MouseEvent) => {
+        if (!previewMode && !isSelecting && !hasSelectedByBox) {
+            // 只有点击画布空白区域才清空选择
+            if (e.target === e.currentTarget) {
+                selectComponent(null)
+            }
             // 点击画布关闭右键菜单
             setMenuVisible(false)
+        }
+        // 重置框选标记
+        setHasSelectedByBox(false)
+    }
+
+    // 框选开始
+    const handleCanvasMouseDown = (e: React.MouseEvent) => {
+        if (previewMode) return
+        
+        // 只有在画布空白区域按下鼠标才开始框选
+        if (e.target === e.currentTarget) {
+            const canvasRect = customCanvasRef.current?.getBoundingClientRect()
+            if (canvasRect) {
+                const x = (e.clientX - canvasRect.left) / state.scale
+                const y = (e.clientY - canvasRect.top) / state.scale
+                
+                setIsSelecting(true)
+                setSelectionStart({ x, y })
+                setSelectionEnd({ x, y })
+                setMenuVisible(false)
+                setHasSelectedByBox(false)
+            }
+        }
+    }
+
+    // 框选移动
+    const handleCanvasMouseMove = (e: React.MouseEvent) => {
+        if (!isSelecting || previewMode) return
+        
+        const canvasRect = customCanvasRef.current?.getBoundingClientRect()
+        if (canvasRect) {
+            const x = (e.clientX - canvasRect.left) / state.scale
+            const y = (e.clientY - canvasRect.top) / state.scale
+            
+            setSelectionEnd({ x, y })
+            
+            // 计算框选区域
+            const minX = Math.min(selectionStart.x, x)
+            const maxX = Math.max(selectionStart.x, x)
+            const minY = Math.min(selectionStart.y, y)
+            const maxY = Math.max(selectionStart.y, y)
+            
+            // 检测哪些组件在框选区域内
+            const selectedIds = state.components
+                .filter(comp => {
+                    const compX = comp.style.x
+                    const compY = comp.style.y
+                    const compRight = compX + comp.style.width
+                    const compBottom = compY + comp.style.height
+                    
+                    // 判断组件是否与框选区域相交
+                    return !(compRight < minX || compX > maxX || compBottom < minY || compY > maxY)
+                })
+                .map(comp => comp.id)
+            
+            selectComponents(selectedIds)
+        }
+    }
+
+    // 框选结束
+    const handleCanvasMouseUp = () => {
+        if (isSelecting) {
+            setIsSelecting(false)
+            // 如果选中了组件，标记为通过框选选中
+            const selectedIds = state.selectedIds || []
+            if (selectedIds.length > 0) {
+                setHasSelectedByBox(true)
+            }
         }
     }
     
@@ -446,6 +548,16 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     // 菜单项点击处理
     const handleMenuClick = (action: string) => {
         closeMenu()
+        
+        // 如果有多选，批量操作
+        const selectedIds = state.selectedIds || []
+        if (selectedIds.length > 1) {
+            if (action === 'delete') {
+                deleteComponents(selectedIds)
+            }
+            return
+        }
+        
         if (!selectedComponentId) return
         
         switch (action) {
@@ -497,6 +609,9 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     left: !previewMode ? 40 : 0,
                 }}
                 onClick={handleCanvasClick}
+                onMouseDown={handleCanvasMouseDown}
+                onMouseMove={handleCanvasMouseMove}
+                onMouseUp={handleCanvasMouseUp}
             >
                 {state.components.map((item) => (
                     <CanvasItem 
@@ -518,6 +633,19 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                         }}
                     />
                 ))}
+
+                {/* 框选区域 */}
+                {!previewMode && isSelecting && (
+                    <div
+                        className="selection-box"
+                        style={{
+                            left: Math.min(selectionStart.x, selectionEnd.x),
+                            top: Math.min(selectionStart.y, selectionEnd.y),
+                            width: Math.abs(selectionEnd.x - selectionStart.x),
+                            height: Math.abs(selectionEnd.y - selectionStart.y),
+                        }}
+                    />
+                )}
             </div>
             
             {/* 右键菜单 */}

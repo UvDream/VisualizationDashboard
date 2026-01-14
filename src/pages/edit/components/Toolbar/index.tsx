@@ -19,12 +19,17 @@ import './index.less'
 export default function Toolbar() {
     const navigate = useNavigate()
 
-    const { state, deleteComponent, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent } = useEditor()
+    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form] = Form.useForm()
 
     const handleDelete = () => {
-        if (state.selectedId) {
+        const selectedIds = state.selectedIds || []
+        if (selectedIds.length > 1) {
+            // 多选删除
+            deleteComponents(selectedIds)
+        } else if (state.selectedId) {
+            // 单选删除
             deleteComponent(state.selectedId)
         }
     }
@@ -94,7 +99,7 @@ export default function Toolbar() {
                         <Tooltip title="删除">
                             <Button
                                 icon={<DeleteOutlined />}
-                                disabled={!state.selectedId}
+                                disabled={!state.selectedId && !(state.selectedIds || []).length}
                                 onClick={handleDelete}
                             />
                         </Tooltip>

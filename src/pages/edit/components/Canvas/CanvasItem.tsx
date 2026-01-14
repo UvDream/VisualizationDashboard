@@ -579,7 +579,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export default function CanvasItem({ item, onContextMenu, previewMode = false }: CanvasItemProps) {
     const { state, selectComponent, moveComponent, updateComponent, setSnapLines } = useEditor()
-    const isSelected = state.selectedId === item.id
+    const isSelected = state.selectedId === item.id || (state.selectedIds || []).includes(item.id)
     const ref = useRef<HTMLDivElement>(null)
 
     // 只有在非预览模式下才使用useDrag

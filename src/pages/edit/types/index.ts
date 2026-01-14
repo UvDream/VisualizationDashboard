@@ -345,6 +345,7 @@ export interface CanvasConfig {
 export interface EditorState {
     components: ComponentItem[]
     selectedId: string | null
+    selectedIds: string[] // 多选ID列表
     scale: number // 画布缩放比例
     snapLines: SnapLine[] // 当前显示的吸附辅助线
     canvasConfig: CanvasConfig // 画布配置
@@ -355,7 +356,9 @@ export type EditorAction =
     | { type: 'ADD_COMPONENT'; payload: ComponentItem }
     | { type: 'UPDATE_COMPONENT'; payload: { id: string; updates: Partial<ComponentItem> } }
     | { type: 'DELETE_COMPONENT'; payload: string }
+    | { type: 'DELETE_COMPONENTS'; payload: string[] }
     | { type: 'SELECT_COMPONENT'; payload: string | null }
+    | { type: 'SELECT_COMPONENTS'; payload: string[] }
     | { type: 'MOVE_COMPONENT'; payload: { id: string; x: number; y: number } }
     | { type: 'REORDER_LAYERS'; payload: ComponentItem[] }
     | { type: 'TOGGLE_VISIBILITY'; payload: string }
