@@ -3,7 +3,7 @@ export type ComponentType =
     // 图表类 - ECharts
     | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
     // 组件库 - Antd
-    | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table'
+    | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList'
     // 小组件 - 装饰
     | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2'
     // 图片
@@ -207,6 +207,22 @@ export interface ComponentProps {
         show?: boolean
         color?: string
         fontSize?: number
+    }
+
+    // 滚动排名列表属性
+    rankListData?: Array<{ name: string; value: number }> // 排名数据
+    rankListConfig?: {
+        rowHeight?: number // 行高
+        barHeight?: number // 进度条高度
+        barColor?: string // 进度条颜色
+        barBgColor?: string // 进度条背景色
+        textColor?: string // 文字颜色
+        valueColor?: string // 数值颜色
+        fontSize?: number // 字体大小
+        showIndex?: boolean // 显示序号
+        indexColor?: string // 序号颜色
+        scrollSpeed?: number // 滚动速度(ms)
+        showBar?: boolean // 显示进度条
     }
 }
 

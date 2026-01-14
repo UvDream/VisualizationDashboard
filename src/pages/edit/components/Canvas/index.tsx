@@ -139,6 +139,36 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 450, height: 250, backgroundColor: 'rgba(255,255,255,0.05)' }
     },
+    scrollRankList: {
+        props: {
+            rankListData: [
+                { name: '北京市', value: 9850 },
+                { name: '上海市', value: 8720 },
+                { name: '广州市', value: 7650 },
+                { name: '深圳市', value: 6890 },
+                { name: '杭州市', value: 5430 },
+                { name: '成都市', value: 4980 },
+                { name: '武汉市', value: 4560 },
+                { name: '南京市', value: 4120 },
+                { name: '重庆市', value: 3890 },
+                { name: '西安市', value: 3450 },
+            ],
+            rankListConfig: {
+                rowHeight: 36,
+                barHeight: 12,
+                barColor: '#1890ff',
+                barBgColor: 'rgba(255,255,255,0.1)',
+                textColor: '#fff',
+                valueColor: '#1890ff',
+                fontSize: 14,
+                showIndex: true,
+                indexColor: '#1890ff',
+                scrollSpeed: 3000,
+                showBar: true,
+            }
+        },
+        style: { width: 320, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // 3D 组件
     threeEarth: {

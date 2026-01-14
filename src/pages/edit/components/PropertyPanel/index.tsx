@@ -1031,6 +1031,139 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 滚动排名列表配置
+        ...(selectedComponent.type === 'scrollRankList' ? [{
+            key: 'rankListConfig',
+            label: '列表配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <div className="form-row">
+                        <Form.Item label="行高">
+                            <InputNumber
+                                value={selectedComponent.props.rankListConfig?.rowHeight || 36}
+                                onChange={(v) => handleChange('props.rankListConfig', {
+                                    ...selectedComponent.props.rankListConfig,
+                                    rowHeight: v
+                                })}
+                                min={24}
+                                max={60}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="字体大小">
+                            <InputNumber
+                                value={selectedComponent.props.rankListConfig?.fontSize || 14}
+                                onChange={(v) => handleChange('props.rankListConfig', {
+                                    ...selectedComponent.props.rankListConfig,
+                                    fontSize: v
+                                })}
+                                min={10}
+                                max={24}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="滚动速度(ms)">
+                        <InputNumber
+                            value={selectedComponent.props.rankListConfig?.scrollSpeed || 3000}
+                            onChange={(v) => handleChange('props.rankListConfig', {
+                                ...selectedComponent.props.rankListConfig,
+                                scrollSpeed: v
+                            })}
+                            min={500}
+                            max={10000}
+                            step={500}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="文字颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.rankListConfig?.textColor || '#fff'}
+                                onChange={(c) => handleChange('props.rankListConfig', {
+                                    ...selectedComponent.props.rankListConfig,
+                                    textColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                        <Form.Item label="数值颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.rankListConfig?.valueColor || '#1890ff'}
+                                onChange={(c) => handleChange('props.rankListConfig', {
+                                    ...selectedComponent.props.rankListConfig,
+                                    valueColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="显示序号" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.rankListConfig?.showIndex !== false}
+                            onChange={(v) => handleChange('props.rankListConfig', {
+                                ...selectedComponent.props.rankListConfig,
+                                showIndex: v
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.rankListConfig?.showIndex !== false && (
+                        <Form.Item label="序号颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.rankListConfig?.indexColor || '#1890ff'}
+                                onChange={(c) => handleChange('props.rankListConfig', {
+                                    ...selectedComponent.props.rankListConfig,
+                                    indexColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                    )}
+                    <Form.Item label="显示进度条" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.rankListConfig?.showBar !== false}
+                            onChange={(v) => handleChange('props.rankListConfig', {
+                                ...selectedComponent.props.rankListConfig,
+                                showBar: v
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.rankListConfig?.showBar !== false && (
+                        <>
+                            <Form.Item label="进度条高度">
+                                <InputNumber
+                                    value={selectedComponent.props.rankListConfig?.barHeight || 12}
+                                    onChange={(v) => handleChange('props.rankListConfig', {
+                                        ...selectedComponent.props.rankListConfig,
+                                        barHeight: v
+                                    })}
+                                    min={4}
+                                    max={20}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="进度条颜色">
+                                    <ColorPicker
+                                        value={selectedComponent.props.rankListConfig?.barColor || '#1890ff'}
+                                        onChange={(c) => handleChange('props.rankListConfig', {
+                                            ...selectedComponent.props.rankListConfig,
+                                            barColor: c.toHexString()
+                                        })}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="进度条背景">
+                                    <ColorPicker
+                                        value={selectedComponent.props.rankListConfig?.barBgColor || 'rgba(255,255,255,0.1)'}
+                                        onChange={(c) => handleChange('props.rankListConfig', {
+                                            ...selectedComponent.props.rankListConfig,
+                                            barBgColor: c.toHexString()
+                                        })}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -1221,6 +1354,15 @@ export default function PropertyPanel() {
                         value={selectedComponent.props.calendarData || []}
                         onChange={(v) => handleChange('props.calendarData', v)}
                         placeholder='[["2025-01-01", 50], ["2025-01-02", 80]]'
+                    />
+                </Form.Item>
+            )}
+            {selectedComponent.type === 'scrollRankList' && (
+                <Form.Item label="排名数据">
+                    <JsonEditor
+                        value={selectedComponent.props.rankListData || []}
+                        onChange={(v) => handleChange('props.rankListData', v)}
+                        placeholder='[{"name":"北京","value":100}]'
                     />
                 </Form.Item>
             )}
