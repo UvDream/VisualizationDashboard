@@ -219,30 +219,100 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
                 }],
             }
         case 'radarChart':
+            const radarConfig = props.radarConfig || {}
+            const radarSeriesConfig = props.radarSeriesConfig || {}
+            const radarIndicator = radarConfig.indicator || [
+                { name: '销售', max: 100 },
+                { name: '管理', max: 100 },
+                { name: '技术', max: 100 },
+                { name: '客服', max: 100 },
+                { name: '研发', max: 100 },
+            ]
+            
+            // 构建雷达图系列数据
+            const radarSeriesData = props.seriesData?.map(s => ({
+                name: s.name,
+                value: Array.isArray(s.data[0]) ? s.data[0] : s.data,
+                areaStyle: radarSeriesConfig.areaStyle?.show ? {
+                    opacity: radarSeriesConfig.areaStyle?.opacity || 0.3
+                } : undefined,
+                lineStyle: {
+                    width: radarSeriesConfig.lineStyle?.width || 2
+                },
+                symbol: radarSeriesConfig.symbol || 'circle',
+                symbolSize: radarSeriesConfig.symbolSize || 6,
+            })) || [{ value: [80, 60, 90, 70, 85], name: '默认' }]
+
             return {
                 ...baseOption,
                 radar: {
-                    // Radar needs indicator config too, usually in options. For now simplified.
-                    indicator: [
-                        { name: 'Sales', max: 100 },
-                        { name: 'Admin', max: 100 },
-                        { name: 'Tech', max: 100 },
-                        { name: 'Support', max: 100 },
-                        { name: 'Dev', max: 100 },
-                    ],
+                    shape: radarConfig.shape || 'polygon',
+                    radius: `${radarConfig.radius || 65}%`,
+                    indicator: radarIndicator,
+                    axisLine: {
+                        show: radarConfig.axisLine?.show !== false,
+                        lineStyle: {
+                            color: radarConfig.axisLine?.lineStyle?.color || 'rgba(255,255,255,0.3)',
+                            width: radarConfig.axisLine?.lineStyle?.width || 1,
+                        }
+                    },
+                    splitLine: {
+                        show: radarConfig.splitLine?.show !== false,
+                        lineStyle: {
+                            color: radarConfig.splitLine?.lineStyle?.color || 'rgba(255,255,255,0.3)',
+                            width: radarConfig.splitLine?.lineStyle?.width || 1,
+                        }
+                    },
+                    splitArea: {
+                        show: radarConfig.splitArea?.show !== false,
+                        areaStyle: {
+                            color: radarConfig.splitArea?.areaStyle?.color || ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.05)']
+                        }
+                    },
+                    axisName: {
+                        color: radarConfig.axisName?.color || '#fff',
+                        fontSize: radarConfig.axisName?.fontSize || 12,
+                        fontWeight: radarConfig.axisName?.fontWeight || 'normal',
+                    }
                 },
-                series: commonSeries.length ? commonSeries : [{
+                series: [{
                     type: 'radar',
-                    data: [{ value: [80, 60, 90, 70, 85] }],
+                    data: radarSeriesData,
                 }],
             }
         case 'pieChart':
+            const pieConfig = props.pieConfig || {}
             return {
                 ...baseOption,
                 tooltip: { trigger: 'item' },
                 series: [{
                     type: 'pie',
-                    radius: '60%',
+                    radius: pieConfig.radius || ['0%', '70%'],
+                    center: pieConfig.center || ['50%', '50%'],
+                    roseType: pieConfig.roseType || false,
+                    itemStyle: {
+                        borderRadius: pieConfig.borderRadius || 0,
+                        borderWidth: pieConfig.borderWidth || 0,
+                        borderColor: pieConfig.borderColor || '#000',
+                        shadowBlur: pieConfig.itemStyle?.shadowBlur || 0,
+                        shadowColor: pieConfig.itemStyle?.shadowColor || 'rgba(0,0,0,0.5)',
+                    },
+                    label: {
+                        show: pieConfig.label?.show !== false,
+                        position: pieConfig.label?.position || 'outside',
+                        color: pieConfig.label?.color || '#fff',
+                        fontSize: pieConfig.label?.fontSize || 12,
+                        formatter: pieConfig.label?.formatter || '{b}: {d}%',
+                    },
+                    labelLine: {
+                        show: pieConfig.labelLine?.show !== false,
+                        length: pieConfig.labelLine?.length || 10,
+                        length2: pieConfig.labelLine?.length2 || 10,
+                        lineStyle: {
+                            color: pieConfig.labelLine?.lineStyle?.color || '#fff',
+                            width: pieConfig.labelLine?.lineStyle?.width || 1,
+                        }
+                    },
                     data: props.pieData || [
                         { value: 1048, name: 'A' },
                         { value: 735, name: 'B' },

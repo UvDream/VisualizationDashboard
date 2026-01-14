@@ -37,7 +37,32 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
                 { value: 580, name: '邮件营销' },
                 { value: 484, name: '联盟广告' },
                 { value: 300, name: '视频广告' }
-            ]
+            ],
+            pieConfig: {
+                radius: ['0%', '70%'],
+                center: ['50%', '50%'],
+                roseType: false,
+                borderRadius: 0,
+                borderWidth: 0,
+                borderColor: '#000',
+                label: {
+                    show: true,
+                    position: 'outside',
+                    color: '#fff',
+                    fontSize: 12,
+                    formatter: '{b}: {d}%'
+                },
+                labelLine: {
+                    show: true,
+                    length: 10,
+                    length2: 10,
+                    lineStyle: { color: '#fff', width: 1 }
+                },
+                itemStyle: {
+                    shadowBlur: 0,
+                    shadowColor: 'rgba(0,0,0,0.5)'
+                }
+            }
         },
         style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
@@ -50,9 +75,31 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
     },
     radarChart: {
         props: {
-            // 雷达图稍复杂，暂时简化默认数据，后续可支持 indicator 编辑
+            radarConfig: {
+                shape: 'polygon',
+                radius: 65,
+                indicator: [
+                    { name: '销售', max: 100 },
+                    { name: '管理', max: 100 },
+                    { name: '技术', max: 100 },
+                    { name: '客服', max: 100 },
+                    { name: '研发', max: 100 },
+                    { name: '市场', max: 100 },
+                ],
+                axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.3)', width: 1 } },
+                splitLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.3)', width: 1 } },
+                splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.05)'] } },
+                axisName: { color: '#fff', fontSize: 12, fontWeight: 'normal' },
+            },
+            radarSeriesConfig: {
+                areaStyle: { show: true, opacity: 0.3 },
+                lineStyle: { width: 2 },
+                symbol: 'circle',
+                symbolSize: 6,
+            },
             seriesData: [
-                { name: '预算 vs 开销', data: [[80, 50, 90, 40, 60, 70]] } // Radar data is array of arrays
+                { name: '预算分配', data: [80, 50, 90, 40, 60, 70] },
+                { name: '实际开销', data: [60, 70, 80, 50, 80, 60] },
             ]
         },
         style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }

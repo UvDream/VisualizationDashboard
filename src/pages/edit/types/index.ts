@@ -182,6 +182,79 @@ export interface ComponentProps {
     // 开关
     checked?: boolean
 
+    // 雷达图配置
+    radarConfig?: {
+        shape?: 'polygon' | 'circle' // 雷达图形状
+        radius?: number // 半径百分比
+        indicator?: Array<{ name: string; max: number }> // 指示器
+        axisLine?: {
+            show?: boolean
+            lineStyle?: {
+                color?: string
+                width?: number
+            }
+        }
+        splitLine?: {
+            show?: boolean
+            lineStyle?: {
+                color?: string
+                width?: number
+            }
+        }
+        splitArea?: {
+            show?: boolean
+            areaStyle?: {
+                color?: string[]
+            }
+        }
+        axisName?: {
+            color?: string
+            fontSize?: number
+            fontWeight?: string
+        }
+    }
+    radarSeriesConfig?: {
+        areaStyle?: {
+            show?: boolean
+            opacity?: number
+        }
+        lineStyle?: {
+            width?: number
+        }
+        symbol?: string
+        symbolSize?: number
+    }
+
+    // 饼图配置
+    pieConfig?: {
+        radius?: [string, string] // 内外半径 ['40%', '70%']
+        center?: [string, string] // 圆心位置 ['50%', '50%']
+        roseType?: false | 'radius' | 'area' // 玫瑰图类型
+        borderRadius?: number // 扇区圆角
+        borderWidth?: number // 扇区边框宽度
+        borderColor?: string // 扇区边框颜色
+        label?: {
+            show?: boolean
+            position?: 'outside' | 'inside' | 'center'
+            color?: string
+            fontSize?: number
+            formatter?: string // '{b}: {d}%'
+        }
+        labelLine?: {
+            show?: boolean
+            length?: number
+            length2?: number
+            lineStyle?: {
+                color?: string
+                width?: number
+            }
+        }
+        itemStyle?: {
+            shadowBlur?: number
+            shadowColor?: string
+        }
+    }
+
     // 地图属性
     mapRegion?: string // 地图区域：china, beijing, shanghai 等
     mapData?: Array<{ name: string; value: number }> // 地图数据

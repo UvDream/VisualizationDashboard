@@ -669,6 +669,562 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 雷达图配置
+        ...(selectedComponent.type === 'radarChart' ? [{
+            key: 'radarConfig',
+            label: '雷达图配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="形状">
+                        <Select
+                            value={selectedComponent.props.radarConfig?.shape || 'polygon'}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                shape: v
+                            })}
+                            options={[
+                                { value: 'polygon', label: '多边形' },
+                                { value: 'circle', label: '圆形' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="半径(%)">
+                        <InputNumber
+                            value={selectedComponent.props.radarConfig?.radius || 65}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                radius: v
+                            })}
+                            min={20}
+                            max={90}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="显示轴线" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.radarConfig?.axisLine?.show !== false}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                axisLine: { ...selectedComponent.props.radarConfig?.axisLine, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.radarConfig?.axisLine?.show !== false && (
+                        <div className="form-row">
+                            <Form.Item label="轴线颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.radarConfig?.axisLine?.lineStyle?.color || 'rgba(255,255,255,0.3)'}
+                                    onChange={(c) => handleChange('props.radarConfig', {
+                                        ...selectedComponent.props.radarConfig,
+                                        axisLine: {
+                                            ...selectedComponent.props.radarConfig?.axisLine,
+                                            lineStyle: {
+                                                ...selectedComponent.props.radarConfig?.axisLine?.lineStyle,
+                                                color: c.toHexString()
+                                            }
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="轴线宽度">
+                                <InputNumber
+                                    value={selectedComponent.props.radarConfig?.axisLine?.lineStyle?.width || 1}
+                                    onChange={(v) => handleChange('props.radarConfig', {
+                                        ...selectedComponent.props.radarConfig,
+                                        axisLine: {
+                                            ...selectedComponent.props.radarConfig?.axisLine,
+                                            lineStyle: {
+                                                ...selectedComponent.props.radarConfig?.axisLine?.lineStyle,
+                                                width: v
+                                            }
+                                        }
+                                    })}
+                                    min={1}
+                                    max={5}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </div>
+                    )}
+                    <Form.Item label="显示分割线" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.radarConfig?.splitLine?.show !== false}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                splitLine: { ...selectedComponent.props.radarConfig?.splitLine, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.radarConfig?.splitLine?.show !== false && (
+                        <div className="form-row">
+                            <Form.Item label="分割线颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.radarConfig?.splitLine?.lineStyle?.color || 'rgba(255,255,255,0.3)'}
+                                    onChange={(c) => handleChange('props.radarConfig', {
+                                        ...selectedComponent.props.radarConfig,
+                                        splitLine: {
+                                            ...selectedComponent.props.radarConfig?.splitLine,
+                                            lineStyle: {
+                                                ...selectedComponent.props.radarConfig?.splitLine?.lineStyle,
+                                                color: c.toHexString()
+                                            }
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="分割线宽度">
+                                <InputNumber
+                                    value={selectedComponent.props.radarConfig?.splitLine?.lineStyle?.width || 1}
+                                    onChange={(v) => handleChange('props.radarConfig', {
+                                        ...selectedComponent.props.radarConfig,
+                                        splitLine: {
+                                            ...selectedComponent.props.radarConfig?.splitLine,
+                                            lineStyle: {
+                                                ...selectedComponent.props.radarConfig?.splitLine?.lineStyle,
+                                                width: v
+                                            }
+                                        }
+                                    })}
+                                    min={1}
+                                    max={5}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </div>
+                    )}
+                    <Form.Item label="显示分割区域" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.radarConfig?.splitArea?.show !== false}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                splitArea: { ...selectedComponent.props.radarConfig?.splitArea, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        },
+        {
+            key: 'radarAxisName',
+            label: '指示器文字',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="文字颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.radarConfig?.axisName?.color || '#fff'}
+                            onChange={(c) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                axisName: {
+                                    ...selectedComponent.props.radarConfig?.axisName,
+                                    color: c.toHexString()
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="字体大小">
+                            <InputNumber
+                                value={selectedComponent.props.radarConfig?.axisName?.fontSize || 12}
+                                onChange={(v) => handleChange('props.radarConfig', {
+                                    ...selectedComponent.props.radarConfig,
+                                    axisName: {
+                                        ...selectedComponent.props.radarConfig?.axisName,
+                                        fontSize: v
+                                    }
+                                })}
+                                min={10}
+                                max={24}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="字体粗细">
+                            <Select
+                                value={selectedComponent.props.radarConfig?.axisName?.fontWeight || 'normal'}
+                                onChange={(v) => handleChange('props.radarConfig', {
+                                    ...selectedComponent.props.radarConfig,
+                                    axisName: {
+                                        ...selectedComponent.props.radarConfig?.axisName,
+                                        fontWeight: v
+                                    }
+                                })}
+                                options={[
+                                    { value: 'normal', label: '正常' },
+                                    { value: 'bold', label: '加粗' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        },
+        {
+            key: 'radarSeries',
+            label: '系列样式',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示区域填充" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.radarSeriesConfig?.areaStyle?.show !== false}
+                            onChange={(v) => handleChange('props.radarSeriesConfig', {
+                                ...selectedComponent.props.radarSeriesConfig,
+                                areaStyle: { ...selectedComponent.props.radarSeriesConfig?.areaStyle, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.radarSeriesConfig?.areaStyle?.show !== false && (
+                        <Form.Item label="填充透明度">
+                            <InputNumber
+                                value={selectedComponent.props.radarSeriesConfig?.areaStyle?.opacity || 0.3}
+                                onChange={(v) => handleChange('props.radarSeriesConfig', {
+                                    ...selectedComponent.props.radarSeriesConfig,
+                                    areaStyle: {
+                                        ...selectedComponent.props.radarSeriesConfig?.areaStyle,
+                                        opacity: v
+                                    }
+                                })}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    )}
+                    <Form.Item label="线条宽度">
+                        <InputNumber
+                            value={selectedComponent.props.radarSeriesConfig?.lineStyle?.width || 2}
+                            onChange={(v) => handleChange('props.radarSeriesConfig', {
+                                ...selectedComponent.props.radarSeriesConfig,
+                                lineStyle: {
+                                    ...selectedComponent.props.radarSeriesConfig?.lineStyle,
+                                    width: v
+                                }
+                            })}
+                            min={1}
+                            max={10}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="标记点形状">
+                            <Select
+                                value={selectedComponent.props.radarSeriesConfig?.symbol || 'circle'}
+                                onChange={(v) => handleChange('props.radarSeriesConfig', {
+                                    ...selectedComponent.props.radarSeriesConfig,
+                                    symbol: v
+                                })}
+                                options={[
+                                    { value: 'circle', label: '圆形' },
+                                    { value: 'rect', label: '方形' },
+                                    { value: 'roundRect', label: '圆角方形' },
+                                    { value: 'triangle', label: '三角形' },
+                                    { value: 'diamond', label: '菱形' },
+                                    { value: 'none', label: '无' },
+                                ]}
+                            />
+                        </Form.Item>
+                        <Form.Item label="标记点大小">
+                            <InputNumber
+                                value={selectedComponent.props.radarSeriesConfig?.symbolSize || 6}
+                                onChange={(v) => handleChange('props.radarSeriesConfig', {
+                                    ...selectedComponent.props.radarSeriesConfig,
+                                    symbolSize: v
+                                })}
+                                min={0}
+                                max={20}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        }] : []),
+        // 饼图配置 - 仅对饼图有效
+        ...(selectedComponent.type === 'pieChart' ? [{
+            key: 'pieBasic',
+            label: '饼图配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="饼图类型">
+                        <Radio.Group
+                            value={selectedComponent.props.pieConfig?.roseType || false}
+                            onChange={(e) => handleChange('props.pieConfig', {
+                                ...selectedComponent.props.pieConfig,
+                                roseType: e.target.value
+                            })}
+                            optionType="button"
+                            size="small"
+                        >
+                            <Radio value={false}>普通</Radio>
+                            <Radio value="radius">玫瑰图</Radio>
+                            <Radio value="area">面积玫瑰</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="内半径">
+                            <Input
+                                value={selectedComponent.props.pieConfig?.radius?.[0] || '0%'}
+                                onChange={(e) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    radius: [e.target.value, selectedComponent.props.pieConfig?.radius?.[1] || '70%']
+                                })}
+                                placeholder="0%"
+                            />
+                        </Form.Item>
+                        <Form.Item label="外半径">
+                            <Input
+                                value={selectedComponent.props.pieConfig?.radius?.[1] || '70%'}
+                                onChange={(e) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    radius: [selectedComponent.props.pieConfig?.radius?.[0] || '0%', e.target.value]
+                                })}
+                                placeholder="70%"
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="圆心X">
+                            <Input
+                                value={selectedComponent.props.pieConfig?.center?.[0] || '50%'}
+                                onChange={(e) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    center: [e.target.value, selectedComponent.props.pieConfig?.center?.[1] || '50%']
+                                })}
+                                placeholder="50%"
+                            />
+                        </Form.Item>
+                        <Form.Item label="圆心Y">
+                            <Input
+                                value={selectedComponent.props.pieConfig?.center?.[1] || '50%'}
+                                onChange={(e) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    center: [selectedComponent.props.pieConfig?.center?.[0] || '50%', e.target.value]
+                                })}
+                                placeholder="50%"
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="扇区圆角">
+                        <InputNumber
+                            value={selectedComponent.props.pieConfig?.borderRadius || 0}
+                            onChange={(v) => handleChange('props.pieConfig', {
+                                ...selectedComponent.props.pieConfig,
+                                borderRadius: v
+                            })}
+                            min={0}
+                            max={50}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.pieConfig?.borderWidth || 0}
+                                onChange={(v) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    borderWidth: v
+                                })}
+                                min={0}
+                                max={10}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="边框颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.pieConfig?.borderColor || '#fff'}
+                                onChange={(c) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    borderColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="阴影模糊">
+                            <InputNumber
+                                value={selectedComponent.props.pieConfig?.itemStyle?.shadowBlur || 0}
+                                onChange={(v) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.pieConfig?.itemStyle,
+                                        shadowBlur: v
+                                    }
+                                })}
+                                min={0}
+                                max={50}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="阴影颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.pieConfig?.itemStyle?.shadowColor || 'rgba(0,0,0,0.3)'}
+                                onChange={(c) => handleChange('props.pieConfig', {
+                                    ...selectedComponent.props.pieConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.pieConfig?.itemStyle,
+                                        shadowColor: c.toHexString()
+                                    }
+                                })}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        },
+        {
+            key: 'pieLabel',
+            label: '标签配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示标签" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.pieConfig?.label?.show !== false}
+                            onChange={(v) => handleChange('props.pieConfig', {
+                                ...selectedComponent.props.pieConfig,
+                                label: { ...selectedComponent.props.pieConfig?.label, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.pieConfig?.label?.show !== false && (
+                        <>
+                            <Form.Item label="标签位置">
+                                <Radio.Group
+                                    value={selectedComponent.props.pieConfig?.label?.position || 'outside'}
+                                    onChange={(e) => handleChange('props.pieConfig', {
+                                        ...selectedComponent.props.pieConfig,
+                                        label: { ...selectedComponent.props.pieConfig?.label, position: e.target.value }
+                                    })}
+                                    optionType="button"
+                                    size="small"
+                                >
+                                    <Radio value="outside">外部</Radio>
+                                    <Radio value="inside">内部</Radio>
+                                    <Radio value="center">中心</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                            <Form.Item label="标签格式">
+                                <Select
+                                    value={selectedComponent.props.pieConfig?.label?.formatter || '{b}: {d}%'}
+                                    onChange={(v) => handleChange('props.pieConfig', {
+                                        ...selectedComponent.props.pieConfig,
+                                        label: { ...selectedComponent.props.pieConfig?.label, formatter: v }
+                                    })}
+                                    options={[
+                                        { value: '{b}', label: '名称' },
+                                        { value: '{c}', label: '数值' },
+                                        { value: '{d}%', label: '百分比' },
+                                        { value: '{b}: {c}', label: '名称: 数值' },
+                                        { value: '{b}: {d}%', label: '名称: 百分比' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item label="标签颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.pieConfig?.label?.color || '#fff'}
+                                    onChange={(c) => handleChange('props.pieConfig', {
+                                        ...selectedComponent.props.pieConfig,
+                                        label: { ...selectedComponent.props.pieConfig?.label, color: c.toHexString() }
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item label="字体大小">
+                                <InputNumber
+                                    value={selectedComponent.props.pieConfig?.label?.fontSize || 12}
+                                    onChange={(v) => handleChange('props.pieConfig', {
+                                        ...selectedComponent.props.pieConfig,
+                                        label: { ...selectedComponent.props.pieConfig?.label, fontSize: v }
+                                    })}
+                                    min={10}
+                                    max={24}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form>
+            )
+        },
+        {
+            key: 'pieLabelLine',
+            label: '引导线配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示引导线" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.pieConfig?.labelLine?.show !== false}
+                            onChange={(v) => handleChange('props.pieConfig', {
+                                ...selectedComponent.props.pieConfig,
+                                labelLine: { ...selectedComponent.props.pieConfig?.labelLine, show: v }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.pieConfig?.labelLine?.show !== false && (
+                        <>
+                            <div className="form-row">
+                                <Form.Item label="第一段长度">
+                                    <InputNumber
+                                        value={selectedComponent.props.pieConfig?.labelLine?.length || 10}
+                                        onChange={(v) => handleChange('props.pieConfig', {
+                                            ...selectedComponent.props.pieConfig,
+                                            labelLine: { ...selectedComponent.props.pieConfig?.labelLine, length: v }
+                                        })}
+                                        min={0}
+                                        max={50}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="第二段长度">
+                                    <InputNumber
+                                        value={selectedComponent.props.pieConfig?.labelLine?.length2 || 20}
+                                        onChange={(v) => handleChange('props.pieConfig', {
+                                            ...selectedComponent.props.pieConfig,
+                                            labelLine: { ...selectedComponent.props.pieConfig?.labelLine, length2: v }
+                                        })}
+                                        min={0}
+                                        max={50}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <div className="form-row">
+                                <Form.Item label="线条颜色">
+                                    <ColorPicker
+                                        value={selectedComponent.props.pieConfig?.labelLine?.lineStyle?.color || '#fff'}
+                                        onChange={(c) => handleChange('props.pieConfig', {
+                                            ...selectedComponent.props.pieConfig,
+                                            labelLine: {
+                                                ...selectedComponent.props.pieConfig?.labelLine,
+                                                lineStyle: {
+                                                    ...selectedComponent.props.pieConfig?.labelLine?.lineStyle,
+                                                    color: c.toHexString()
+                                                }
+                                            }
+                                        })}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="线条宽度">
+                                    <InputNumber
+                                        value={selectedComponent.props.pieConfig?.labelLine?.lineStyle?.width || 1}
+                                        onChange={(v) => handleChange('props.pieConfig', {
+                                            ...selectedComponent.props.pieConfig,
+                                            labelLine: {
+                                                ...selectedComponent.props.pieConfig?.labelLine,
+                                                lineStyle: {
+                                                    ...selectedComponent.props.pieConfig?.labelLine?.lineStyle,
+                                                    width: v
+                                                }
+                                            }
+                                        })}
+                                        min={1}
+                                        max={5}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
         // 图例配置 - 仅对图表有效
         ...(['lineChart', 'barChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
@@ -1430,6 +1986,27 @@ export default function PropertyPanel() {
                             value={selectedComponent.props.seriesData || []}
                             onChange={(v) => handleChange('props.seriesData', v)}
                             placeholder='[{"name":"Series A","data":[120, 132, 101]}]'
+                        />
+                    </Form.Item>
+                </>
+            )}
+            {selectedComponent.type === 'radarChart' && (
+                <>
+                    <Form.Item label="指示器配置">
+                        <JsonEditor
+                            value={selectedComponent.props.radarConfig?.indicator || []}
+                            onChange={(v) => handleChange('props.radarConfig', {
+                                ...selectedComponent.props.radarConfig,
+                                indicator: v
+                            })}
+                            placeholder='[{"name":"销售","max":100}]'
+                        />
+                    </Form.Item>
+                    <Form.Item label="系列数据">
+                        <JsonEditor
+                            value={selectedComponent.props.seriesData || []}
+                            onChange={(v) => handleChange('props.seriesData', v)}
+                            placeholder='[{"name":"预算","data":[80,50,90,40,60]}]'
                         />
                     </Form.Item>
                 </>
