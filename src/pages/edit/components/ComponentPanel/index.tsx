@@ -48,6 +48,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'doubleLineChart', name: '双折线图', icon: <LineChartOutlined />, category: 'chart' },
     { type: 'singleBarChart', name: '单柱状图', icon: <BarChartOutlined />, category: 'chart' },
     { type: 'doubleBarChart', name: '双柱状图', icon: <BarChartOutlined />, category: 'chart' },
+    { type: 'horizontalBarChart', name: '横向柱状图', icon: <BarChartOutlined style={{ transform: 'rotate(90deg)' }} />, category: 'chart' },
     { type: 'pieChart', name: '饼图', icon: <PieChartOutlined />, category: 'chart' },
     { type: 'gaugeChart', name: '仪表盘', icon: <DashboardOutlined />, category: 'chart' },
     { type: 'radarChart', name: '雷达图', icon: <RadarChartOutlined />, category: 'chart' },

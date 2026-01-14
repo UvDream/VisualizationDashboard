@@ -149,7 +149,7 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
         const baseSeries = {
             ...s,
             type: (type === 'singleLineChart' || type === 'doubleLineChart') ? 'line' :
-                (type === 'singleBarChart' || type === 'doubleBarChart') ? 'bar' :
+                (type === 'singleBarChart' || type === 'doubleBarChart' || type === 'horizontalBarChart') ? 'bar' :
                     type === 'scatterChart' ? 'scatter' :
                         type === 'radarChart' ? 'radar' : 'line'
         }
@@ -200,7 +200,7 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
     if (commonSeries.length === 0) {
         // Fallback demos if no data provided (should be overridden by defaultConfigs usually)
         if (type === 'singleLineChart' || type === 'doubleLineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
-        if (type === 'singleBarChart' || type === 'doubleBarChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
+        if (type === 'singleBarChart' || type === 'doubleBarChart' || type === 'horizontalBarChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
     }
 
     switch (type) {
@@ -210,6 +210,14 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
         case 'singleBarChart':
         case 'doubleBarChart':
             return { ...baseOption, xAxis, yAxis, series: commonSeries }
+        case 'horizontalBarChart':
+            // 横向柱状图：交换x轴和y轴
+            return {
+                ...baseOption,
+                xAxis: buildAxisConfig(props.xAxisConfig, 'value'),
+                yAxis: buildAxisConfig(props.yAxisConfig, 'category', props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E']),
+                series: commonSeries
+            }
         case 'scatterChart':
             return {
                 ...baseOption,
@@ -685,6 +693,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             case 'doubleLineChart':
             case 'singleBarChart':
             case 'doubleBarChart':
+            case 'horizontalBarChart':
             case 'pieChart':
             case 'gaugeChart':
             case 'radarChart':

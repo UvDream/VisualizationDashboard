@@ -102,7 +102,7 @@ export default function PropertyPanel() {
             ),
         },
         // 轴配置 - 仅对需要轴的图表有效
-        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'scatterChart'].includes(selectedComponent.type) ? [
+        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type) ? [
             {
                 key: 'xAxis',
                 label: 'X轴配置',
@@ -1226,7 +1226,7 @@ export default function PropertyPanel() {
             )
         }] : []),
         // 图例配置 - 仅对图表有效
-        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
             label: '图例配置',
             children: (
