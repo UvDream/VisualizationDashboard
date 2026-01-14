@@ -22,6 +22,7 @@ import './index.less'
 // 懒加载地图组件
 const MapChart = lazy(() => import('./MapChart'))
 const ScrollRankList = lazy(() => import('./ScrollRankList'))
+const CarouselList = lazy(() => import('./CarouselList'))
 
 interface CanvasItemProps {
     item: ComponentItem
@@ -667,6 +668,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         <ScrollRankList
                             data={item.props.rankListData || []}
                             config={item.props.rankListConfig}
+                        />
+                    </Suspense>
+                )
+            case 'carouselList':
+                return (
+                    <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载中...</div>}>
+                        <CarouselList
+                            data={item.props.carouselListData || []}
+                            config={item.props.carouselListConfig}
                         />
                     </Suspense>
                 )

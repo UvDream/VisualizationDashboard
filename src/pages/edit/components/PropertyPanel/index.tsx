@@ -1164,6 +1164,142 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 轮播列表配置
+        ...(selectedComponent.type === 'carouselList' ? [{
+            key: 'carouselListConfig',
+            label: '列表配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <div className="form-row">
+                        <Form.Item label="行高">
+                            <InputNumber
+                                value={selectedComponent.props.carouselListConfig?.rowHeight || 36}
+                                onChange={(v) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    rowHeight: v
+                                })}
+                                min={24}
+                                max={60}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="字体大小">
+                            <InputNumber
+                                value={selectedComponent.props.carouselListConfig?.fontSize || 14}
+                                onChange={(v) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    fontSize: v
+                                })}
+                                min={10}
+                                max={24}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="每页行数">
+                            <InputNumber
+                                value={selectedComponent.props.carouselListConfig?.pageSize || 5}
+                                onChange={(v) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    pageSize: v
+                                })}
+                                min={1}
+                                max={20}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="滚动速度(ms)">
+                            <InputNumber
+                                value={selectedComponent.props.carouselListConfig?.scrollSpeed || 3000}
+                                onChange={(v) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    scrollSpeed: v
+                                })}
+                                min={500}
+                                max={10000}
+                                step={500}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="文字颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.carouselListConfig?.textColor || '#fff'}
+                            onChange={(c) => handleChange('props.carouselListConfig', {
+                                ...selectedComponent.props.carouselListConfig,
+                                textColor: c.toHexString()
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="行背景色">
+                            <ColorPicker
+                                value={selectedComponent.props.carouselListConfig?.rowBgColor || 'rgba(255,255,255,0.02)'}
+                                onChange={(c) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    rowBgColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                        <Form.Item label="交替行背景">
+                            <ColorPicker
+                                value={selectedComponent.props.carouselListConfig?.rowAltBgColor || 'rgba(255,255,255,0.05)'}
+                                onChange={(c) => handleChange('props.carouselListConfig', {
+                                    ...selectedComponent.props.carouselListConfig,
+                                    rowAltBgColor: c.toHexString()
+                                })}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="显示表头" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.carouselListConfig?.showHeader !== false}
+                            onChange={(v) => handleChange('props.carouselListConfig', {
+                                ...selectedComponent.props.carouselListConfig,
+                                showHeader: v
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.carouselListConfig?.showHeader !== false && (
+                        <>
+                            <Form.Item label="表头高度">
+                                <InputNumber
+                                    value={selectedComponent.props.carouselListConfig?.headerHeight || 40}
+                                    onChange={(v) => handleChange('props.carouselListConfig', {
+                                        ...selectedComponent.props.carouselListConfig,
+                                        headerHeight: v
+                                    })}
+                                    min={24}
+                                    max={60}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="表头背景">
+                                    <ColorPicker
+                                        value={selectedComponent.props.carouselListConfig?.headerBgColor || 'rgba(24, 144, 255, 0.3)'}
+                                        onChange={(c) => handleChange('props.carouselListConfig', {
+                                            ...selectedComponent.props.carouselListConfig,
+                                            headerBgColor: c.toHexString()
+                                        })}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="表头文字">
+                                    <ColorPicker
+                                        value={selectedComponent.props.carouselListConfig?.headerTextColor || '#1890ff'}
+                                        onChange={(c) => handleChange('props.carouselListConfig', {
+                                            ...selectedComponent.props.carouselListConfig,
+                                            headerTextColor: c.toHexString()
+                                        })}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -1365,6 +1501,27 @@ export default function PropertyPanel() {
                         placeholder='[{"name":"北京","value":100}]'
                     />
                 </Form.Item>
+            )}
+            {selectedComponent.type === 'carouselList' && (
+                <>
+                    <Form.Item label="列配置">
+                        <JsonEditor
+                            value={selectedComponent.props.carouselListConfig?.columns || []}
+                            onChange={(v) => handleChange('props.carouselListConfig', {
+                                ...selectedComponent.props.carouselListConfig,
+                                columns: v
+                            })}
+                            placeholder='[{"title":"名称","key":"name","width":80}]'
+                        />
+                    </Form.Item>
+                    <Form.Item label="列表数据">
+                        <JsonEditor
+                            value={selectedComponent.props.carouselListData || []}
+                            onChange={(v) => handleChange('props.carouselListData', v)}
+                            placeholder='[{"name":"张三","dept":"技术部"}]'
+                        />
+                    </Form.Item>
+                </>
             )}
             {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
                 <Form.Item label="数值">

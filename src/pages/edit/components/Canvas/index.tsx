@@ -169,6 +169,40 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 320, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    carouselList: {
+        props: {
+            carouselListData: [
+                { id: '001', name: '张三', dept: '技术部', status: '在线' },
+                { id: '002', name: '李四', dept: '销售部', status: '离线' },
+                { id: '003', name: '王五', dept: '市场部', status: '在线' },
+                { id: '004', name: '赵六', dept: '财务部', status: '在线' },
+                { id: '005', name: '钱七', dept: '人事部', status: '离线' },
+                { id: '006', name: '孙八', dept: '技术部', status: '在线' },
+                { id: '007', name: '周九', dept: '销售部', status: '在线' },
+                { id: '008', name: '吴十', dept: '市场部', status: '离线' },
+            ],
+            carouselListConfig: {
+                columns: [
+                    { title: '编号', key: 'id', width: 60 },
+                    { title: '姓名', key: 'name', width: 80 },
+                    { title: '部门', key: 'dept', width: 80 },
+                    { title: '状态', key: 'status', width: 60 },
+                ],
+                rowHeight: 36,
+                headerHeight: 40,
+                headerBgColor: 'rgba(24, 144, 255, 0.3)',
+                headerTextColor: '#1890ff',
+                rowBgColor: 'rgba(255,255,255,0.02)',
+                rowAltBgColor: 'rgba(255,255,255,0.05)',
+                textColor: '#fff',
+                fontSize: 14,
+                scrollSpeed: 3000,
+                showHeader: true,
+                pageSize: 5,
+            }
+        },
+        style: { width: 320, height: 260, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // 3D 组件
     threeEarth: {

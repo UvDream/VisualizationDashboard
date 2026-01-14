@@ -28,6 +28,7 @@ import {
     HeatMapOutlined,
     CalendarOutlined,
     OrderedListOutlined,
+    UnorderedListOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -67,6 +68,7 @@ const antdComponents: ComponentConfig[] = [
     { type: 'card', name: '卡片', icon: <CreditCardOutlined />, category: 'component' },
     { type: 'table', name: '表格', icon: <TableOutlined />, category: 'component' },
     { type: 'scrollRankList', name: '滚动排名', icon: <OrderedListOutlined />, category: 'component' },
+    { type: 'carouselList', name: '轮播列表', icon: <UnorderedListOutlined />, category: 'component' },
 ]
 
 // 小组件 - 装饰边框

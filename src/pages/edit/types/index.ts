@@ -3,7 +3,7 @@ export type ComponentType =
     // 图表类 - ECharts
     | 'lineChart' | 'barChart' | 'pieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
     // 组件库 - Antd
-    | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList'
+    | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
     | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2'
     // 图片
@@ -223,6 +223,23 @@ export interface ComponentProps {
         indexColor?: string // 序号颜色
         scrollSpeed?: number // 滚动速度(ms)
         showBar?: boolean // 显示进度条
+    }
+
+    // 轮播列表属性
+    carouselListData?: Array<Record<string, any>> // 列表数据
+    carouselListConfig?: {
+        columns?: Array<{ title: string; key: string; width?: number }> // 列配置
+        rowHeight?: number // 行高
+        headerHeight?: number // 表头高度
+        headerBgColor?: string // 表头背景色
+        headerTextColor?: string // 表头文字颜色
+        rowBgColor?: string // 行背景色
+        rowAltBgColor?: string // 交替行背景色
+        textColor?: string // 文字颜色
+        fontSize?: number // 字体大小
+        scrollSpeed?: number // 滚动速度(ms)
+        showHeader?: boolean // 显示表头
+        pageSize?: number // 每页显示行数
     }
 }
 
