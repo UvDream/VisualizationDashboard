@@ -10,7 +10,16 @@ import './index.less'
 // 默认组件配置
 const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; style: Partial<ComponentItem['style']> }> = {
     // 图表类
-    lineChart: {
+    singleLineChart: {
+        props: {
+            xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+            seriesData: [
+                { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210] },
+            ]
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    doubleLineChart: {
         props: {
             xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
             seriesData: [

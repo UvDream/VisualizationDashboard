@@ -199,12 +199,13 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
 
     if (commonSeries.length === 0) {
         // Fallback demos if no data provided (should be overridden by defaultConfigs usually)
-        if (type === 'lineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
+        if (type === 'singleLineChart' || type === 'doubleLineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
         if (type === 'barChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
     }
 
     switch (type) {
-        case 'lineChart':
+        case 'singleLineChart':
+        case 'doubleLineChart':
             return { ...baseOption, xAxis, yAxis, series: commonSeries }
         case 'barChart':
             return { ...baseOption, xAxis, yAxis, series: commonSeries }
@@ -679,7 +680,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
         switch (item.type) {
             // 图表类
             // 图表类
-            case 'lineChart':
+            case 'singleLineChart':
+            case 'doubleLineChart':
             case 'barChart':
             case 'pieChart':
             case 'gaugeChart':

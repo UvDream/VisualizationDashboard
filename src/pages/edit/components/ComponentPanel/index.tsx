@@ -44,7 +44,8 @@ interface ComponentConfig {
 
 // 图表组件
 const chartComponents: ComponentConfig[] = [
-    { type: 'lineChart', name: '折线图', icon: <LineChartOutlined />, category: 'chart' },
+    { type: 'singleLineChart', name: '单折线图', icon: <LineChartOutlined />, category: 'chart' },
+    { type: 'doubleLineChart', name: '双折线图', icon: <LineChartOutlined />, category: 'chart' },
     { type: 'barChart', name: '柱状图', icon: <BarChartOutlined />, category: 'chart' },
     { type: 'pieChart', name: '饼图', icon: <PieChartOutlined />, category: 'chart' },
     { type: 'gaugeChart', name: '仪表盘', icon: <DashboardOutlined />, category: 'chart' },

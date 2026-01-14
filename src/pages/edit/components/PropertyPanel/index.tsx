@@ -102,7 +102,7 @@ export default function PropertyPanel() {
             ),
         },
         // 轴配置 - 仅对需要轴的图表有效
-        ...(['lineChart', 'barChart', 'scatterChart'].includes(selectedComponent.type) ? [
+        ...(['singleLineChart', 'doubleLineChart', 'barChart', 'scatterChart'].includes(selectedComponent.type) ? [
             {
                 key: 'xAxis',
                 label: 'X轴配置',
@@ -503,7 +503,7 @@ export default function PropertyPanel() {
             }
         ] : []),
         // 符号配置 - 仅对折线图和散点图有效
-        ...(['lineChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+        ...(['singleLineChart', 'doubleLineChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'symbol',
             label: '符号配置',
             children: (
@@ -571,7 +571,7 @@ export default function PropertyPanel() {
                                     <div className="form-row">
                                         <Form.Item label="符号大小">
                                             <InputNumber
-                                                value={selectedComponent.props.seriesData[selectedSeriesIndex].symbolConfig?.size || (selectedComponent.type === 'lineChart' ? 4 : 10)}
+                                                value={selectedComponent.props.seriesData[selectedSeriesIndex].symbolConfig?.size || (['singleLineChart', 'doubleLineChart'].includes(selectedComponent.type) ? 4 : 10)}
                                                 onChange={(v) => {
                                                     const newData = [...selectedComponent.props.seriesData!];
                                                     newData[selectedSeriesIndex] = {
@@ -644,7 +644,7 @@ export default function PropertyPanel() {
                                         </Form.Item>
                                         <Form.Item label="边框宽度">
                                             <InputNumber
-                                                value={selectedComponent.props.seriesData[selectedSeriesIndex].symbolConfig?.borderWidth || (selectedComponent.type === 'lineChart' ? 1 : 0)}
+                                                value={selectedComponent.props.seriesData[selectedSeriesIndex].symbolConfig?.borderWidth || (['singleLineChart', 'doubleLineChart'].includes(selectedComponent.type) ? 1 : 0)}
                                                 onChange={(v) => {
                                                     const newData = [...selectedComponent.props.seriesData!];
                                                     newData[selectedSeriesIndex] = {
@@ -1226,7 +1226,7 @@ export default function PropertyPanel() {
             )
         }] : []),
         // 图例配置 - 仅对图表有效
-        ...(['lineChart', 'barChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+        ...(['singleLineChart', 'doubleLineChart', 'barChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
             label: '图例配置',
             children: (
