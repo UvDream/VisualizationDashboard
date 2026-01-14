@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
+    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
@@ -174,6 +174,7 @@ export interface ComponentProps {
     }>
     pieData?: Array<{ name: string; value: number }>
     funnelData?: Array<{ name: string; value: number }>
+    wordCloudData?: Array<{ name: string; value: number }>
     singleData?: number
     legend?: ChartLegendConfig
 
@@ -314,6 +315,19 @@ export interface ComponentProps {
         scrollSpeed?: number // 滚动速度(ms)
         showHeader?: boolean // 显示表头
         pageSize?: number // 每页显示行数
+    }
+
+    // 词云配置
+    wordCloudConfig?: {
+        shape?: 'circle' | 'rect' | 'diamond' | 'triangle' // 形状
+        colorScheme?: 'default' | 'blue' | 'green' | 'warm' | 'cool' | 'rainbow' // 颜色方案
+        minFontSize?: number // 最小字体
+        maxFontSize?: number // 最大字体
+        fontFamily?: string // 字体
+        fontWeight?: 'normal' | 'bold' // 字体粗细
+        rotation?: boolean // 是否旋转
+        rotationRange?: [number, number] // 旋转角度范围
+        gridSize?: number // 网格大小
     }
 }
 

@@ -2,6 +2,8 @@
 
 一个基于 React 的可视化大屏编辑器，支持拖拽式组件布局、实时预览和丰富的图表组件。
 
+## 预览地址
+[点击预览](https://visualization-dashboard-sooty.vercel.app/)
 ## 技术栈
 
 - React 19 + TypeScript

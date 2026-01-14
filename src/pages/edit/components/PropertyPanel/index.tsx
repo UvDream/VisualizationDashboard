@@ -1225,6 +1225,124 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 词云配置
+        ...(selectedComponent.type === 'wordCloudChart' ? [{
+            key: 'wordCloudConfig',
+            label: '词云配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="形状">
+                        <Select
+                            value={selectedComponent.props.wordCloudConfig?.shape || 'circle'}
+                            onChange={(v) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                shape: v
+                            })}
+                            options={[
+                                { value: 'circle', label: '圆形' },
+                                { value: 'rect', label: '矩形' },
+                                { value: 'diamond', label: '菱形' },
+                                { value: 'triangle', label: '三角形' }
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="颜色方案">
+                        <Select
+                            value={selectedComponent.props.wordCloudConfig?.colorScheme || 'default'}
+                            onChange={(v) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                colorScheme: v
+                            })}
+                            options={[
+                                { value: 'default', label: '默认' },
+                                { value: 'blue', label: '蓝色系' },
+                                { value: 'green', label: '绿色系' },
+                                { value: 'warm', label: '暖色系' },
+                                { value: 'cool', label: '冷色系' },
+                                { value: 'rainbow', label: '彩虹' }
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="最小字号">
+                            <InputNumber
+                                value={selectedComponent.props.wordCloudConfig?.minFontSize || 12}
+                                onChange={(v) => handleChange('props.wordCloudConfig', {
+                                    ...selectedComponent.props.wordCloudConfig,
+                                    minFontSize: v
+                                })}
+                                min={8}
+                                max={24}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="最大字号">
+                            <InputNumber
+                                value={selectedComponent.props.wordCloudConfig?.maxFontSize || 48}
+                                onChange={(v) => handleChange('props.wordCloudConfig', {
+                                    ...selectedComponent.props.wordCloudConfig,
+                                    maxFontSize: v
+                                })}
+                                min={24}
+                                max={100}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="字体">
+                        <Select
+                            value={selectedComponent.props.wordCloudConfig?.fontFamily || 'Arial, sans-serif'}
+                            onChange={(v) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                fontFamily: v
+                            })}
+                            options={[
+                                { value: 'Arial, sans-serif', label: 'Arial' },
+                                { value: 'Microsoft YaHei, sans-serif', label: '微软雅黑' },
+                                { value: 'SimHei, sans-serif', label: '黑体' },
+                                { value: 'KaiTi, serif', label: '楷体' },
+                                { value: 'Courier New, monospace', label: 'Courier' }
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="字体粗细">
+                        <Radio.Group
+                            value={selectedComponent.props.wordCloudConfig?.fontWeight || 'bold'}
+                            onChange={(e) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                fontWeight: e.target.value
+                            })}
+                            optionType="button"
+                            size="small"
+                        >
+                            <Radio value="normal">正常</Radio>
+                            <Radio value="bold">加粗</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item label="文字旋转" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.wordCloudConfig?.rotation || false}
+                            onChange={(v) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                rotation: v
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="网格大小">
+                        <InputNumber
+                            value={selectedComponent.props.wordCloudConfig?.gridSize || 8}
+                            onChange={(v) => handleChange('props.wordCloudConfig', {
+                                ...selectedComponent.props.wordCloudConfig,
+                                gridSize: v
+                            })}
+                            min={4}
+                            max={20}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
         // 图例配置 - 仅对图表有效
         ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
@@ -2045,6 +2163,15 @@ export default function PropertyPanel() {
                         value={selectedComponent.props.funnelData || []}
                         onChange={(v) => handleChange('props.funnelData', v)}
                         placeholder='[{"value":100,"name":"展示"},{"value":80,"name":"点击"}]'
+                    />
+                </Form.Item>
+            )}
+            {selectedComponent.type === 'wordCloudChart' && (
+                <Form.Item label="词云数据">
+                    <JsonEditor
+                        value={selectedComponent.props.wordCloudData || []}
+                        onChange={(v) => handleChange('props.wordCloudData', v)}
+                        placeholder='[{"name":"数据可视化","value":100},{"name":"大数据","value":80}]'
                     />
                 </Form.Item>
             )}

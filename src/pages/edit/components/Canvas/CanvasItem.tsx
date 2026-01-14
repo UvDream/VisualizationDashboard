@@ -17,6 +17,7 @@ import { TextureLoader } from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
+import WordCloudChart from './WordCloudChart'
 import './index.less'
 
 // 懒加载地图组件
@@ -783,6 +784,16 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         option={item.props.chartOption || getChartOption(item.type, item.props)}
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
+                    />
+                )
+            
+            case 'wordCloudChart':
+                return (
+                    <WordCloudChart
+                        data={item.props.wordCloudData || []}
+                        width={item.style.width}
+                        height={item.style.height}
+                        config={item.props.wordCloudConfig}
                     />
                 )
             

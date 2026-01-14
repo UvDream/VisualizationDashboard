@@ -144,6 +144,39 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    wordCloudChart: {
+        props: {
+            wordCloudData: [
+                { name: '数据可视化', value: 100 },
+                { name: '大数据', value: 90 },
+                { name: '人工智能', value: 85 },
+                { name: '云计算', value: 80 },
+                { name: '物联网', value: 75 },
+                { name: '区块链', value: 70 },
+                { name: '机器学习', value: 65 },
+                { name: '深度学习', value: 60 },
+                { name: '数据分析', value: 55 },
+                { name: '数据挖掘', value: 50 },
+                { name: '前端开发', value: 45 },
+                { name: '后端开发', value: 40 },
+                { name: '全栈开发', value: 35 },
+                { name: '移动开发', value: 30 },
+                { name: '微服务', value: 25 }
+            ],
+            wordCloudConfig: {
+                shape: 'circle',
+                colorScheme: 'default',
+                minFontSize: 12,
+                maxFontSize: 48,
+                fontFamily: 'Arial, sans-serif',
+                fontWeight: 'bold',
+                rotation: false,
+                rotationRange: [-90, 90],
+                gridSize: 8
+            }
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
     gaugeChart: {
         props: {
             singleData: 75,
