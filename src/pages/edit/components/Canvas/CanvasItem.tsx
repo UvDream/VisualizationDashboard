@@ -148,14 +148,14 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
     const commonSeries = props.seriesData?.map(s => {
         const baseSeries = {
             ...s,
-            type: type === 'lineChart' ? 'line' :
-                type === 'barChart' ? 'bar' :
+            type: (type === 'singleLineChart' || type === 'doubleLineChart') ? 'line' :
+                (type === 'singleBarChart' || type === 'doubleBarChart') ? 'bar' :
                     type === 'scatterChart' ? 'scatter' :
                         type === 'radarChart' ? 'radar' : 'line'
         }
 
         // 为折线图添加符号配置
-        if (type === 'lineChart') {
+        if (type === 'singleLineChart' || type === 'doubleLineChart') {
             // 优先使用系列自身的符号配置，否则使用全局配置
             const symbolConfig = s.symbolConfig || props.symbolConfig;
             if (symbolConfig) {
@@ -200,14 +200,15 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
     if (commonSeries.length === 0) {
         // Fallback demos if no data provided (should be overridden by defaultConfigs usually)
         if (type === 'singleLineChart' || type === 'doubleLineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
-        if (type === 'barChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
+        if (type === 'singleBarChart' || type === 'doubleBarChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
     }
 
     switch (type) {
         case 'singleLineChart':
         case 'doubleLineChart':
             return { ...baseOption, xAxis, yAxis, series: commonSeries }
-        case 'barChart':
+        case 'singleBarChart':
+        case 'doubleBarChart':
             return { ...baseOption, xAxis, yAxis, series: commonSeries }
         case 'scatterChart':
             return {
@@ -682,7 +683,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             // 图表类
             case 'singleLineChart':
             case 'doubleLineChart':
-            case 'barChart':
+            case 'singleBarChart':
+            case 'doubleBarChart':
             case 'pieChart':
             case 'gaugeChart':
             case 'radarChart':

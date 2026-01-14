@@ -29,11 +29,21 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
-    barChart: {
+    singleBarChart: {
         props: {
             xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
             seriesData: [
                 { name: '销售额', data: [500, 300, 400, 600, 250] }
+            ]
+        },
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
+    doubleBarChart: {
+        props: {
+            xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
+            seriesData: [
+                { name: '销售额', data: [500, 300, 400, 600, 250] },
+                { name: '利润', data: [200, 150, 180, 280, 100] }
             ]
         },
         style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
