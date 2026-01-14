@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import ReactECharts from 'echarts-for-react'
 import * as echarts from 'echarts'
-import { getMapRegionByName, getMapGeoJsonUrls } from '../../utils/mapData'
+import { getMapRegionByName, getMapJsonPath } from '../../utils/mapData'
 
 interface MapChartProps {
     mapRegion: string
@@ -37,36 +37,18 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
                 return
             }
 
-            // 获取所有可能的 URL
-            const urls = getMapGeoJsonUrls(regionConfig.adcode)
-            let geoJson: any = null
-            let lastError: Error | null = null
-
-            // 依次尝试每个 URL
-            for (const url of urls) {
-                if (cancelled) return
-                
-                try {
-                    const response = await fetch(url)
-                    if (response.ok) {
-                        geoJson = await response.json()
-                        break
-                    }
-                } catch (err) {
-                    lastError = err instanceof Error ? err : new Error('Unknown error')
-                }
-            }
-
-            if (cancelled) return
-
-            if (!geoJson) {
-                console.error('所有地图源加载失败:', lastError)
-                setError('地图数据加载失败')
-                setLoading(false)
-                return
-            }
-
             try {
+                const url = getMapJsonPath(mapRegion)
+                const response = await fetch(url)
+                
+                if (!response.ok) {
+                    throw new Error(`加载失败: ${response.status}`)
+                }
+                
+                const geoJson = await response.json()
+
+                if (cancelled) return
+
                 // 注册地图
                 echarts.registerMap(mapRegion, geoJson)
                 loadedMapsRef.current.add(mapRegion)
@@ -74,8 +56,9 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
                 setMapReady(true)
                 setLoading(false)
             } catch (err) {
-                console.error('地图注册失败:', err)
-                setError('地图注册失败')
+                if (cancelled) return
+                console.error('地图加载失败:', err)
+                setError('地图数据加载失败')
                 setLoading(false)
             }
         }
