@@ -29,6 +29,7 @@ import {
     CalendarOutlined,
     OrderedListOutlined,
     UnorderedListOutlined,
+    FunnelPlotOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -51,6 +52,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'horizontalBarChart', name: '横向柱状图', icon: <BarChartOutlined style={{ transform: 'rotate(90deg)' }} />, category: 'chart' },
     { type: 'pieChart', name: '饼图', icon: <PieChartOutlined />, category: 'chart' },
     { type: 'halfPieChart', name: '半环形图', icon: <PieChartOutlined />, category: 'chart' },
+    { type: 'funnelChart', name: '漏斗图', icon: <FunnelPlotOutlined />, category: 'chart' },
     { type: 'gaugeChart', name: '仪表盘', icon: <DashboardOutlined />, category: 'chart' },
     { type: 'radarChart', name: '雷达图', icon: <RadarChartOutlined />, category: 'chart' },
     { type: 'scatterChart', name: '散点图', icon: <DotChartOutlined />, category: 'chart' },

@@ -1226,7 +1226,7 @@ export default function PropertyPanel() {
             )
         }] : []),
         // 图例配置 - 仅对图表有效
-        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'halfPieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
             label: '图例配置',
             children: (
@@ -2036,6 +2036,15 @@ export default function PropertyPanel() {
                         value={selectedComponent.props.pieData || []}
                         onChange={(v) => handleChange('props.pieData', v)}
                         placeholder='[{"value":1048,"name":"Search Engine"}]'
+                    />
+                </Form.Item>
+            )}
+            {selectedComponent.type === 'funnelChart' && (
+                <Form.Item label="漏斗图数据">
+                    <JsonEditor
+                        value={selectedComponent.props.funnelData || []}
+                        onChange={(v) => handleChange('props.funnelData', v)}
+                        placeholder='[{"value":100,"name":"展示"},{"value":80,"name":"点击"}]'
                     />
                 </Form.Item>
             )}

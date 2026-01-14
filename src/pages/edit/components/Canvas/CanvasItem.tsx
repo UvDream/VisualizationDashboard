@@ -374,6 +374,41 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
                     ],
                 }],
             }
+        case 'funnelChart':
+            return {
+                ...baseOption,
+                tooltip: { trigger: 'item', formatter: '{b}: {c}' },
+                series: [{
+                    type: 'funnel',
+                    left: '10%',
+                    top: 60,
+                    bottom: 60,
+                    width: '80%',
+                    min: 0,
+                    max: 100,
+                    minSize: '0%',
+                    maxSize: '100%',
+                    sort: 'descending',
+                    gap: 2,
+                    label: {
+                        show: true,
+                        position: 'inside',
+                        color: '#fff',
+                        fontSize: 12,
+                    },
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                    },
+                    data: props.funnelData || [
+                        { value: 100, name: '展示' },
+                        { value: 80, name: '点击' },
+                        { value: 60, name: '访问' },
+                        { value: 40, name: '咨询' },
+                        { value: 20, name: '订单' }
+                    ],
+                }],
+            }
         case 'gaugeChart':
             return {
                 ...baseOption,
@@ -739,6 +774,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             case 'horizontalBarChart':
             case 'pieChart':
             case 'halfPieChart':
+            case 'funnelChart':
             case 'gaugeChart':
             case 'radarChart':
             case 'scatterChart':

@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
+    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
@@ -173,6 +173,7 @@ export interface ComponentProps {
         symbolConfig?: ChartSymbolConfig;
     }>
     pieData?: Array<{ name: string; value: number }>
+    funnelData?: Array<{ name: string; value: number }>
     singleData?: number
     legend?: ChartLegendConfig
 

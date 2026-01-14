@@ -132,6 +132,18 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    funnelChart: {
+        props: {
+            funnelData: [
+                { value: 100, name: '展示' },
+                { value: 80, name: '点击' },
+                { value: 60, name: '访问' },
+                { value: 40, name: '咨询' },
+                { value: 20, name: '订单' }
+            ]
+        },
+        style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
     gaugeChart: {
         props: {
             singleData: 75,
