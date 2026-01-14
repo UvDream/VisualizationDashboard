@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
-import { ArrowUpOutlined, ArrowDownOutlined, VerticalAlignTopOutlined, VerticalAlignBottomOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
 import Ruler from '../Ruler'
 import type { ComponentType, ComponentItem } from '../../types'
