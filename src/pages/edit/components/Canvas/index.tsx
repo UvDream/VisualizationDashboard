@@ -95,6 +95,43 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
         },
         style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    halfPieChart: {
+        props: {
+            pieData: [
+                { value: 1048, name: '搜索引擎' },
+                { value: 735, name: '直接访问' },
+                { value: 580, name: '邮件营销' },
+                { value: 484, name: '联盟广告' },
+                { value: 300, name: '视频广告' }
+            ],
+            pieConfig: {
+                radius: ['40%', '70%'],
+                center: ['50%', '70%'],
+                roseType: false,
+                borderRadius: 0,
+                borderWidth: 0,
+                borderColor: '#000',
+                label: {
+                    show: true,
+                    position: 'outside',
+                    color: '#fff',
+                    fontSize: 12,
+                    formatter: '{b}: {d}%'
+                },
+                labelLine: {
+                    show: true,
+                    length: 10,
+                    length2: 10,
+                    lineStyle: { color: '#fff', width: 1 }
+                },
+                itemStyle: {
+                    shadowBlur: 0,
+                    shadowColor: 'rgba(0,0,0,0.5)'
+                }
+            }
+        },
+        style: { width: 350, height: 300, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
     gaugeChart: {
         props: {
             singleData: 75,

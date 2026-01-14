@@ -939,7 +939,7 @@ export default function PropertyPanel() {
             )
         }] : []),
         // 饼图配置 - 仅对饼图有效
-        ...(selectedComponent.type === 'pieChart' ? [{
+        ...(['pieChart', 'halfPieChart'].includes(selectedComponent.type) ? [{
             key: 'pieBasic',
             label: '饼图配置',
             children: (
@@ -1226,7 +1226,7 @@ export default function PropertyPanel() {
             )
         }] : []),
         // 图例配置 - 仅对图表有效
-        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
+        ...(['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'pieChart', 'halfPieChart', 'radarChart', 'scatterChart'].includes(selectedComponent.type) ? [{
             key: 'legend',
             label: '图例配置',
             children: (
@@ -2030,7 +2030,7 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
-            {selectedComponent.type === 'pieChart' && (
+            {['pieChart', 'halfPieChart'].includes(selectedComponent.type) && (
                 <Form.Item label="饼图数据">
                     <JsonEditor
                         value={selectedComponent.props.pieData || []}

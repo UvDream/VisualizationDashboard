@@ -331,6 +331,49 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
                     ],
                 }],
             }
+        case 'halfPieChart':
+            const halfPieConfig = props.pieConfig || {}
+            return {
+                ...baseOption,
+                tooltip: { trigger: 'item' },
+                series: [{
+                    type: 'pie',
+                    radius: halfPieConfig.radius || ['40%', '70%'],
+                    center: halfPieConfig.center || ['50%', '70%'],
+                    startAngle: 180,
+                    endAngle: 360,
+                    roseType: halfPieConfig.roseType || false,
+                    itemStyle: {
+                        borderRadius: halfPieConfig.borderRadius || 0,
+                        borderWidth: halfPieConfig.borderWidth || 0,
+                        borderColor: halfPieConfig.borderColor || '#000',
+                        shadowBlur: halfPieConfig.itemStyle?.shadowBlur || 0,
+                        shadowColor: halfPieConfig.itemStyle?.shadowColor || 'rgba(0,0,0,0.5)',
+                    },
+                    label: {
+                        show: halfPieConfig.label?.show !== false,
+                        position: halfPieConfig.label?.position || 'outside',
+                        color: halfPieConfig.label?.color || '#fff',
+                        fontSize: halfPieConfig.label?.fontSize || 12,
+                        formatter: halfPieConfig.label?.formatter || '{b}: {d}%',
+                    },
+                    labelLine: {
+                        show: halfPieConfig.labelLine?.show !== false,
+                        length: halfPieConfig.labelLine?.length || 10,
+                        length2: halfPieConfig.labelLine?.length2 || 10,
+                        lineStyle: {
+                            color: halfPieConfig.labelLine?.lineStyle?.color || '#fff',
+                            width: halfPieConfig.labelLine?.lineStyle?.width || 1,
+                        }
+                    },
+                    data: props.pieData || [
+                        { value: 1048, name: 'A' },
+                        { value: 735, name: 'B' },
+                        { value: 580, name: 'C' },
+                        { value: 484, name: 'D' },
+                    ],
+                }],
+            }
         case 'gaugeChart':
             return {
                 ...baseOption,
@@ -695,6 +738,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             case 'doubleBarChart':
             case 'horizontalBarChart':
             case 'pieChart':
+            case 'halfPieChart':
             case 'gaugeChart':
             case 'radarChart':
             case 'scatterChart':
