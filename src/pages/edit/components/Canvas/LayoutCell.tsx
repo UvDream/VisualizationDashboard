@@ -127,6 +127,22 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                         opts={{ renderer: 'svg' }}
                     />
                 )
+            case 'funnelChart':
+                return (
+                    <ReactECharts
+                        option={getFunnelChartOption(item)}
+                        style={{ width: '100%', height: '100%' }}
+                        opts={{ renderer: 'svg' }}
+                    />
+                )
+            case 'scatterChart':
+                return (
+                    <ReactECharts
+                        option={getScatterChartOption(item)}
+                        style={{ width: '100%', height: '100%' }}
+                        opts={{ renderer: 'svg' }}
+                    />
+                )
             case 'text':
                 return (
                     <span style={{
@@ -185,21 +201,6 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                         <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
                         <LayoutCell layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
                         <LayoutCell layoutId={item.id} cellIndex={2} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'} cellConfig={item.props.layoutConfig?.cells?.[2]} />
-                    </div>
-                )
-            case 'layoutTwoRow':
-                return (
-                    <div 
-                        className="layout-component layout-two-row" 
-                        style={{ 
-                            width: '100%', 
-                            height: '100%',
-                            flexDirection: item.props.layoutConfig?.direction === 'horizontal' ? 'row' : 'column',
-                            gap: item.props.layoutConfig?.gap ?? 8
-                        }}
-                    >
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '左栏' : '上方'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '右栏' : '下方'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
                     </div>
                 )
             case 'layoutHeader':
@@ -363,6 +364,54 @@ function getRadarChartOption(item: ComponentItem) {
                 name: s.name,
                 value: Array.isArray(s.data[0]) ? s.data[0] : s.data,
             })) || [{ value: [80, 50, 90, 40, 60] }],
+        }],
+    }
+}
+
+function getFunnelChartOption(item: ComponentItem) {
+    return {
+        backgroundColor: 'transparent',
+        tooltip: { trigger: 'item', formatter: '{b}: {c}' },
+        series: [{
+            type: 'funnel',
+            left: '10%',
+            top: 20,
+            bottom: 20,
+            width: '80%',
+            min: 0,
+            max: 100,
+            minSize: '0%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 2,
+            label: { show: true, position: 'inside', color: '#fff', fontSize: 10 },
+            itemStyle: { borderColor: '#fff', borderWidth: 1 },
+            data: item.props.funnelData || [
+                { value: 100, name: '展示' },
+                { value: 80, name: '点击' },
+                { value: 60, name: '访问' },
+                { value: 40, name: '咨询' },
+                { value: 20, name: '订单' },
+            ],
+        }],
+    }
+}
+
+function getScatterChartOption(item: ComponentItem) {
+    return {
+        backgroundColor: 'transparent',
+        grid: { top: 20, right: 20, bottom: 30, left: 40 },
+        tooltip: { trigger: 'item' },
+        xAxis: { type: 'value', axisLabel: { color: '#aaa', fontSize: 10 }, splitLine: { lineStyle: { color: '#333' } } },
+        yAxis: { type: 'value', axisLabel: { color: '#aaa', fontSize: 10 }, splitLine: { lineStyle: { color: '#333' } } },
+        series: item.props.seriesData?.map((s: any) => ({
+            ...s,
+            type: 'scatter',
+            symbolSize: 10,
+        })) || [{ 
+            type: 'scatter', 
+            symbolSize: 10,
+            data: [[10, 20], [30, 40], [50, 60], [70, 80], [90, 100]] 
         }],
     }
 }
