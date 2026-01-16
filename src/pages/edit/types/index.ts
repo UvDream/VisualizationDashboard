@@ -12,6 +12,8 @@ export type ComponentType =
     | 'icon'
     // 容器
     | 'container'
+    // 布局组件
+    | 'layoutTwoColumn' | 'layoutThreeColumn' | 'layoutTwoRow' | 'layoutHeader' | 'layoutSidebar'
     // 3D组件
     | 'threeEarth' | 'threeParticles'
 
@@ -166,8 +168,8 @@ export interface ComponentProps {
     // 图表数据
     chartTitle?: string
     xAxisData?: string[]
-    seriesData?: Array<{ 
-        name: string; 
+    seriesData?: Array<{
+        name: string;
         data: any[];
         // 系列特定的符号配置
         symbolConfig?: ChartSymbolConfig;
@@ -340,6 +342,9 @@ export interface ComponentItem {
     style: ComponentStyle
     visible: boolean
     locked: boolean
+    // 布局嵌套支持
+    parentId?: string      // 父布局组件ID
+    cellIndex?: number     // 所在布局单元格索引 (0, 1, 2...)
 }
 
 // 吸附线

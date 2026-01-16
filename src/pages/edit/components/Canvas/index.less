@@ -266,17 +266,17 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
     &:hover {
         background-color: rgba(64, 150, 255, 0.2);
         color: #fff;
     }
-    
+
     .anticon {
         font-size: 14px;
         opacity: 0.7;
     }
-    
+
     &:hover .anticon {
         opacity: 1;
     }
@@ -284,7 +284,7 @@
 
 .context-menu-item-delete {
     color: #ff6b6b;
-    
+
     &:hover {
         background-color: rgba(255, 77, 79, 0.15);
         color: #ff4d4f;
@@ -305,4 +305,217 @@
     pointer-events: none;
     z-index: 9999;
     box-shadow: 0 0 10px rgba(64, 150, 255, 0.3);
+}
+
+/* 布局组件样式 */
+.layout-component {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.layout-cell {
+    background: linear-gradient(135deg, rgba(24, 144, 255, 0.15) 0%, rgba(24, 144, 255, 0.05) 100%);
+    border: 1px dashed rgba(24, 144, 255, 0.4);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    user-select: none;
+    transition: all 0.2s ease;
+    min-height: 60px;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(135deg, rgba(24, 144, 255, 0.25) 0%, rgba(24, 144, 255, 0.1) 100%);
+        border-color: rgba(24, 144, 255, 0.6);
+    }
+
+    // 拖放悬停状态
+    &.layout-cell-hover {
+        background: linear-gradient(135deg, rgba(82, 196, 26, 0.3) 0%, rgba(82, 196, 26, 0.15) 100%);
+        border-color: rgba(82, 196, 26, 0.8);
+        border-style: solid;
+        box-shadow: inset 0 0 20px rgba(82, 196, 26, 0.2);
+    }
+
+    // 有子组件时的样式 - 让内容填满
+    &.has-child {
+        border-style: solid;
+        border-color: rgba(24, 144, 255, 0.5);
+        padding: 0;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    // 子组件被选中时
+    &.child-selected {
+        border-color: #1890ff;
+        border-width: 2px;
+        box-shadow: 0 0 10px rgba(24, 144, 255, 0.4);
+    }
+
+    // 标签文字
+    .layout-cell-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+    }
+
+    // 占位符
+    .layout-cell-placeholder {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        padding: 8px;
+    }
+}
+
+// 布局单元格内的子组件容器
+.layout-cell-children {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: flex-start;
+}
+
+// 布局单元格内的子组件
+.layout-cell-child {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    overflow: hidden;
+
+    &:hover {
+        border-color: rgba(24, 144, 255, 0.6);
+        background: rgba(24, 144, 255, 0.1);
+    }
+}
+
+// 布局单元格内的按钮样式
+.layout-cell-button {
+    padding: 4px 12px;
+    background: #1890ff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+// 布局单元格内的进度条样式
+.layout-cell-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+
+    .layout-cell-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #1890ff, #52c41a);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+}
+
+// 布局单元格内的图片占位符
+.layout-cell-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
+}
+
+// 布局单元格内的组件占位符
+.layout-cell-component-placeholder {
+    padding: 8px 12px;
+    background: rgba(24, 144, 255, 0.1);
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* 两栏布局 */
+.layout-two-column {
+    flex-direction: row;
+
+    .layout-cell {
+        flex: 1;
+    }
+}
+
+/* 三栏布局 */
+.layout-three-column {
+    flex-direction: row;
+
+    .layout-cell {
+        flex: 1;
+    }
+}
+
+/* 两行布局 */
+.layout-two-row {
+    flex-direction: column;
+
+    .layout-cell {
+        flex: 1;
+    }
+}
+
+/* 头部布局 */
+.layout-header {
+    flex-direction: column;
+
+    .layout-header-top {
+        flex: 0 0 80px;
+        background: linear-gradient(135deg, rgba(82, 196, 26, 0.15) 0%, rgba(82, 196, 26, 0.05) 100%);
+        border-color: rgba(82, 196, 26, 0.4);
+
+        &:hover {
+            background: linear-gradient(135deg, rgba(82, 196, 26, 0.25) 0%, rgba(82, 196, 26, 0.1) 100%);
+            border-color: rgba(82, 196, 26, 0.6);
+        }
+    }
+
+    .layout-header-content {
+        flex: 1;
+    }
+}
+
+/* 侧栏布局 */
+.layout-sidebar {
+    flex-direction: row;
+
+    .layout-sidebar-left {
+        flex: 0 0 200px;
+        background: linear-gradient(135deg, rgba(250, 173, 20, 0.15) 0%, rgba(250, 173, 20, 0.05) 100%);
+        border-color: rgba(250, 173, 20, 0.4);
+
+        &:hover {
+            background: linear-gradient(135deg, rgba(250, 173, 20, 0.25) 0%, rgba(250, 173, 20, 0.1) 100%);
+            border-color: rgba(250, 173, 20, 0.6);
+        }
+    }
+
+    .layout-sidebar-content {
+        flex: 1;
+    }
 }

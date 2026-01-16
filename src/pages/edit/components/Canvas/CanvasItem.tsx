@@ -18,6 +18,7 @@ import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
 import WordCloudChart from './WordCloudChart'
+import LayoutCell from './LayoutCell'
 import './index.less'
 
 // 懒加载地图组件
@@ -239,7 +240,7 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
                 { name: '客服', max: 100 },
                 { name: '研发', max: 100 },
             ]
-            
+
             // 构建雷达图系列数据
             const radarSeriesData = props.seriesData?.map(s => ({
                 name: s.name,
@@ -433,13 +434,13 @@ const getCalendarOption = (props: ComponentItem['props']) => {
     const colors = props.calendarColors || ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
     const cellSize = props.calendarCellSize || 15
     const lang = props.calendarLang || 'zh'
-    
+
     // 中英文月份名称
     const monthNameMap: Record<string, string[]> = {
         zh: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
         en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }
-    
+
     // 中英文星期名称
     const dayNameMap: Record<string, string[]> = {
         zh: ['日', '一', '二', '三', '四', '五', '六'],
@@ -450,20 +451,20 @@ const getCalendarOption = (props: ComponentItem['props']) => {
     const legendOrient = props.legend?.orient || 'horizontal'
     const legendLeft = props.legend?.left || 'center'
     const legendTop = props.legend?.top || 'bottom'
-    
+
     // 根据图例位置调整日历位置
     let calendarTop = 40
     let calendarBottom = 20
     let calendarLeft = 50
     let calendarRight = 30
-    
+
     if (showLegend) {
         if (legendTop === 'top') {
             calendarTop = 70
         } else if (legendTop === 'bottom') {
             calendarBottom = 50
         }
-        
+
         if (legendOrient === 'vertical') {
             if (legendLeft === 'left') {
                 calendarLeft = 100
@@ -472,7 +473,7 @@ const getCalendarOption = (props: ComponentItem['props']) => {
             }
         }
     }
-    
+
     // 构建 visualMap 配置
     const visualMapConfig: any = showLegend ? {
         min: 0,
@@ -482,13 +483,13 @@ const getCalendarOption = (props: ComponentItem['props']) => {
         inRange: {
             color: colors
         },
-        textStyle: { 
+        textStyle: {
             color: props.legend?.textStyle?.color || '#fff',
             fontSize: props.legend?.textStyle?.fontSize || 12,
             fontWeight: props.legend?.textStyle?.fontWeight || 'normal'
         }
     } : { show: false }
-    
+
     // 设置图例位置
     if (showLegend) {
         if (legendOrient === 'horizontal') {
@@ -511,7 +512,7 @@ const getCalendarOption = (props: ComponentItem['props']) => {
             }
         }
     }
-    
+
     return {
         backgroundColor: 'transparent',
         title: props.chartTitle ? {
@@ -786,7 +787,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         opts={{ renderer: 'svg' }}
                     />
                 )
-            
+
             case 'wordCloudChart':
                 return (
                     <WordCloudChart
@@ -796,7 +797,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         config={item.props.wordCloudConfig}
                     />
                 )
-            
+
             case 'mapChart':
                 return (
                     <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载地图...</div>}>
@@ -807,7 +808,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         />
                     </Suspense>
                 )
-            
+
             case 'calendarChart':
                 return (
                     <ReactECharts
@@ -991,28 +992,66 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     </div>
                 )
 
+            // 布局组件
+            case 'layoutTwoColumn':
+                return (
+                    <div className="layout-component layout-two-column">
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="右栏" />
+                    </div>
+                )
+            case 'layoutThreeColumn':
+                return (
+                    <div className="layout-component layout-three-column">
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="中栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={2} cellLabel="右栏" />
+                    </div>
+                )
+            case 'layoutTwoRow':
+                return (
+                    <div className="layout-component layout-two-row">
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="上方" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="下方" />
+                    </div>
+                )
+            case 'layoutHeader':
+                return (
+                    <div className="layout-component layout-header">
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="头部" className="layout-header-top" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-header-content" />
+                    </div>
+                )
+            case 'layoutSidebar':
+                return (
+                    <div className="layout-component layout-sidebar">
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="侧栏" className="layout-sidebar-left" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-sidebar-content" />
+                    </div>
+                )
+
             // 图片
             case 'image':
                 return (
                     <div className="canvas-item-image-placeholder" style={{ width: '100%', height: '100%' }}>
                         {item.props.src ? (
-                            <img 
-                                src={item.props.src} 
-                                alt={item.props.alt || ''} 
-                                style={{ 
-                                    width: '100%', 
-                                    height: '100%', 
+                            <img
+                                src={item.props.src}
+                                alt={item.props.alt || ''}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
                                     objectFit: 'cover',
                                     display: 'block',
                                     pointerEvents: 'none'
                                 }}
                             />
                         ) : (
-                            <div style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                display: 'flex', 
-                                alignItems: 'center', 
+                            <div style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
                                 justifyContent: 'center',
                                 backgroundColor: '#2a2a2a',
                                 color: '#aaa'

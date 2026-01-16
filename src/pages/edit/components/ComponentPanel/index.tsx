@@ -31,6 +31,8 @@ import {
     UnorderedListOutlined,
     FunnelPlotOutlined,
     CloudOutlined,
+    LayoutOutlined,
+    AppstoreOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -87,6 +89,12 @@ const widgetComponents: ComponentConfig[] = [
     { type: 'decoration1', name: '装饰1', icon: <GatewayOutlined />, category: 'widget' },
     { type: 'decoration2', name: '装饰2', icon: <StarOutlined />, category: 'widget' },
     { type: 'container', name: '容器', icon: <BorderOuterOutlined />, category: 'widget' },
+    // 布局组件
+    { type: 'layoutTwoColumn', name: '两栏布局', icon: <LayoutOutlined />, category: 'widget' },
+    { type: 'layoutThreeColumn', name: '三栏布局', icon: <AppstoreOutlined />, category: 'widget' },
+    { type: 'layoutTwoRow', name: '两行布局', icon: <LayoutOutlined style={{ transform: 'rotate(90deg)' }} />, category: 'widget' },
+    { type: 'layoutHeader', name: '头部布局', icon: <LayoutOutlined />, category: 'widget' },
+    { type: 'layoutSidebar', name: '侧栏布局', icon: <LayoutOutlined />, category: 'widget' },
 ]
 
 // 图片组件

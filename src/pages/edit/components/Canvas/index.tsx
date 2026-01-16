@@ -379,6 +379,12 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
     decoration1: { props: {}, style: { width: 200, height: 60 } },
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },
+    // 布局组件
+    layoutTwoColumn: { props: {}, style: { width: 600, height: 300, backgroundColor: 'transparent' } },
+    layoutThreeColumn: { props: {}, style: { width: 900, height: 300, backgroundColor: 'transparent' } },
+    layoutTwoRow: { props: {}, style: { width: 400, height: 400, backgroundColor: 'transparent' } },
+    layoutHeader: { props: {}, style: { width: 600, height: 400, backgroundColor: 'transparent' } },
+    layoutSidebar: { props: {}, style: { width: 600, height: 400, backgroundColor: 'transparent' } },
 
     // 图片
     image: { props: { alt: '图片' }, style: { width: 200, height: 150, backgroundColor: '#2a2a2a' } },
@@ -395,7 +401,7 @@ interface CanvasProps {
 export default function Canvas({ previewMode = false }: CanvasProps) {
     const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
-    
+
     // 右键菜单状态
     const [menuVisible, setMenuVisible] = useState(false)
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 })
@@ -488,14 +494,14 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     // 框选开始
     const handleCanvasMouseDown = (e: React.MouseEvent) => {
         if (previewMode) return
-        
+
         // 只有在画布空白区域按下鼠标才开始框选
         if (e.target === e.currentTarget) {
             const canvasRect = customCanvasRef.current?.getBoundingClientRect()
             if (canvasRect) {
                 const x = (e.clientX - canvasRect.left) / state.scale
                 const y = (e.clientY - canvasRect.top) / state.scale
-                
+
                 setIsSelecting(true)
                 setSelectionStart({ x, y })
                 setSelectionEnd({ x, y })
@@ -508,20 +514,20 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     // 框选移动
     const handleCanvasMouseMove = (e: React.MouseEvent) => {
         if (!isSelecting || previewMode) return
-        
+
         const canvasRect = customCanvasRef.current?.getBoundingClientRect()
         if (canvasRect) {
             const x = (e.clientX - canvasRect.left) / state.scale
             const y = (e.clientY - canvasRect.top) / state.scale
-            
+
             setSelectionEnd({ x, y })
-            
+
             // 计算框选区域
             const minX = Math.min(selectionStart.x, x)
             const maxX = Math.max(selectionStart.x, x)
             const minY = Math.min(selectionStart.y, y)
             const maxY = Math.max(selectionStart.y, y)
-            
+
             // 检测哪些组件在框选区域内
             const selectedIds = state.components
                 .filter(comp => {
@@ -529,12 +535,12 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     const compY = comp.style.y
                     const compRight = compX + comp.style.width
                     const compBottom = compY + comp.style.height
-                    
+
                     // 判断组件是否与框选区域相交
                     return !(compRight < minX || compX > maxX || compBottom < minY || compY > maxY)
                 })
                 .map(comp => comp.id)
-            
+
             selectComponents(selectedIds)
         }
     }
@@ -550,38 +556,38 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
             }
         }
     }
-    
+
     // 右键菜单事件处理
     const handleContextMenu = (e: React.MouseEvent, componentId: string) => {
         if (previewMode) return
-        
+
         e.preventDefault()
         e.stopPropagation()
-        
+
         // 设置菜单位置
         setMenuPosition({ x: e.clientX, y: e.clientY })
         setSelectedComponentId(componentId)
         setMenuVisible(true)
-        
+
         // 点击外部关闭菜单
         document.addEventListener('click', handleClickOutside)
     }
-    
+
     const handleClickOutside = () => {
         setMenuVisible(false)
         document.removeEventListener('click', handleClickOutside)
     }
-    
+
     // 关闭菜单
     const closeMenu = () => {
         setMenuVisible(false)
         document.removeEventListener('click', handleClickOutside)
     }
-    
+
     // 菜单项点击处理
     const handleMenuClick = (action: string) => {
         closeMenu()
-        
+
         // 如果有多选，批量操作
         const selectedIds = state.selectedIds || []
         if (selectedIds.length > 1) {
@@ -590,9 +596,9 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
             }
             return
         }
-        
+
         if (!selectedComponentId) return
-        
+
         switch (action) {
             case 'bringForward':
                 bringForward(selectedComponentId)
@@ -646,11 +652,12 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                 onMouseMove={handleCanvasMouseMove}
                 onMouseUp={handleCanvasMouseUp}
             >
-                {state.components.map((item) => (
-                    <CanvasItem 
-                        key={item.id} 
-                        item={item} 
-                        onContextMenu={!previewMode ? (e) => handleContextMenu(e, item.id) : undefined} 
+                {/* 只渲染顶层组件，子组件由 LayoutCell 渲染 */}
+                {state.components.filter(item => !item.parentId).map((item) => (
+                    <CanvasItem
+                        key={item.id}
+                        item={item}
+                        onContextMenu={!previewMode ? (e) => handleContextMenu(e, item.id) : undefined}
                         previewMode={previewMode}
                     />
                 ))}
@@ -680,7 +687,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     />
                 )}
             </div>
-            
+
             {/* 右键菜单 */}
             {!previewMode && menuVisible && (
                 <div
