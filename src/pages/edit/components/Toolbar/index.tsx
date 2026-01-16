@@ -11,6 +11,7 @@ import {
     ZoomOutOutlined,
     ReloadOutlined,
     SettingOutlined,
+    GithubOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
@@ -144,6 +145,12 @@ export default function Toolbar() {
                     <Button type="primary" icon={<SaveOutlined />}>
                         保存
                     </Button>
+                    <Tooltip title="GitHub">
+                        <Button
+                            icon={<GithubOutlined />}
+                            onClick={() => window.open('https://github.com/UvDream/VisualizationDashboard', '_blank')}
+                        />
+                    </Tooltip>
                 </Space>
             </div>
 
