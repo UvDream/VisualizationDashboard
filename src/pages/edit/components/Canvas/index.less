@@ -456,28 +456,16 @@
 /* 两栏布局 */
 .layout-two-column {
     flex-direction: row;
-
-    .layout-cell {
-        flex: 1;
-    }
 }
 
 /* 三栏布局 */
 .layout-three-column {
     flex-direction: row;
-
-    .layout-cell {
-        flex: 1;
-    }
 }
 
 /* 两行布局 */
 .layout-two-row {
     flex-direction: column;
-
-    .layout-cell {
-        flex: 1;
-    }
 }
 
 /* 头部布局 */
@@ -485,7 +473,6 @@
     flex-direction: column;
 
     .layout-header-top {
-        flex: 0 0 80px;
         background: linear-gradient(135deg, rgba(82, 196, 26, 0.15) 0%, rgba(82, 196, 26, 0.05) 100%);
         border-color: rgba(82, 196, 26, 0.4);
 
@@ -494,10 +481,6 @@
             border-color: rgba(82, 196, 26, 0.6);
         }
     }
-
-    .layout-header-content {
-        flex: 1;
-    }
 }
 
 /* 侧栏布局 */
@@ -505,7 +488,6 @@
     flex-direction: row;
 
     .layout-sidebar-left {
-        flex: 0 0 200px;
         background: linear-gradient(135deg, rgba(250, 173, 20, 0.15) 0%, rgba(250, 173, 20, 0.05) 100%);
         border-color: rgba(250, 173, 20, 0.4);
 
@@ -513,9 +495,5 @@
             background: linear-gradient(135deg, rgba(250, 173, 20, 0.25) 0%, rgba(250, 173, 20, 0.1) 100%);
             border-color: rgba(250, 173, 20, 0.6);
         }
-    }
-
-    .layout-sidebar-content {
-        flex: 1;
     }
 }

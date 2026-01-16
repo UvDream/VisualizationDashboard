@@ -13,7 +13,7 @@ export type ComponentType =
     // 容器
     | 'container'
     // 布局组件
-    | 'layoutTwoColumn' | 'layoutThreeColumn' | 'layoutTwoRow' | 'layoutHeader' | 'layoutSidebar'
+    | 'layoutTwoColumn' | 'layoutThreeColumn' | 'layoutHeader' | 'layoutSidebar'
     // 3D组件
     | 'threeEarth' | 'threeParticles'
 
@@ -330,6 +330,18 @@ export interface ComponentProps {
         rotation?: boolean // 是否旋转
         rotationRange?: [number, number] // 旋转角度范围
         gridSize?: number // 网格大小
+    }
+
+    // 布局组件配置
+    layoutConfig?: {
+        direction?: 'horizontal' | 'vertical' // 布局方向：水平(左右) 或 垂直(上下)
+        gap?: number // 栏间距
+        cells?: Array<{
+            flex?: number // 所占比例 (flex-grow)
+            width?: string // 固定宽度 (如 '200px', '30%')
+            height?: string // 固定高度
+            backgroundColor?: string // 背景色
+        }>
     }
 }
 

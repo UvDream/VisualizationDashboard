@@ -1974,6 +1974,86 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 布局组件配置
+        ...(['layoutTwoColumn', 'layoutThreeColumn', 'layoutHeader', 'layoutSidebar'].includes(selectedComponent.type) ? [{
+            key: 'layoutConfig',
+            label: '布局配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="布局方向">
+                        <Radio.Group
+                            value={selectedComponent.props.layoutConfig?.direction || (
+                                ['layoutTwoRow', 'layoutHeader'].includes(selectedComponent.type) ? 'vertical' : 'horizontal'
+                            )}
+                            onChange={(e) => handleChange('props.layoutConfig', {
+                                ...selectedComponent.props.layoutConfig,
+                                direction: e.target.value
+                            })}
+                        >
+                            <Radio.Button value="horizontal">左右</Radio.Button>
+                            <Radio.Button value="vertical">上下</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item label="栏间距">
+                        <InputNumber
+                            value={selectedComponent.props.layoutConfig?.gap ?? 8}
+                            onChange={(v) => handleChange('props.layoutConfig', {
+                                ...selectedComponent.props.layoutConfig,
+                                gap: v ?? 8
+                            })}
+                            min={0}
+                            max={50}
+                            style={{ width: '100%' }}
+                            addonAfter="px"
+                        />
+                    </Form.Item>
+                    {/* 各栏配置 */}
+                    {(() => {
+                        const cellCount = ['layoutThreeColumn'].includes(selectedComponent.type) ? 3 : 2
+                        const cellLabels = selectedComponent.props.layoutConfig?.direction === 'vertical'
+                            ? ['上方', '中间', '下方']
+                            : ['左栏', '中栏', '右栏']
+                        return Array.from({ length: cellCount }, (_, i) => (
+                            <div key={i} style={{ marginBottom: 16, padding: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: 4 }}>
+                                <div style={{ marginBottom: 8, color: '#fff', fontSize: 12 }}>{cellLabels[i] || `栏${i + 1}`}</div>
+                                <div className="form-row">
+                                    <Form.Item label="比例">
+                                        <InputNumber
+                                            value={selectedComponent.props.layoutConfig?.cells?.[i]?.flex ?? 1}
+                                            onChange={(v) => {
+                                                const cells = [...(selectedComponent.props.layoutConfig?.cells || [])]
+                                                cells[i] = { ...cells[i], flex: v ?? 1 }
+                                                handleChange('props.layoutConfig', {
+                                                    ...selectedComponent.props.layoutConfig,
+                                                    cells
+                                                })
+                                            }}
+                                            min={0.1}
+                                            max={10}
+                                            step={0.1}
+                                            style={{ width: '100%' }}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="背景色">
+                                        <ColorPicker
+                                            value={selectedComponent.props.layoutConfig?.cells?.[i]?.backgroundColor || 'transparent'}
+                                            onChange={(c) => {
+                                                const cells = [...(selectedComponent.props.layoutConfig?.cells || [])]
+                                                cells[i] = { ...cells[i], backgroundColor: c.toHexString() }
+                                                handleChange('props.layoutConfig', {
+                                                    ...selectedComponent.props.layoutConfig,
+                                                    cells
+                                                })
+                                            }}
+                                        />
+                                    </Form.Item>
+                                </div>
+                            </div>
+                        ))
+                    })()}
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (

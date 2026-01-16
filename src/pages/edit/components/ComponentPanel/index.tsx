@@ -92,7 +92,6 @@ const widgetComponents: ComponentConfig[] = [
     // 布局组件
     { type: 'layoutTwoColumn', name: '两栏布局', icon: <LayoutOutlined />, category: 'widget' },
     { type: 'layoutThreeColumn', name: '三栏布局', icon: <AppstoreOutlined />, category: 'widget' },
-    { type: 'layoutTwoRow', name: '两行布局', icon: <LayoutOutlined style={{ transform: 'rotate(90deg)' }} />, category: 'widget' },
     { type: 'layoutHeader', name: '头部布局', icon: <LayoutOutlined />, category: 'widget' },
     { type: 'layoutSidebar', name: '侧栏布局', icon: <LayoutOutlined />, category: 'widget' },
 ]

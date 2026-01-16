@@ -380,11 +380,47 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },
     // 布局组件
-    layoutTwoColumn: { props: {}, style: { width: 600, height: 300, backgroundColor: 'transparent' } },
-    layoutThreeColumn: { props: {}, style: { width: 900, height: 300, backgroundColor: 'transparent' } },
-    layoutTwoRow: { props: {}, style: { width: 400, height: 400, backgroundColor: 'transparent' } },
-    layoutHeader: { props: {}, style: { width: 600, height: 400, backgroundColor: 'transparent' } },
-    layoutSidebar: { props: {}, style: { width: 600, height: 400, backgroundColor: 'transparent' } },
+    layoutTwoColumn: { 
+        props: { 
+            layoutConfig: { 
+                direction: 'horizontal', 
+                gap: 8, 
+                cells: [{ flex: 1 }, { flex: 1 }] 
+            } 
+        }, 
+        style: { width: 600, height: 300, backgroundColor: 'transparent' } 
+    },
+    layoutThreeColumn: { 
+        props: { 
+            layoutConfig: { 
+                direction: 'horizontal', 
+                gap: 8, 
+                cells: [{ flex: 1 }, { flex: 1 }, { flex: 1 }] 
+            } 
+        }, 
+        style: { width: 900, height: 300, backgroundColor: 'transparent' } 
+    },
+
+    layoutHeader: { 
+        props: { 
+            layoutConfig: { 
+                direction: 'vertical', 
+                gap: 8, 
+                cells: [{ flex: 0.3 }, { flex: 1 }] 
+            } 
+        }, 
+        style: { width: 600, height: 400, backgroundColor: 'transparent' } 
+    },
+    layoutSidebar: { 
+        props: { 
+            layoutConfig: { 
+                direction: 'horizontal', 
+                gap: 8, 
+                cells: [{ flex: 0.3 }, { flex: 1 }] 
+            } 
+        }, 
+        style: { width: 600, height: 400, backgroundColor: 'transparent' } 
+    },
 
     // 图片
     image: { props: { alt: '图片' }, style: { width: 200, height: 150, backgroundColor: '#2a2a2a' } },

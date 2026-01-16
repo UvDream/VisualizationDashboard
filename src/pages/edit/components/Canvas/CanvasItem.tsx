@@ -995,38 +995,104 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             // 布局组件
             case 'layoutTwoColumn':
                 return (
-                    <div className="layout-component layout-two-column">
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="右栏" />
+                    <div 
+                        className="layout-component layout-two-column"
+                        style={{
+                            flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
+                            gap: item.props.layoutConfig?.gap ?? 8
+                        }}
+                    >
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={0} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
+                            cellConfig={item.props.layoutConfig?.cells?.[0]}
+                        />
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={1} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
+                            cellConfig={item.props.layoutConfig?.cells?.[1]}
+                        />
                     </div>
                 )
             case 'layoutThreeColumn':
                 return (
-                    <div className="layout-component layout-three-column">
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="中栏" />
-                        <LayoutCell layoutId={item.id} cellIndex={2} cellLabel="右栏" />
-                    </div>
-                )
-            case 'layoutTwoRow':
-                return (
-                    <div className="layout-component layout-two-row">
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="上方" />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="下方" />
+                    <div 
+                        className="layout-component layout-three-column"
+                        style={{
+                            flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
+                            gap: item.props.layoutConfig?.gap ?? 8
+                        }}
+                    >
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={0} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
+                            cellConfig={item.props.layoutConfig?.cells?.[0]}
+                        />
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={1} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'}
+                            cellConfig={item.props.layoutConfig?.cells?.[1]}
+                        />
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={2} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
+                            cellConfig={item.props.layoutConfig?.cells?.[2]}
+                        />
                     </div>
                 )
             case 'layoutHeader':
                 return (
-                    <div className="layout-component layout-header">
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="头部" className="layout-header-top" />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-header-content" />
+                    <div 
+                        className="layout-component layout-header"
+                        style={{
+                            flexDirection: item.props.layoutConfig?.direction === 'horizontal' ? 'row' : 'column',
+                            gap: item.props.layoutConfig?.gap ?? 8
+                        }}
+                    >
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={0} 
+                            cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'} 
+                            className="layout-header-top"
+                            cellConfig={item.props.layoutConfig?.cells?.[0]}
+                        />
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={1} 
+                            cellLabel="内容区" 
+                            className="layout-header-content"
+                            cellConfig={item.props.layoutConfig?.cells?.[1]}
+                        />
                     </div>
                 )
             case 'layoutSidebar':
                 return (
-                    <div className="layout-component layout-sidebar">
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="侧栏" className="layout-sidebar-left" />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-sidebar-content" />
+                    <div 
+                        className="layout-component layout-sidebar"
+                        style={{
+                            flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
+                            gap: item.props.layoutConfig?.gap ?? 8
+                        }}
+                    >
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={0} 
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'} 
+                            className="layout-sidebar-left"
+                            cellConfig={item.props.layoutConfig?.cells?.[0]}
+                        />
+                        <LayoutCell 
+                            layoutId={item.id} 
+                            cellIndex={1} 
+                            cellLabel="内容区" 
+                            className="layout-sidebar-content"
+                            cellConfig={item.props.layoutConfig?.cells?.[1]}
+                        />
                     </div>
                 )
 
