@@ -149,6 +149,43 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 ) : (
                     <div className="layout-cell-placeholder">图片</div>
                 )
+            // 布局组件嵌套支持
+            case 'layoutTwoColumn':
+                return (
+                    <div className="layout-component layout-two-column" style={{ width: '100%', height: '100%' }}>
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="右栏" />
+                    </div>
+                )
+            case 'layoutThreeColumn':
+                return (
+                    <div className="layout-component layout-three-column" style={{ width: '100%', height: '100%' }}>
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="左栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="中栏" />
+                        <LayoutCell layoutId={item.id} cellIndex={2} cellLabel="右栏" />
+                    </div>
+                )
+            case 'layoutTwoRow':
+                return (
+                    <div className="layout-component layout-two-row" style={{ width: '100%', height: '100%' }}>
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="上方" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="下方" />
+                    </div>
+                )
+            case 'layoutHeader':
+                return (
+                    <div className="layout-component layout-header" style={{ width: '100%', height: '100%' }}>
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="头部" className="layout-header-top" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-header-content" />
+                    </div>
+                )
+            case 'layoutSidebar':
+                return (
+                    <div className="layout-component layout-sidebar" style={{ width: '100%', height: '100%' }}>
+                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel="侧栏" className="layout-sidebar-left" />
+                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-sidebar-content" />
+                    </div>
+                )
             default:
                 return <div className="layout-cell-placeholder">{item.type}</div>
         }
