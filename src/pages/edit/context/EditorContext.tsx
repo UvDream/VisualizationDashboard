@@ -29,7 +29,9 @@ const getInitialState = (): EditorState => {
             width: 1920,
             height: 1080,
             backgroundColor: '#000000',
-            name: '大屏可视化'
+            name: '大屏可视化',
+            backgroundImageMode: 'cover',
+            backgroundImageOpacity: 1,
         }
     }
 }

@@ -662,6 +662,61 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
         }
     }
 
+    // 生成背景样式
+    const getBackgroundStyle = () => {
+        const config = state.canvasConfig
+        const baseStyle: React.CSSProperties = {
+            backgroundColor: config?.backgroundColor || '#000000',
+        }
+
+        if (config?.backgroundImage) {
+            const opacity = config.backgroundImageOpacity ?? 1
+            const mode = config.backgroundImageMode || 'cover'
+
+            switch (mode) {
+                case 'tile':
+                    baseStyle.backgroundImage = `url(${config.backgroundImage})`
+                    baseStyle.backgroundRepeat = 'repeat'
+                    baseStyle.backgroundSize = 'auto'
+                    baseStyle.backgroundPosition = 'top left'
+                    baseStyle.opacity = opacity
+                    break
+                case 'stretch':
+                    baseStyle.backgroundImage = `url(${config.backgroundImage})`
+                    baseStyle.backgroundRepeat = 'no-repeat'
+                    baseStyle.backgroundSize = '100% 100%'
+                    baseStyle.backgroundPosition = 'center'
+                    baseStyle.opacity = opacity
+                    break
+                case 'cover':
+                    baseStyle.backgroundImage = `url(${config.backgroundImage})`
+                    baseStyle.backgroundRepeat = 'no-repeat'
+                    baseStyle.backgroundSize = 'cover'
+                    baseStyle.backgroundPosition = 'center'
+                    baseStyle.opacity = opacity
+                    break
+                case 'contain':
+                    baseStyle.backgroundImage = `url(${config.backgroundImage})`
+                    baseStyle.backgroundRepeat = 'no-repeat'
+                    baseStyle.backgroundSize = 'contain'
+                    baseStyle.backgroundPosition = 'center'
+                    baseStyle.opacity = opacity
+                    break
+                case 'center':
+                    baseStyle.backgroundImage = `url(${config.backgroundImage})`
+                    baseStyle.backgroundRepeat = 'no-repeat'
+                    baseStyle.backgroundSize = 'auto'
+                    baseStyle.backgroundPosition = 'center'
+                    baseStyle.opacity = opacity
+                    break
+                default:
+                    break
+            }
+        }
+
+        return baseStyle
+    }
+
     return (
         <div className="canvas-wrapper">
             {!previewMode && (
@@ -678,7 +733,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                 style={{
                     width: state.canvasConfig?.width || 1920,
                     height: state.canvasConfig?.height || 1080,
-                    backgroundColor: state.canvasConfig?.backgroundColor || '#000000',
+                    ...getBackgroundStyle(),
                     transform: `scale(${state.scale}) translate(0px, 0px)`,
                     top: !previewMode ? 40 : 0,
                     left: !previewMode ? 40 : 0,
