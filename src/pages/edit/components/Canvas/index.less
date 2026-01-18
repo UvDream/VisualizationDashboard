@@ -70,6 +70,40 @@
         }
     }
 
+    /* 组合样式 - 完全禁用border，只使用outline */
+    &.grouped,
+    &.group-main {
+        border-width: 0 !important;  // 完全移除border
+        border-style: none !important;
+        border-color: transparent !important;
+    }
+
+    &.grouped {
+        outline: 1px dashed rgba(82, 196, 26, 0.5);
+        outline-offset: -1px;
+        
+        &.selected {
+            border-width: 0 !important;  // 选中时也完全移除border
+            border-style: none !important;
+            border-color: transparent !important;
+            outline-color: #1890ff;
+            box-shadow: 0 0 0 1px #1890ff, 0 0 0 3px rgba(82, 196, 26, 0.3);
+        }
+    }
+
+    &.group-main {
+        outline: 2px solid rgba(82, 196, 26, 0.8);
+        outline-offset: -2px;
+        
+        &.selected {
+            border-width: 0 !important;  // 选中时也完全移除border
+            border-style: none !important;
+            border-color: transparent !important;
+            outline-color: #1890ff;
+            box-shadow: 0 0 0 1px #1890ff, 0 0 0 3px rgba(82, 196, 26, 0.5);
+        }
+    }
+
     .resize-handle {
         position: absolute;
         width: 8px;

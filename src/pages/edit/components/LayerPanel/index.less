@@ -76,4 +76,32 @@
             }
         }
     }
+
+    // 组合图层特殊样式
+    .layer-group {
+        background: linear-gradient(90deg, rgba(82, 196, 26, 0.1) 0%, transparent 100%);
+        border-left: 3px solid rgba(82, 196, 26, 0.5);
+        padding-left: 9px;
+
+        &:hover {
+            background: linear-gradient(90deg, rgba(82, 196, 26, 0.15) 0%, rgba(42, 42, 42, 1) 100%);
+        }
+
+        &.selected {
+            background: linear-gradient(90deg, rgba(24, 144, 255, 0.2) 0%, rgba(82, 196, 26, 0.1) 100%);
+            border-left: 3px solid #1890ff;
+            box-shadow: inset 0 0 0 1px rgba(82, 196, 26, 0.3);
+        }
+
+        .layer-group-icon {
+            color: #52c41a;
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        .layer-item-name {
+            color: #52c41a;
+            font-weight: 500;
+        }
+    }
 }

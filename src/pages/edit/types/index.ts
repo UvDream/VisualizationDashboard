@@ -357,6 +357,9 @@ export interface ComponentItem {
     // 布局嵌套支持
     parentId?: string      // 父布局组件ID
     cellIndex?: number     // 所在布局单元格索引 (0, 1, 2...)
+    // 组合支持
+    groupId?: string       // 组合ID，同一组合的组件有相同的groupId
+    isGroup?: boolean      // 是否为组合（组合中的主组件标记）
 }
 
 // 吸附线
@@ -401,6 +404,8 @@ export type EditorAction =
     | { type: 'SET_SCALE'; payload: number }
     | { type: 'SET_SNAP_LINES'; payload: SnapLine[] }
     | { type: 'SET_CANVAS_CONFIG'; payload: Partial<CanvasConfig> }
+    | { type: 'GROUP_COMPONENTS'; payload: string[] }
+    | { type: 'UNGROUP_COMPONENTS'; payload: string }
 
 // 拖拽项类型
 export interface DragItem {

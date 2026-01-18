@@ -435,7 +435,7 @@ interface CanvasProps {
 }
 
 export default function Canvas({ previewMode = false }: CanvasProps) {
-    const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack } = useEditor()
+    const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack, groupComponents, ungroupComponents } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
 
     // 右键菜单状态
@@ -624,11 +624,49 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     const handleMenuClick = (action: string) => {
         closeMenu()
 
-        // 如果有多选，批量操作
         const selectedIds = state.selectedIds || []
+        
+        // 组合操作 - 需要多选
+        if (action === 'group') {
+            if (selectedIds.length >= 2) {
+                groupComponents(selectedIds)
+            }
+            return
+        }
+
+        // 取消组合操作
+        if (action === 'ungroup') {
+            if (selectedComponentId) {
+                const component = state.components.find(comp => comp.id === selectedComponentId)
+                if (component?.groupId) {
+                    ungroupComponents(selectedComponentId)
+                }
+            }
+            return
+        }
+
+        // 多选操作
         if (selectedIds.length > 1) {
-            if (action === 'delete') {
-                deleteComponents(selectedIds)
+            switch (action) {
+                case 'delete':
+                    deleteComponents(selectedIds)
+                    break
+                case 'bringForward':
+                    // 批量上移一层
+                    selectedIds.forEach(id => bringForward(id))
+                    break
+                case 'sendBackward':
+                    // 批量下移一层
+                    selectedIds.forEach(id => sendBackward(id))
+                    break
+                case 'bringToFront':
+                    // 批量置顶
+                    selectedIds.forEach(id => bringToFront(id))
+                    break
+                case 'sendToBack':
+                    // 批量置底
+                    selectedIds.forEach(id => sendToBack(id))
+                    break
             }
             return
         }
@@ -788,37 +826,80 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                         top: menuPosition.y,
                     }}
                 >
-                    <div
-                        className="context-menu-item"
-                        onClick={() => handleMenuClick('bringForward')}
-                    >
-                        上移一层
-                    </div>
-                    <div
-                        className="context-menu-item"
-                        onClick={() => handleMenuClick('sendBackward')}
-                    >
-                        下移一层
-                    </div>
-                    <div
-                        className="context-menu-item"
-                        onClick={() => handleMenuClick('bringToFront')}
-                    >
-                        置顶
-                    </div>
-                    <div
-                        className="context-menu-item"
-                        onClick={() => handleMenuClick('sendToBack')}
-                    >
-                        置底
-                    </div>
-                    <div className="context-menu-divider" />
-                    <div
-                        className="context-menu-item context-menu-item-delete"
-                        onClick={() => handleMenuClick('delete')}
-                    >
-                        删除
-                    </div>
+                    {/* 根据选中状态显示不同菜单 */}
+                    {(() => {
+                        const selectedIds = state.selectedIds || []
+                        const selectedComponent = selectedComponentId ? state.components.find(comp => comp.id === selectedComponentId) : null
+                        const isGrouped = selectedComponent?.groupId
+                        const canGroup = selectedIds.length >= 2 && !selectedIds.some(id => {
+                            const comp = state.components.find(c => c.id === id)
+                            return comp?.groupId
+                        })
+                        
+                        return (
+                            <>
+                                {/* 组合相关操作 */}
+                                {canGroup && (
+                                    <>
+                                        <div
+                                            className="context-menu-item"
+                                            onClick={() => handleMenuClick('group')}
+                                        >
+                                            组合
+                                        </div>
+                                        <div className="context-menu-divider" />
+                                    </>
+                                )}
+                                
+                                {isGrouped && (
+                                    <>
+                                        <div
+                                            className="context-menu-item"
+                                            onClick={() => handleMenuClick('ungroup')}
+                                        >
+                                            取消组合
+                                        </div>
+                                        <div className="context-menu-divider" />
+                                    </>
+                                )}
+
+                                {/* 图层操作 - 多选和单选都显示 */}
+                                <div
+                                    className="context-menu-item"
+                                    onClick={() => handleMenuClick('bringForward')}
+                                >
+                                    上移一层
+                                </div>
+                                <div
+                                    className="context-menu-item"
+                                    onClick={() => handleMenuClick('sendBackward')}
+                                >
+                                    下移一层
+                                </div>
+                                <div
+                                    className="context-menu-item"
+                                    onClick={() => handleMenuClick('bringToFront')}
+                                >
+                                    置顶
+                                </div>
+                                <div
+                                    className="context-menu-item"
+                                    onClick={() => handleMenuClick('sendToBack')}
+                                >
+                                    置底
+                                </div>
+                                <div className="context-menu-divider" />
+
+                                {/* 删除操作 */}
+                                <div
+                                    className="context-menu-item context-menu-item-delete"
+                                    onClick={() => handleMenuClick('delete')}
+                                >
+                                    删除{selectedIds.length > 1 ? `(${selectedIds.length}个)` : ''}
+                                </div>
+                            </>
+                        )
+                    })()}
                 </div>
             )}
         </div>

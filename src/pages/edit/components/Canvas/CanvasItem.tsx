@@ -606,7 +606,29 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
     const handleClick = (e: React.MouseEvent) => {
         if (!previewMode) {
             e.stopPropagation()
-            selectComponent(item.id)
+            
+            // Ctrl/Cmd + 点击实现多选
+            if (e.ctrlKey || e.metaKey) {
+                const currentSelectedIds = state.selectedIds || []
+                if (currentSelectedIds.includes(item.id)) {
+                    // 取消选中
+                    selectComponents(currentSelectedIds.filter(id => id !== item.id))
+                } else {
+                    // 添加到选中列表
+                    selectComponents([...currentSelectedIds, item.id])
+                }
+                return
+            }
+            
+            // 如果组件属于组合，选中整个组合
+            if (item.groupId) {
+                const groupComponents = state.components
+                    .filter(comp => comp.groupId === item.groupId)
+                    .map(comp => comp.id)
+                selectComponents(groupComponents)
+            } else {
+                selectComponent(item.id)
+            }
         }
     }
 
@@ -619,6 +641,18 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
         // 考虑缩放比例
         const startPosX = item.style.x
         const startPosY = item.style.y
+
+        // 获取组合中的所有组件
+        const groupedComponents = item.groupId 
+            ? state.components.filter(comp => comp.groupId === item.groupId)
+            : [item]
+
+        // 记录所有组件的初始位置
+        const initialPositions = groupedComponents.map(comp => ({
+            id: comp.id,
+            startX: comp.style.x,
+            startY: comp.style.y
+        }))
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
             // 这里的移动距离需要除以缩放比例，回到逻辑坐标系
@@ -636,11 +670,22 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 state.components
             )
 
-            // OPTIMIZATION: Update DOM directly to avoid re-renders and history flood
-            if (ref.current) {
-                ref.current.style.left = `${snappedX}px`
-                ref.current.style.top = `${snappedY}px`
-            }
+            // 计算实际移动的偏移量
+            const actualDeltaX = snappedX - startPosX
+            const actualDeltaY = snappedY - startPosY
+
+            // 更新所有组合中的组件位置
+            groupedComponents.forEach((comp, index) => {
+                const newX = initialPositions[index].startX + actualDeltaX
+                const newY = initialPositions[index].startY + actualDeltaY
+                
+                // 直接更新DOM以避免重新渲染
+                const compElement = document.querySelector(`[data-component-id="${comp.id}"]`) as HTMLElement
+                if (compElement) {
+                    compElement.style.left = `${newX}px`
+                    compElement.style.top = `${newY}px`
+                }
+            })
 
             // Only update snap lines in global state (transient)
             setSnapLines(snapLines)
@@ -661,10 +706,20 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             const newRawY = startPosY + deltaY
             const { x: finalX, y: finalY } = calculateSnap(item.id, newRawX, newRawY, state.components)
 
-            // Only update if changed
-            if (finalX !== item.style.x || finalY !== item.style.y) {
-                moveComponent(item.id, finalX, finalY)
-            }
+            // 计算实际移动的偏移量
+            const actualDeltaX = finalX - startPosX
+            const actualDeltaY = finalY - startPosY
+
+            // 更新所有组合中的组件位置到状态
+            groupedComponents.forEach((comp, index) => {
+                const newX = initialPositions[index].startX + actualDeltaX
+                const newY = initialPositions[index].startY + actualDeltaY
+                
+                // Only update if changed
+                if (newX !== comp.style.x || newY !== comp.style.y) {
+                    moveComponent(comp.id, newX, newY)
+                }
+            })
         }
 
         document.addEventListener('mousemove', handleMouseMove)
@@ -1169,7 +1224,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
     return (
         <div
             ref={ref}
-            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''}`}
+            data-component-id={item.id}
+            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''} ${item.groupId ? 'grouped' : ''} ${item.isGroup ? 'group-main' : ''}`}
             style={{
                 left: item.style.x,
                 top: item.style.y,

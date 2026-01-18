@@ -59,11 +59,17 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
             }
 
         case 'DELETE_COMPONENT':
+            // 如果删除的组件是组合的一部分，删除整个组合
+            const componentToDelete = state.components.find(comp => comp.id === action.payload)
+            const componentsToDelete = componentToDelete?.groupId 
+                ? state.components.filter(comp => comp.groupId === componentToDelete.groupId).map(comp => comp.id)
+                : [action.payload]
+            
             return {
                 ...state,
-                components: state.components.filter((comp) => comp.id !== action.payload),
-                selectedId: state.selectedId === action.payload ? null : state.selectedId,
-                selectedIds: state.selectedIds.filter(id => id !== action.payload),
+                components: state.components.filter((comp) => !componentsToDelete.includes(comp.id)),
+                selectedId: componentsToDelete.includes(state.selectedId || '') ? null : state.selectedId,
+                selectedIds: state.selectedIds.filter(id => !componentsToDelete.includes(id)),
             }
 
         case 'DELETE_COMPONENTS':
@@ -139,6 +145,49 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 snapLines: action.payload,
             }
 
+        case 'GROUP_COMPONENTS':
+            const groupId = `group_${Date.now()}`
+            const componentsToGroup = action.payload
+            if (componentsToGroup.length < 2) return state
+            
+            return {
+                ...state,
+                components: state.components.map((comp) => {
+                    if (componentsToGroup.includes(comp.id)) {
+                        return {
+                            ...comp,
+                            groupId,
+                            isGroup: componentsToGroup[0] === comp.id, // 第一个组件作为组合的主组件
+                        }
+                    }
+                    return comp
+                }),
+                selectedIds: [componentsToGroup[0]], // 选中组合的主组件
+                selectedId: componentsToGroup[0],
+            }
+
+        case 'UNGROUP_COMPONENTS':
+            const componentToUngroup = state.components.find(comp => comp.id === action.payload)
+            if (!componentToUngroup?.groupId) return state
+            
+            const groupIdToRemove = componentToUngroup.groupId
+            const ungroupedIds = state.components
+                .filter(comp => comp.groupId === groupIdToRemove)
+                .map(comp => comp.id)
+            
+            return {
+                ...state,
+                components: state.components.map((comp) => {
+                    if (comp.groupId === groupIdToRemove) {
+                        const { groupId, isGroup, ...rest } = comp
+                        return rest
+                    }
+                    return comp
+                }),
+                selectedIds: ungroupedIds,
+                selectedId: ungroupedIds.length === 1 ? ungroupedIds[0] : null,
+            }
+
         case 'SET_CANVAS_CONFIG':
             return {
                 ...state,
@@ -177,6 +226,8 @@ const HISTORY_ACTIONS = [
     'TOGGLE_VISIBILITY',
     'TOGGLE_LOCK',
     'SET_CANVAS_CONFIG',
+    'GROUP_COMPONENTS',
+    'UNGROUP_COMPONENTS',
 ]
 
 // History Reducer
@@ -261,6 +312,8 @@ interface EditorContextType {
     setCanvasConfig: (config: Partial<CanvasConfig>) => void
     getSelectedComponent: () => ComponentItem | undefined
     copyComponent: (id: string) => void
+    groupComponents: (ids: string[]) => void
+    ungroupComponents: (id: string) => void
     undo: () => void
     redo: () => void
     canUndo: boolean
@@ -410,6 +463,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         return state.components.find((comp) => comp.id === state.selectedId)
     }, [state.components, state.selectedId])
 
+    const groupComponents = React.useCallback((ids: string[]) => {
+        dispatch({ type: 'GROUP_COMPONENTS', payload: ids })
+    }, [dispatch])
+
+    const ungroupComponents = React.useCallback((id: string) => {
+        dispatch({ type: 'UNGROUP_COMPONENTS', payload: id })
+    }, [dispatch])
+
     const copyComponent = React.useCallback((id: string) => {
         const component = state.components.find((comp) => comp.id === id)
         if (!component) return
@@ -450,6 +511,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setCanvasConfig,
         getSelectedComponent,
         copyComponent,
+        groupComponents,
+        ungroupComponents,
         undo,
         redo,
         canUndo: history.past.length > 0,
@@ -476,6 +539,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setCanvasConfig,
         getSelectedComponent,
         copyComponent,
+        groupComponents,
+        ungroupComponents,
         undo,
         redo,
         history.past.length,
