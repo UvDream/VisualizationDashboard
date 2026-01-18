@@ -424,7 +424,19 @@ const defaultConfigs: Record<ComponentType, { props: ComponentItem['props']; sty
 
     // 图片
     image: { props: { alt: '图片' }, style: { width: 200, height: 150, backgroundColor: '#2a2a2a' } },
-    carousel: { props: {}, style: { width: 400, height: 200, backgroundColor: '#2a2a2a' } },
+    carousel: { 
+        props: { 
+            carouselImages: [],
+            carouselConfig: {
+                autoplay: true,
+                interval: 3000,
+                showDots: true,
+                showArrows: true,
+                effect: 'slide'
+            }
+        }, 
+        style: { width: 400, height: 200, backgroundColor: '#2a2a2a' } 
+    },
 
     // 图标
     icon: { props: { iconType: 'smile' }, style: { width: 60, height: 60, fontSize: 32, color: '#1890ff' } },

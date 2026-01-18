@@ -319,6 +319,16 @@ export interface ComponentProps {
         pageSize?: number // 每页显示行数
     }
 
+    // 轮播图属性
+    carouselImages?: string[] // 轮播图片列表（base64或URL）
+    carouselConfig?: {
+        autoplay?: boolean // 自动播放
+        interval?: number // 切换间隔(ms)
+        showDots?: boolean // 显示指示点
+        showArrows?: boolean // 显示箭头
+        effect?: 'slide' | 'fade' // 切换效果
+    }
+
     // 词云配置
     wordCloudConfig?: {
         shape?: 'circle' | 'rect' | 'diamond' | 'triangle' // 形状

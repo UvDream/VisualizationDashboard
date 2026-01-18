@@ -3,6 +3,7 @@ import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, 
 import { useEditor } from '../../context/EditorContext'
 import { getMapRegionOptions } from '../../utils/mapData'
 import JsonEditor from './JsonEditor'
+import ImageListEditor from './ImageListEditor'
 import './index.less'
 
 export default function PropertyPanel() {
@@ -2149,6 +2150,60 @@ export default function PropertyPanel() {
                             value={selectedComponent.props.alt}
                             onChange={(e) => handleChange('props.alt', e.target.value)}
                         />
+                    </Form.Item>
+                </>
+            )}
+            {selectedComponent.type === 'carousel' && (
+                <>
+                    <Form.Item label="轮播图片">
+                        <ImageListEditor
+                            value={selectedComponent.props.carouselImages || []}
+                            onChange={(v) => handleChange('props.carouselImages', v)}
+                        />
+                    </Form.Item>
+                    <Form.Item label="自动播放">
+                        <Switch
+                            checked={selectedComponent.props.carouselConfig?.autoplay !== false}
+                            onChange={(v) => handleChange('props.carouselConfig', {
+                                ...selectedComponent.props.carouselConfig,
+                                autoplay: v
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="切换间隔(ms)">
+                        <InputNumber
+                            value={selectedComponent.props.carouselConfig?.interval || 3000}
+                            onChange={(v) => handleChange('props.carouselConfig', {
+                                ...selectedComponent.props.carouselConfig,
+                                interval: v
+                            })}
+                            min={1000}
+                            max={10000}
+                            step={500}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="显示指示点">
+                        <Switch
+                            checked={selectedComponent.props.carouselConfig?.showDots !== false}
+                            onChange={(v) => handleChange('props.carouselConfig', {
+                                ...selectedComponent.props.carouselConfig,
+                                showDots: v
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="切换效果">
+                        <Select
+                            value={selectedComponent.props.carouselConfig?.effect || 'fade'}
+                            onChange={(v) => handleChange('props.carouselConfig', {
+                                ...selectedComponent.props.carouselConfig,
+                                effect: v
+                            })}
+                            style={{ width: '100%' }}
+                        >
+                            <Select.Option value="fade">淡入淡出</Select.Option>
+                            <Select.Option value="slide">滑动（开发中）</Select.Option>
+                        </Select>
                     </Form.Item>
                 </>
             )}

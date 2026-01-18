@@ -1,4 +1,4 @@
-import { useRef, Suspense, lazy } from 'react'
+import { useRef, Suspense, lazy, useState } from 'react'
 import { useDrag } from 'react-dnd'
 import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card, Table } from 'antd'
 import ReactECharts from 'echarts-for-react'
@@ -19,6 +19,7 @@ import { calculateSnap } from '../../utils/snapping'
 import type { ComponentItem } from '../../types'
 import WordCloudChart from './WordCloudChart'
 import LayoutCell from './LayoutCell'
+import Carousel from './Carousel'
 import './index.less'
 
 // 懒加载地图组件
@@ -580,9 +581,10 @@ const iconMap: Record<string, React.ReactNode> = {
 }
 
 export default function CanvasItem({ item, onContextMenu, previewMode = false }: CanvasItemProps) {
-    const { state, selectComponent, moveComponent, updateComponent, setSnapLines } = useEditor()
+    const { state, selectComponent, selectComponents, moveComponent, updateComponent, setSnapLines } = useEditor()
     const isSelected = state.selectedId === item.id || (state.selectedIds || []).includes(item.id)
     const ref = useRef<HTMLDivElement>(null)
+    const [isLocalDragging, setIsLocalDragging] = useState(false)
 
     // 只有在非预览模式下才使用useDrag
     const [isDragging] = !previewMode ? (() => {
@@ -635,6 +637,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
     const handleMouseDown = (e: React.MouseEvent) => {
         if (item.locked || previewMode) return
         e.stopPropagation()
+
+        setIsLocalDragging(true)  // 开始拖拽
 
         const startX = e.clientX
         const startY = e.clientY
@@ -695,6 +699,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
             setSnapLines([])
+            setIsLocalDragging(false)  // 结束拖拽
 
             // Commit final position to history
             // Re-calculate final position to be sure (or store in a ref)
@@ -1184,9 +1189,11 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 )
             case 'carousel':
                 return (
-                    <div className="canvas-item-carousel-placeholder">
-                        <span>轮播图</span>
-                    </div>
+                    <Carousel
+                        images={item.props.carouselImages || []}
+                        config={item.props.carouselConfig}
+                        isDragging={isLocalDragging || isDragging}
+                    />
                 )
 
             // 图标 (Updated)
