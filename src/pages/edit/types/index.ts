@@ -383,8 +383,10 @@ export interface CanvasConfig {
     height: number
     backgroundColor: string
     name: string
+    // 背景类型：纯色或图片
+    backgroundType?: 'color' | 'image'
     // 背景图片配置
-    backgroundImage?: string // base64 格式的图片数据
+    backgroundImage?: string // 图片URL或base64格式的图片数据
     backgroundImageMode?: 'tile' | 'stretch' | 'cover' | 'contain' | 'center' // 背景图片模式
     backgroundImageOpacity?: number // 背景图片透明度 0-1
 }

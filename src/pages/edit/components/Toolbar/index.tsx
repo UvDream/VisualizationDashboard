@@ -13,7 +13,6 @@ import {
     SettingOutlined,
     GithubOutlined,
     UploadOutlined,
-    DeleteFilled,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
@@ -63,6 +62,8 @@ export default function Toolbar() {
             width: state.canvasConfig?.width,
             height: state.canvasConfig?.height,
             backgroundColor: state.canvasConfig?.backgroundColor,
+            backgroundType: state.canvasConfig?.backgroundType || 'color',
+            backgroundImage: state.canvasConfig?.backgroundImage,
             backgroundImageMode: state.canvasConfig?.backgroundImageMode || 'cover',
             backgroundImageOpacity: state.canvasConfig?.backgroundImageOpacity || 1,
         })
@@ -71,18 +72,18 @@ export default function Toolbar() {
 
     const handleSaveSettings = () => {
         form.validateFields().then((values) => {
-            const { name, width, height, backgroundColor, backgroundImageMode, backgroundImageOpacity } = values
-            const bgStr = typeof backgroundColor === 'string' ? backgroundColor : backgroundColor?.toHexString()
+            const { name, width, height, backgroundColor, backgroundType, backgroundImage, backgroundImageMode, backgroundImageOpacity } = values
+            const bgStr = backgroundColor && typeof backgroundColor === 'string' ? backgroundColor : backgroundColor?.toHexString()
 
             setCanvasConfig({
                 name,
                 width,
                 height,
-                backgroundColor: bgStr,
+                backgroundColor: backgroundType === 'color' ? bgStr : '#000000', // 图片背景时使用默认黑色
+                backgroundType,
+                backgroundImage: backgroundType === 'image' ? backgroundImage : undefined,
                 backgroundImageMode,
                 backgroundImageOpacity,
-                // 保持现有的背景图片
-                backgroundImage: state.canvasConfig?.backgroundImage,
             })
             setIsModalOpen(false)
         })
@@ -93,23 +94,12 @@ export default function Toolbar() {
         const reader = new FileReader()
         reader.onload = (e) => {
             const base64 = e.target?.result as string
-            setCanvasConfig({
-                ...state.canvasConfig,
-                backgroundImage: base64,
-            })
+            // 更新表单字段
+            form.setFieldValue('backgroundImage', base64)
             message.success('背景图片上传成功')
         }
         reader.readAsDataURL(file)
         return false // 阻止默认上传行为
-    }
-
-    // 删除背景图片
-    const handleRemoveImage = () => {
-        setCanvasConfig({
-            ...state.canvasConfig,
-            backgroundImage: undefined,
-        })
-        message.success('背景图片已删除')
     }
 
     return (
@@ -207,82 +197,74 @@ export default function Toolbar() {
                             <InputNumber min={100} max={10000} />
                         </Form.Item>
                     </Space>
-                    <Form.Item name="backgroundColor" label="背景颜色" rules={[{ required: true }]}>
-                        <ColorPicker showText format="hex" />
-                    </Form.Item>
-                    
-                    <Form.Item label="背景图片">
-                        <Space direction="vertical" style={{ width: '100%' }}>
-                            {state.canvasConfig?.backgroundImage ? (
-                                <div style={{ 
-                                    border: '1px dashed #d9d9d9', 
-                                    borderRadius: 6, 
-                                    padding: 8,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <img 
-                                            src={state.canvasConfig.backgroundImage} 
-                                            alt="背景图片预览" 
-                                            style={{ 
-                                                width: 40, 
-                                                height: 40, 
-                                                objectFit: 'cover', 
-                                                borderRadius: 4 
-                                            }} 
-                                        />
-                                        <span>背景图片已上传</span>
-                                    </div>
-                                    <Button 
-                                        type="text" 
-                                        danger 
-                                        icon={<DeleteFilled />} 
-                                        onClick={handleRemoveImage}
-                                    >
-                                        删除
-                                    </Button>
-                                </div>
-                            ) : (
-                                <Upload
-                                    accept="image/*"
-                                    beforeUpload={handleImageUpload}
-                                    showUploadList={false}
-                                >
-                                    <Button icon={<UploadOutlined />}>上传背景图片</Button>
-                                </Upload>
-                            )}
-                        </Space>
+                    <Form.Item name="backgroundType" label="背景类型" rules={[{ required: true }]}>
+                        <Select
+                            options={[
+                                { value: 'color', label: '纯色背景' },
+                                { value: 'image', label: '背景图片' },
+                            ]}
+                        />
                     </Form.Item>
 
-                    {state.canvasConfig?.backgroundImage && (
-                        <>
-                            <Form.Item name="backgroundImageMode" label="背景图片模式">
-                                <Select
-                                    options={[
-                                        { value: 'tile', label: '平铺 - 重复显示图片' },
-                                        { value: 'stretch', label: '拉伸 - 拉伸填满画布' },
-                                        { value: 'cover', label: '填充 - 保持比例填满画布' },
-                                        { value: 'contain', label: '适应 - 保持比例完整显示' },
-                                        { value: 'center', label: '居中 - 原始大小居中显示' },
-                                    ]}
-                                />
-                            </Form.Item>
-                            <Form.Item name="backgroundImageOpacity" label="背景图片透明度">
-                                <Slider
-                                    min={0}
-                                    max={1}
-                                    step={0.1}
-                                    marks={{
-                                        0: '0%',
-                                        0.5: '50%',
-                                        1: '100%'
-                                    }}
-                                />
-                            </Form.Item>
-                        </>
-                    )}
+                    <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.backgroundType !== currentValues.backgroundType}>
+                        {({ getFieldValue }) => {
+                            const backgroundType = getFieldValue('backgroundType')
+                            
+                            if (backgroundType === 'color') {
+                                return (
+                                    <Form.Item name="backgroundColor" label="背景颜色" rules={[{ required: true }]}>
+                                        <ColorPicker showText format="hex" />
+                                    </Form.Item>
+                                )
+                            }
+                            
+                            if (backgroundType === 'image') {
+                                return (
+                                    <>
+                                        <Form.Item name="backgroundImage" label="背景图片URL" rules={[{ required: true, message: '请输入背景图片URL' }]}>
+                                            <Input placeholder="请输入图片URL，如：https://example.com/image.jpg" />
+                                        </Form.Item>
+                                        
+                                        <Form.Item label="或上传本地图片">
+                                            <Upload
+                                                accept="image/*"
+                                                beforeUpload={handleImageUpload}
+                                                showUploadList={false}
+                                            >
+                                                <Button icon={<UploadOutlined />}>上传图片</Button>
+                                            </Upload>
+                                        </Form.Item>
+
+                                        <Form.Item name="backgroundImageMode" label="背景图片模式">
+                                            <Select
+                                                options={[
+                                                    { value: 'tile', label: '平铺 - 重复显示图片' },
+                                                    { value: 'stretch', label: '拉伸 - 拉伸填满画布' },
+                                                    { value: 'cover', label: '填充 - 保持比例填满画布' },
+                                                    { value: 'contain', label: '适应 - 保持比例完整显示' },
+                                                    { value: 'center', label: '居中 - 原始大小居中显示' },
+                                                ]}
+                                            />
+                                        </Form.Item>
+                                        
+                                        <Form.Item name="backgroundImageOpacity" label="背景图片透明度">
+                                            <Slider
+                                                min={0}
+                                                max={1}
+                                                step={0.1}
+                                                marks={{
+                                                    0: '0%',
+                                                    0.5: '50%',
+                                                    1: '100%'
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    </>
+                                )
+                            }
+                            return null
+                        }}
+                    </Form.Item>
                 </Form>
             </Modal>
         </div>

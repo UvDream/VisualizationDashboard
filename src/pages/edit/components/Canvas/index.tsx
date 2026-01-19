@@ -746,7 +746,8 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
             backgroundColor: config?.backgroundColor || '#000000',
         }
 
-        if (config?.backgroundImage) {
+        // 只有当背景类型为图片且有背景图片时才应用背景图片样式
+        if (config?.backgroundType === 'image' && config?.backgroundImage) {
             const opacity = config.backgroundImageOpacity ?? 1
             const mode = config.backgroundImageMode || 'cover'
 

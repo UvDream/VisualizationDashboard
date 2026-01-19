@@ -30,6 +30,7 @@ const getInitialState = (): EditorState => {
             height: 1080,
             backgroundColor: '#000000',
             name: '大屏可视化',
+            backgroundType: 'color',
             backgroundImageMode: 'cover',
             backgroundImageOpacity: 1,
         }
