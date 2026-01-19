@@ -5,7 +5,7 @@ import type { ComponentItem } from '../../types'
 import './index.less'
 
 export default function LayerPanel() {
-    const { state, selectComponent, selectComponents, deleteComponent, toggleVisibility, toggleLock, reorderLayers, ungroupComponents } = useEditor()
+    const { state, selectComponent, selectComponents, deleteComponent, toggleVisibility, toggleLock,  ungroupComponents } = useEditor()
 
     // 将组件按组合分组
     const groupedComponents = new Map<string, ComponentItem[]>()
