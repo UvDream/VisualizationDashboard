@@ -623,15 +623,19 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 return
             }
             
-            // 如果组件属于组合，选中整个组合
-            if (item.groupId) {
-                const groupComponents = state.components
-                    .filter(comp => comp.groupId === item.groupId)
-                    .map(comp => comp.id)
-                selectComponents(groupComponents)
-            } else {
-                selectComponent(item.id)
-            }
+            // 普通点击：只选中当前组件，不自动选中整个组合
+            selectComponent(item.id)
+        }
+    }
+
+    const handleDoubleClick = (e: React.MouseEvent) => {
+        if (!previewMode && item.groupId) {
+            e.stopPropagation()
+            // 双击选中整个组合
+            const groupComponents = state.components
+                .filter(comp => comp.groupId === item.groupId)
+                .map(comp => comp.id)
+            selectComponents(groupComponents)
         }
     }
 
@@ -647,13 +651,16 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
         const startPosX = item.style.x
         const startPosY = item.style.y
 
-        // 获取组合中的所有组件
-        const groupedComponents = item.groupId 
-            ? state.components.filter(comp => comp.groupId === item.groupId)
+        // 获取需要一起拖拽的组件
+        // 如果当前组件在多选列表中，拖拽所有选中的组件
+        // 否则，只拖拽当前组件
+        const selectedIds = state.selectedIds || []
+        const componentsToDrag = selectedIds.includes(item.id) && selectedIds.length > 1
+            ? state.components.filter(comp => selectedIds.includes(comp.id))
             : [item]
 
         // 记录所有组件的初始位置
-        const initialPositions = groupedComponents.map(comp => ({
+        const initialPositions = componentsToDrag.map(comp => ({
             id: comp.id,
             startX: comp.style.x,
             startY: comp.style.y
@@ -679,8 +686,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             const actualDeltaX = snappedX - startPosX
             const actualDeltaY = snappedY - startPosY
 
-            // 更新所有组合中的组件位置
-            groupedComponents.forEach((comp, index) => {
+            // 更新所有需要拖拽的组件位置
+            componentsToDrag.forEach((comp, index) => {
                 const newX = initialPositions[index].startX + actualDeltaX
                 const newY = initialPositions[index].startY + actualDeltaY
                 
@@ -716,8 +723,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             const actualDeltaX = finalX - startPosX
             const actualDeltaY = finalY - startPosY
 
-            // 更新所有组合中的组件位置到状态
-            groupedComponents.forEach((comp, index) => {
+            // 更新所有需要拖拽的组件位置到状态
+            componentsToDrag.forEach((comp, index) => {
                 const newX = initialPositions[index].startX + actualDeltaX
                 const newY = initialPositions[index].startY + actualDeltaY
                 
@@ -1233,7 +1240,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
         <div
             ref={ref}
             data-component-id={item.id}
-            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''} ${item.groupId ? 'grouped' : ''} ${item.isGroup ? 'group-main' : ''}`}
+            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''} ${!previewMode && item.groupId ? 'grouped' : ''} ${!previewMode && item.isGroup ? 'group-main' : ''}`}
             style={{
                 left: item.style.x,
                 top: item.style.y,
@@ -1246,6 +1253,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 cursor: !previewMode && !item.locked ? 'move' : 'default',
             }}
             onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
             onMouseDown={handleMouseDown}
             onContextMenu={onContextMenu}
         >

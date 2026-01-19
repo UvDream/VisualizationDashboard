@@ -30,3 +30,24 @@
     top: 0 !important;
     left: 0 !important;
 }
+
+/* 预览模式下隐藏组合边框 */
+.preview-container .canvas-item {
+    &.grouped {
+        outline: none !important;
+        
+        &.selected {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    &.group-main {
+        outline: none !important;
+        
+        &.selected {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    }
+}
