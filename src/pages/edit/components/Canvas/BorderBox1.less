@@ -1,0 +1,125 @@
+.border-box-1 {
+    position: relative;
+    overflow: hidden;
+
+    .main-border {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .border-item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        pointer-events: none;
+
+        .corner-main {
+            animation: cornerPulse 0.5s infinite alternate;
+        }
+
+        .corner-small {
+            animation: cornerSmallPulse 0.5s infinite alternate;
+        }
+
+        .animation-bar {
+            animation: barAnimation 1.5s infinite;
+        }
+    }
+
+    .border-content {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--border-color, #4fd2dd);
+    }
+
+    // 角落主要装饰动画
+    @keyframes cornerPulse {
+        0% {
+            fill: var(--border-color, #4fd2dd);
+            opacity: 1;
+        }
+        50% {
+            fill: var(--glow-color, #235fa7);
+            opacity: 0.8;
+        }
+        100% {
+            fill: var(--border-color, #4fd2dd);
+            opacity: 1;
+        }
+    }
+
+    // 小装饰动画
+    @keyframes cornerSmallPulse {
+        0% {
+            fill: var(--glow-color, #235fa7);
+            opacity: 1;
+        }
+        50% {
+            fill: var(--border-color, #4fd2dd);
+            opacity: 0.8;
+        }
+        100% {
+            fill: var(--glow-color, #235fa7);
+            opacity: 1;
+        }
+    }
+
+    // 动画条效果
+    @keyframes barAnimation {
+        0% {
+            fill: var(--border-color, #4fd2dd);
+            opacity: 1;
+        }
+        33% {
+            fill: var(--glow-color, #235fa7);
+            opacity: 0.8;
+        }
+        66% {
+            fill: transparent;
+            opacity: 0.3;
+        }
+        100% {
+            fill: var(--border-color, #4fd2dd);
+            opacity: 1;
+        }
+    }
+
+    // 悬停效果
+    &:hover {
+        .corner-main {
+            animation-duration: 0.3s;
+        }
+        
+        .corner-small {
+            animation-duration: 0.3s;
+        }
+        
+        .animation-bar {
+            animation-duration: 1s;
+        }
+    }
+
+    // 响应式调整
+    @media (max-width: 768px) {
+        .border-content {
+            padding: 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .border-content {
+            padding: 10px;
+        }
+    }
+}

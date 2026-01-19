@@ -169,6 +169,14 @@ export interface ComponentProps {
 
     // 装饰边框属性
     borderStyle?: number
+    borderColor?: string
+    glowColor?: string
+    cornerSize?: number
+    borderWidth?: number
+
+    // 科技标题属性
+    titleColor?: string
+    fontSize?: number
 
     // 进度条
     percent?: number

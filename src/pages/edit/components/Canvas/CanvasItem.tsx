@@ -22,6 +22,7 @@ import type { ComponentItem } from '../../types'
 import WordCloudChart from './WordCloudChart'
 import LayoutCell from './LayoutCell'
 import Carousel from './Carousel'
+import BorderBox1 from './BorderBox1'
 import './index.less'
 
 // 懒加载地图组件
@@ -1021,9 +1022,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             // 小组件 - 装饰边框
             case 'borderBox1':
                 return (
-                    <div className="border-box border-box-1">
-                        <div className="border-box-content">{item.props.content || ''}</div>
-                    </div>
+                    <BorderBox1
+                        width={item.style.width}
+                        height={item.style.height}
+                        borderColor={item.props.borderColor}
+                        glowColor={item.props.glowColor}
+                        borderWidth={item.props.borderWidth}
+                    >
+                        {item.props.content || ''}
+                    </BorderBox1>
                 )
             case 'borderBox2':
                 return (

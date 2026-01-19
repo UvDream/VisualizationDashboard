@@ -532,7 +532,14 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
 
     // 小组件
-    borderBox1: { props: {}, style: { width: 300, height: 200 } },
+    borderBox1: { 
+        props: { 
+            borderColor: '#4fd2dd', 
+            glowColor: '#235fa7', 
+            borderWidth: 2 
+        }, 
+        style: { width: 300, height: 200 } 
+    },
     borderBox2: { props: {}, style: { width: 300, height: 200 } },
     borderBox3: { props: {}, style: { width: 300, height: 200 } },
     decoration1: { props: {}, style: { width: 200, height: 60 } },
