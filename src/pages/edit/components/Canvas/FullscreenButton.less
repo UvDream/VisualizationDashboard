@@ -1,0 +1,112 @@
+.fullscreen-button-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &.drag-over {
+    background: rgba(24, 144, 255, 0.1);
+    border: 2px dashed #1890ff;
+    border-radius: 4px;
+  }
+  
+  .fullscreen-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  
+  .fullscreen-button {
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      background-color: var(--hover-color) !important;
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    
+    &:active {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+    
+    .anticon {
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    
+    &:hover .anticon {
+      color: #fff;
+    }
+  }
+  
+  // 当按钮位置不是center时，调整hover变换
+  .fullscreen-button[style*="top: 10px"],
+  .fullscreen-button[style*="bottom: 10px"] {
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  
+  // 拖拽覆盖层
+  .drag-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(24, 144, 255, 0.1);
+    border: 2px dashed #1890ff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    
+    .drag-hint {
+      background: rgba(24, 144, 255, 0.9);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// 全屏状态下的样式优化
+:fullscreen .fullscreen-button-container,
+:-webkit-full-screen .fullscreen-button-container,
+:-moz-full-screen .fullscreen-button-container,
+:-ms-fullscreen .fullscreen-button-container {
+  .fullscreen-button {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+  }
+}

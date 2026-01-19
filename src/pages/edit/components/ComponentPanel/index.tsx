@@ -33,6 +33,7 @@ import {
     CloudOutlined,
     LayoutOutlined,
     AppstoreOutlined,
+    FullscreenOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -88,6 +89,7 @@ const widgetComponents: ComponentConfig[] = [
     { type: 'borderBox1', name: '边框1', icon: <BorderOuterOutlined />, category: 'widget' },
     { type: 'borderBox2', name: '边框2', icon: <BorderOuterOutlined />, category: 'widget' },
     { type: 'borderBox3', name: '边框3', icon: <BorderOuterOutlined />, category: 'widget' },
+    { type: 'fullscreenButton', name: '全屏按钮', icon: <FullscreenOutlined />, category: 'widget' },
     { type: 'decoration1', name: '装饰1', icon: <GatewayOutlined />, category: 'widget' },
     { type: 'decoration2', name: '装饰2', icon: <StarOutlined />, category: 'widget' },
     { type: 'container', name: '容器', icon: <BorderOuterOutlined />, category: 'widget' },

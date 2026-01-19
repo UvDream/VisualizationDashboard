@@ -3620,6 +3620,81 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
+            {selectedComponent.type === 'fullscreenButton' && (
+                <>
+                    <Form.Item label="按钮大小">
+                        <InputNumber
+                            value={selectedComponent.props.buttonSize || 40}
+                            onChange={(v) => handleChange('props.buttonSize', v ?? 40)}
+                            min={20}
+                            max={80}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="图标大小">
+                        <InputNumber
+                            value={selectedComponent.props.iconSize || 20}
+                            onChange={(v) => handleChange('props.iconSize', v ?? 20)}
+                            min={12}
+                            max={40}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="按钮颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.buttonColor || '#1890ff'}
+                            onChange={(color) => handleChange('props.buttonColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="悬停颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.hoverColor || '#40a9ff'}
+                            onChange={(color) => handleChange('props.hoverColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="按钮位置">
+                        <Select
+                            value={selectedComponent.props.position || 'center'}
+                            onChange={(v) => handleChange('props.position', v)}
+                            style={{ width: '100%' }}
+                            options={[
+                                { value: 'center', label: '居中' },
+                                { value: 'top-left', label: '左上角' },
+                                { value: 'top-right', label: '右上角' },
+                                { value: 'bottom-left', label: '左下角' },
+                                { value: 'bottom-right', label: '右下角' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="自定义图标">
+                        <Input
+                            value={selectedComponent.props.customIcon || ''}
+                            onChange={(e) => handleChange('props.customIcon', e.target.value)}
+                            placeholder="输入图标名称，如：HomeOutlined"
+                            style={{ width: '100%' }}
+                        />
+                        <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                            提示：可以拖拽图标组件到全屏按钮上设置图标
+                        </div>
+                    </Form.Item>
+                    <Form.Item label="显示文字">
+                        <Switch
+                            checked={selectedComponent.props.showText || false}
+                            onChange={(checked) => handleChange('props.showText', checked)}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.showText && (
+                        <Form.Item label="按钮文字">
+                            <Input
+                                value={selectedComponent.props.content || '点击全屏'}
+                                onChange={(e) => handleChange('props.content', e.target.value)}
+                                placeholder="输入按钮文字"
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    )}
+                </>
+            )}
         </Form>
     )
 

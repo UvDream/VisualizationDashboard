@@ -557,6 +557,19 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         }, 
         style: { width: 300, height: 200 } 
     },
+    fullscreenButton: {
+        props: {
+            buttonSize: 40,
+            iconSize: 20,
+            buttonColor: '#1890ff',
+            hoverColor: '#40a9ff',
+            position: 'center',
+            customIcon: '',
+            showText: false,
+            content: '点击全屏'
+        },
+        style: { width: 120, height: 80 }
+    },
     decoration1: { props: {}, style: { width: 200, height: 60 } },
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },

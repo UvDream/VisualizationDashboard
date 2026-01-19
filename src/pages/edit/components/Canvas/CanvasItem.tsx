@@ -25,6 +25,7 @@ import Carousel from './Carousel'
 import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
+import FullscreenButton from './FullscreenButton'
 import './index.less'
 
 // 懒加载地图组件
@@ -1058,6 +1059,29 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     >
                         {item.props.content || ''}
                     </BorderBox3>
+                )
+            case 'fullscreenButton':
+                return (
+                    <FullscreenButton
+                        width={item.style.width}
+                        height={item.style.height}
+                        buttonSize={item.props.buttonSize}
+                        iconSize={item.props.iconSize}
+                        buttonColor={item.props.buttonColor}
+                        hoverColor={item.props.hoverColor}
+                        position={item.props.position}
+                        customIcon={item.props.customIcon}
+                        showText={item.props.showText}
+                        onIconChange={(iconType) => {
+                            if (!previewMode) {
+                                updateComponent(item.id, {
+                                    props: { ...item.props, customIcon: iconType }
+                                })
+                            }
+                        }}
+                    >
+                        {item.props.showText ? (item.props.content || '点击全屏') : null}
+                    </FullscreenButton>
                 )
             case 'decoration1':
                 return <div className="decoration decoration-1" />
