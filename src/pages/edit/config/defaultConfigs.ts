@@ -377,6 +377,38 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         props: {},
         style: { width: 500, height: 300, backgroundColor: '#000000' }
     },
+    threeCube: {
+        props: {},
+        style: { width: 300, height: 300, backgroundColor: 'rgba(0,0,0,0.8)' }
+    },
+    threeDNA: {
+        props: {},
+        style: { width: 300, height: 400, backgroundColor: 'rgba(0,0,0,0.8)' }
+    },
+    threeWave: {
+        props: {},
+        style: { width: 400, height: 300, backgroundColor: 'rgba(0,0,0,0.8)' }
+    },
+    threeTorus: {
+        props: {},
+        style: { width: 300, height: 300, backgroundColor: 'rgba(0,0,0,0.8)' }
+    },
+    threeGalaxy: {
+        props: {},
+        style: { width: 400, height: 400, backgroundColor: '#000000' }
+    },
+    threeTunnel: {
+        props: {},
+        style: { width: 350, height: 350, backgroundColor: '#000000' }
+    },
+    threeMatrix: {
+        props: {},
+        style: { width: 400, height: 300, backgroundColor: '#000000' }
+    },
+    threePlasma: {
+        props: {},
+        style: { width: 350, height: 350, backgroundColor: '#000000' }
+    },
 
     // 小组件
     borderBox1: { props: {}, style: { width: 300, height: 200 } },

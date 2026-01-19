@@ -120,6 +120,14 @@ const iconComponents: ComponentConfig[] = allIconKeys.map(key => {
 const threeComponents: ComponentConfig[] = [
     { type: 'threeEarth', name: '3D地球', icon: <GlobalOutlined />, category: '3d' },
     { type: 'threeParticles', name: '粒子背景', icon: <GatewayOutlined />, category: '3d' },
+    { type: 'threeCube', name: '3D魔方', icon: <BorderOuterOutlined />, category: '3d' },
+    { type: 'threeDNA', name: 'DNA螺旋', icon: <GatewayOutlined />, category: '3d' },
+    { type: 'threeWave', name: '3D波浪', icon: <LineChartOutlined />, category: '3d' },
+    { type: 'threeTorus', name: '3D环形', icon: <PieChartOutlined />, category: '3d' },
+    { type: 'threeGalaxy', name: '星系', icon: <StarOutlined />, category: '3d' },
+    { type: 'threeTunnel', name: '时空隧道', icon: <GatewayOutlined />, category: '3d' },
+    { type: 'threeMatrix', name: '矩阵雨', icon: <BorderOutlined />, category: '3d' },
+    { type: 'threePlasma', name: '等离子球', icon: <DashboardOutlined />, category: '3d' },
 ]
 
 const allComponents = {

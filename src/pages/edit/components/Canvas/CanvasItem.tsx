@@ -11,9 +11,10 @@ import {
     UserOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
-import { Canvas, useLoader } from '@react-three/fiber'
-import { OrbitControls, Stars, Sphere } from '@react-three/drei'
+import { Canvas, useLoader, useFrame } from '@react-three/fiber'
+import { OrbitControls, Stars, Sphere, shaderMaterial } from '@react-three/drei'
 import { TextureLoader } from 'three'
+import * as THREE from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
@@ -530,6 +531,256 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     )
                 }
 
+                // 3D魔方组件
+                function AnimatedCube() {
+                    const meshRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (meshRef.current) {
+                            meshRef.current.rotation.x += 0.01
+                            meshRef.current.rotation.y += 0.01
+                        }
+                    })
+
+                    return (
+                        <mesh ref={meshRef}>
+                            <boxGeometry args={[2, 2, 2]} />
+                            <meshStandardMaterial 
+                                color="#ff6b6b" 
+                                metalness={0.7} 
+                                roughness={0.2}
+                                wireframe={false}
+                            />
+                        </mesh>
+                    )
+                }
+
+                // DNA螺旋组件
+                function DNAHelix() {
+                    const groupRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (groupRef.current) {
+                            groupRef.current.rotation.y += 0.02
+                        }
+                    })
+
+                    const helixPoints = []
+                    for (let i = 0; i < 100; i++) {
+                        const angle = (i / 100) * Math.PI * 8
+                        const x = Math.cos(angle) * 0.5
+                        const z = Math.sin(angle) * 0.5
+                        const y = (i / 100) * 4 - 2
+                        helixPoints.push([x, y, z])
+                    }
+
+                    return (
+                        <group ref={groupRef}>
+                            {helixPoints.map((point, index) => (
+                                <mesh key={index} position={point}>
+                                    <sphereGeometry args={[0.05, 8, 8]} />
+                                    <meshStandardMaterial color={index % 2 === 0 ? "#4ecdc4" : "#ff6b6b"} />
+                                </mesh>
+                            ))}
+                        </group>
+                    )
+                }
+
+                // 3D波浪组件
+                function Wave3D() {
+                    const meshRef = useRef<any>()
+                    
+                    useFrame((state) => {
+                        if (meshRef.current) {
+                            const time = state.clock.elapsedTime
+                            const geometry = meshRef.current.geometry
+                            const positions = geometry.attributes.position.array
+                            
+                            for (let i = 0; i < positions.length; i += 3) {
+                                const x = positions[i]
+                                const z = positions[i + 2]
+                                positions[i + 1] = Math.sin(x * 2 + time) * Math.cos(z * 2 + time) * 0.3
+                            }
+                            
+                            geometry.attributes.position.needsUpdate = true
+                        }
+                    })
+
+                    return (
+                        <mesh ref={meshRef}>
+                            <planeGeometry args={[4, 4, 32, 32]} />
+                            <meshStandardMaterial color="#4ecdc4" wireframe />
+                        </mesh>
+                    )
+                }
+
+                // 3D环形组件
+                function AnimatedTorus() {
+                    const meshRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (meshRef.current) {
+                            meshRef.current.rotation.x += 0.01
+                            meshRef.current.rotation.y += 0.02
+                        }
+                    })
+
+                    return (
+                        <mesh ref={meshRef}>
+                            <torusGeometry args={[1, 0.4, 16, 100]} />
+                            <meshStandardMaterial 
+                                color="#ff9f43" 
+                                metalness={0.8} 
+                                roughness={0.1}
+                            />
+                        </mesh>
+                    )
+                }
+
+                // 星系组件
+                function Galaxy() {
+                    const pointsRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (pointsRef.current) {
+                            pointsRef.current.rotation.y += 0.005
+                        }
+                    })
+
+                    const count = 5000
+                    const positions = new Float32Array(count * 3)
+                    const colors = new Float32Array(count * 3)
+                    
+                    for (let i = 0; i < count; i++) {
+                        const i3 = i * 3
+                        const radius = Math.random() * 3
+                        const spinAngle = radius * 2
+                        const branchAngle = (i % 3) * (Math.PI * 2) / 3
+                        
+                        positions[i3] = Math.cos(branchAngle + spinAngle) * radius
+                        positions[i3 + 1] = (Math.random() - 0.5) * 0.3
+                        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius
+                        
+                        colors[i3] = Math.random()
+                        colors[i3 + 1] = Math.random()
+                        colors[i3 + 2] = Math.random()
+                    }
+
+                    return (
+                        <points ref={pointsRef}>
+                            <bufferGeometry>
+                                <bufferAttribute
+                                    attach="attributes-position"
+                                    array={positions}
+                                    count={count}
+                                    itemSize={3}
+                                />
+                                <bufferAttribute
+                                    attach="attributes-color"
+                                    array={colors}
+                                    count={count}
+                                    itemSize={3}
+                                />
+                            </bufferGeometry>
+                            <pointsMaterial size={0.02} vertexColors />
+                        </points>
+                    )
+                }
+
+                // 时空隧道组件
+                function Tunnel() {
+                    const groupRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (groupRef.current) {
+                            groupRef.current.rotation.z += 0.02
+                        }
+                    })
+
+                    const rings = []
+                    for (let i = 0; i < 20; i++) {
+                        rings.push(
+                            <mesh key={i} position={[0, 0, -i * 0.5]}>
+                                <torusGeometry args={[1 + i * 0.1, 0.05, 8, 32]} />
+                                <meshStandardMaterial 
+                                    color={`hsl(${i * 18}, 70%, 50%)`} 
+                                    emissive={`hsl(${i * 18}, 70%, 20%)`}
+                                />
+                            </mesh>
+                        )
+                    }
+
+                    return <group ref={groupRef}>{rings}</group>
+                }
+
+                // 矩阵雨组件
+                function MatrixRain() {
+                    const pointsRef = useRef<any>()
+                    
+                    useFrame(() => {
+                        if (pointsRef.current) {
+                            const positions = pointsRef.current.geometry.attributes.position.array
+                            for (let i = 1; i < positions.length; i += 3) {
+                                positions[i] -= 0.02
+                                if (positions[i] < -3) {
+                                    positions[i] = 3
+                                }
+                            }
+                            pointsRef.current.geometry.attributes.position.needsUpdate = true
+                        }
+                    })
+
+                    const count = 1000
+                    const positions = new Float32Array(count * 3)
+                    
+                    for (let i = 0; i < count; i++) {
+                        const i3 = i * 3
+                        positions[i3] = (Math.random() - 0.5) * 6
+                        positions[i3 + 1] = Math.random() * 6 - 3
+                        positions[i3 + 2] = (Math.random() - 0.5) * 6
+                    }
+
+                    return (
+                        <points ref={pointsRef}>
+                            <bufferGeometry>
+                                <bufferAttribute
+                                    attach="attributes-position"
+                                    array={positions}
+                                    count={count}
+                                    itemSize={3}
+                                />
+                            </bufferGeometry>
+                            <pointsMaterial size={0.05} color="#00ff00" />
+                        </points>
+                    )
+                }
+
+                // 等离子球组件
+                function PlasmaBall() {
+                    const meshRef = useRef<any>()
+                    
+                    useFrame((state) => {
+                        if (meshRef.current) {
+                            const time = state.clock.elapsedTime
+                            meshRef.current.rotation.y = time * 0.5
+                            meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.2
+                        }
+                    })
+
+                    return (
+                        <mesh ref={meshRef}>
+                            <sphereGeometry args={[1.5, 64, 64]} />
+                            <meshStandardMaterial 
+                                color="#ff6b6b"
+                                emissive="#ff1744"
+                                emissiveIntensity={0.3}
+                                metalness={0.8}
+                                roughness={0.2}
+                            />
+                        </mesh>
+                    )
+                }
+
             // ... inside renderContent ...
             // 3D 组件
             case 'threeEarth':
@@ -573,6 +824,170 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
                             <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} makeDefault />
                         </Canvas>
+                    </div>
+                )
+            case 'threeCube':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <AnimatedCube />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            3D 魔方
+                        </div>
+                    </div>
+                )
+            case 'threeDNA':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <DNAHelix />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            DNA 螺旋
+                        </div>
+                    </div>
+                )
+            case 'threeWave':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 2, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <Wave3D />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            3D 波浪
+                        </div>
+                    </div>
+                )
+            case 'threeTorus':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} />
+                            <AnimatedTorus />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            3D 环形
+                        </div>
+                    </div>
+                )
+            case 'threeGalaxy':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 2, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.2} />
+                            <Galaxy />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            星系
+                        </div>
+                    </div>
+                )
+            case 'threeTunnel':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.3} />
+                            <pointLight position={[0, 0, 10]} />
+                            <Tunnel />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            时空隧道
+                        </div>
+                    </div>
+                )
+            case 'threeMatrix':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0, backgroundColor: '#000' }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <MatrixRain />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: '#00ff00',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.8)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            矩阵雨
+                        </div>
+                    </div>
+                )
+            case 'threePlasma':
+                return (
+                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                        <Canvas
+                            camera={{ position: [0, 0, 5] }}
+                            style={{ width: '100%', height: '100%' }}
+                            resize={{ scroll: false }}
+                        >
+                            <ambientLight intensity={0.2} />
+                            <PlasmaBall />
+                            <OrbitControls enableZoom={true} makeDefault />
+                        </Canvas>
+                        <div style={{
+                            position: 'absolute', top: 10, left: 10, color: 'white',
+                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                        }}>
+                            等离子球
+                        </div>
                     </div>
                 )
             case 'switch':

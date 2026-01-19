@@ -15,7 +15,7 @@ export type ComponentType =
     // 布局组件
     | 'layoutTwoColumn' | 'layoutThreeColumn' | 'layoutHeader' | 'layoutSidebar'
     // 3D组件
-    | 'threeEarth' | 'threeParticles'
+    | 'threeEarth' | 'threeParticles' | 'threeCube' | 'threeDNA' | 'threeWave' | 'threeTorus' | 'threeGalaxy' | 'threeTunnel' | 'threeMatrix' | 'threePlasma'
 
 // 组件分类
 export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
