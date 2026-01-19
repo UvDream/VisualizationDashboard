@@ -12,9 +12,8 @@ import {
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import { Canvas, useLoader, useFrame } from '@react-three/fiber'
-import { OrbitControls, Stars, Sphere, shaderMaterial } from '@react-three/drei'
+import { OrbitControls, Stars, Sphere } from '@react-three/drei'
 import { TextureLoader } from 'three'
-import * as THREE from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
@@ -533,9 +532,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 3D魔方组件
                 function AnimatedCube() {
-                    const meshRef = useRef<any>()
+                    const meshRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.x += 0.01
                             meshRef.current.rotation.y += 0.01
@@ -557,9 +556,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // DNA螺旋组件
                 function DNAHelix() {
-                    const groupRef = useRef<any>()
+                    const groupRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (groupRef.current) {
                             groupRef.current.rotation.y += 0.02
                         }
@@ -577,7 +576,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     return (
                         <group ref={groupRef}>
                             {helixPoints.map((point, index) => (
-                                <mesh key={index} position={point}>
+                                <mesh key={index} position={[point[0], point[1], point[2]]}>
                                     <sphereGeometry args={[0.05, 8, 8]} />
                                     <meshStandardMaterial color={index % 2 === 0 ? "#4ecdc4" : "#ff6b6b"} />
                                 </mesh>
@@ -588,7 +587,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 3D波浪组件
                 function Wave3D() {
-                    const meshRef = useRef<any>()
+                    const meshRef = useRef<any>(null)
                     
                     useFrame((state) => {
                         if (meshRef.current) {
@@ -616,9 +615,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 3D环形组件
                 function AnimatedTorus() {
-                    const meshRef = useRef<any>()
+                    const meshRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.x += 0.01
                             meshRef.current.rotation.y += 0.02
@@ -639,9 +638,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 星系组件
                 function Galaxy() {
-                    const pointsRef = useRef<any>()
+                    const pointsRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (pointsRef.current) {
                             pointsRef.current.rotation.y += 0.005
                         }
@@ -671,15 +670,11 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             <bufferGeometry>
                                 <bufferAttribute
                                     attach="attributes-position"
-                                    array={positions}
-                                    count={count}
-                                    itemSize={3}
+                                    args={[positions, 3]}
                                 />
                                 <bufferAttribute
                                     attach="attributes-color"
-                                    array={colors}
-                                    count={count}
-                                    itemSize={3}
+                                    args={[colors, 3]}
                                 />
                             </bufferGeometry>
                             <pointsMaterial size={0.02} vertexColors />
@@ -689,9 +684,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 时空隧道组件
                 function Tunnel() {
-                    const groupRef = useRef<any>()
+                    const groupRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (groupRef.current) {
                             groupRef.current.rotation.z += 0.02
                         }
@@ -715,9 +710,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 矩阵雨组件
                 function MatrixRain() {
-                    const pointsRef = useRef<any>()
+                    const pointsRef = useRef<any>(null)
                     
-                    useFrame(() => {
+                    useFrame((_state) => {
                         if (pointsRef.current) {
                             const positions = pointsRef.current.geometry.attributes.position.array
                             for (let i = 1; i < positions.length; i += 3) {
@@ -745,9 +740,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             <bufferGeometry>
                                 <bufferAttribute
                                     attach="attributes-position"
-                                    array={positions}
-                                    count={count}
-                                    itemSize={3}
+                                    args={[positions, 3]}
                                 />
                             </bufferGeometry>
                             <pointsMaterial size={0.05} color="#00ff00" />
@@ -757,13 +750,12 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
 
                 // 等离子球组件
                 function PlasmaBall() {
-                    const meshRef = useRef<any>()
+                    const meshRef = useRef<any>(null)
                     
                     useFrame((state) => {
                         if (meshRef.current) {
-                            const time = state.clock.elapsedTime
-                            meshRef.current.rotation.y = time * 0.5
-                            meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.2
+                            meshRef.current.rotation.y += 0.01
+                            meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2
                         }
                     })
 
