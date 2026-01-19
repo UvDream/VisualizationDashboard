@@ -127,6 +127,21 @@ export interface ChartLegendConfig {
 }
 
 
+// 数据源配置
+export interface DataSourceConfig {
+    type: 'mock' | 'api' // 数据源类型：模拟数据或接口数据
+    // 接口配置
+    apiConfig?: {
+        url?: string // 接口地址
+        method?: 'GET' | 'POST' | 'PUT' | 'DELETE' // 请求方法
+        headers?: Record<string, string> // 请求头
+        params?: Record<string, any> // 请求参数
+        body?: Record<string, any> // 请求体（POST/PUT时使用）
+        dataPath?: string // 数据路径，如 'data' 或 'data.list'
+        refreshInterval?: number // 自动刷新间隔（秒），0表示不自动刷新
+    }
+}
+
 // 组件属性（根据类型不同有不同属性）
 export interface ComponentProps {
     // 通用属性
@@ -167,6 +182,8 @@ export interface ComponentProps {
 
     // 图表数据
     chartTitle?: string
+    // 数据源配置
+    dataSource?: DataSourceConfig
     xAxisData?: string[]
     seriesData?: Array<{
         name: string;

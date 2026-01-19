@@ -1,0 +1,16 @@
+{
+  "code": 200,
+  "data": [
+    { "name": "北京市", "value": 12500 },
+    { "name": "上海市", "value": 11200 },
+    { "name": "深圳市", "value": 9800 },
+    { "name": "广州市", "value": 8900 },
+    { "name": "杭州市", "value": 7600 },
+    { "name": "成都市", "value": 6800 },
+    { "name": "武汉市", "value": 6200 },
+    { "name": "南京市", "value": 5900 },
+    { "name": "重庆市", "value": 5400 },
+    { "name": "西安市", "value": 4800 }
+  ],
+  "message": "success"
+}

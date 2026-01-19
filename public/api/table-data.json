@@ -1,0 +1,19 @@
+{
+  "code": 200,
+  "data": {
+    "tableColumns": [
+      { "title": "员工姓名", "dataIndex": "name", "key": "name" },
+      { "title": "所属部门", "dataIndex": "dept", "key": "dept" },
+      { "title": "月销售额", "dataIndex": "sales", "key": "sales" },
+      { "title": "完成率", "dataIndex": "rate", "key": "rate" }
+    ],
+    "tableData": [
+      { "key": "1", "name": "张三", "dept": "销售一部", "sales": 15000, "rate": "120%" },
+      { "key": "2", "name": "李四", "dept": "销售二部", "sales": 18000, "rate": "150%" },
+      { "key": "3", "name": "王五", "dept": "市场部", "sales": 12000, "rate": "100%" },
+      { "key": "4", "name": "赵六", "dept": "技术部", "sales": 22000, "rate": "180%" },
+      { "key": "5", "name": "钱七", "dept": "销售一部", "sales": 16000, "rate": "130%" }
+    ]
+  },
+  "message": "success"
+}

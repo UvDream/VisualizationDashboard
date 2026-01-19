@@ -1,15 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import { getMapRegionOptions } from '../../utils/mapData'
+import { dataRefreshManager } from '../../utils/dataSource'
 import JsonEditor from './JsonEditor'
 import ImageListEditor from './ImageListEditor'
+import DataSourceEditor from './DataSourceEditor'
 import './index.less'
 
 export default function PropertyPanel() {
     const { getSelectedComponent, updateComponent } = useEditor()
     const selectedComponent = getSelectedComponent()
     const [selectedSeriesIndex, setSelectedSeriesIndex] = useState(0)
+
+    // 处理数据源变化和自动刷新
+    useEffect(() => {
+        if (!selectedComponent || !selectedComponent.props.dataSource) return
+
+        const handleDataRefresh = async (data: any) => {
+            // 根据图表类型更新对应的数据
+            const updates: any = {}
+            
+            if (['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type)) {
+                if (data.xAxisData) updates.xAxisData = data.xAxisData
+                if (data.seriesData) updates.seriesData = data.seriesData
+            } else if (['pieChart', 'halfPieChart'].includes(selectedComponent.type)) {
+                if (data.pieData || Array.isArray(data)) {
+                    updates.pieData = data.pieData || data
+                }
+            } else if (selectedComponent.type === 'funnelChart') {
+                if (data.funnelData || Array.isArray(data)) {
+                    updates.funnelData = data.funnelData || data
+                }
+            } else if (selectedComponent.type === 'mapChart') {
+                if (data.mapData || Array.isArray(data)) {
+                    updates.mapData = data.mapData || data
+                }
+            }
+
+            if (Object.keys(updates).length > 0) {
+                updateComponent(selectedComponent.id, {
+                    props: {
+                        ...selectedComponent.props,
+                        ...updates
+                    }
+                })
+            }
+        }
+
+        // 设置自动刷新
+        dataRefreshManager.setAutoRefresh(
+            selectedComponent.id,
+            selectedComponent.props.dataSource,
+            handleDataRefresh
+        )
+
+        return () => {
+            // 清理定时器
+            dataRefreshManager.clearAutoRefresh(selectedComponent.id)
+        }
+    }, [selectedComponent?.id, selectedComponent?.props.dataSource])
 
     if (!selectedComponent) {
         return (
@@ -2059,6 +2109,64 @@ export default function PropertyPanel() {
 
     const dataContent = (
         <Form layout="vertical" size="small" style={{ padding: '0 12px' }}>
+            {/* 数据源配置 - 支持数据源的组件类型 */}
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table'].includes(selectedComponent.type) && (
+                <div style={{ marginBottom: 16, padding: 12, background: 'rgba(24, 144, 255, 0.1)', borderRadius: 6, border: '1px solid rgba(24, 144, 255, 0.3)' }}>
+                    <div style={{ marginBottom: 8, color: '#1890ff', fontSize: 14, fontWeight: 500 }}>数据源配置</div>
+                    <DataSourceEditor
+                        value={selectedComponent.props.dataSource}
+                        componentType={selectedComponent.type}
+                        onChange={(dataSource) => handleChange('props.dataSource', dataSource)}
+                        onDataFetch={async (data) => {
+                            // 根据图表类型更新对应的数据
+                            const updates: any = {}
+                            
+                            if (['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type)) {
+                                if (data.xAxisData) updates.xAxisData = data.xAxisData
+                                if (data.seriesData) updates.seriesData = data.seriesData
+                            } else if (['pieChart', 'halfPieChart'].includes(selectedComponent.type)) {
+                                if (data.pieData || Array.isArray(data)) {
+                                    updates.pieData = data.pieData || data
+                                }
+                            } else if (selectedComponent.type === 'funnelChart') {
+                                if (data.funnelData || Array.isArray(data)) {
+                                    updates.funnelData = data.funnelData || data
+                                }
+                            } else if (selectedComponent.type === 'mapChart') {
+                                if (data.mapData || Array.isArray(data)) {
+                                    updates.mapData = data.mapData || data
+                                }
+                            } else if (selectedComponent.type === 'wordCloudChart') {
+                                if (data.wordCloudData || Array.isArray(data)) {
+                                    updates.wordCloudData = data.wordCloudData || data
+                                }
+                            } else if (selectedComponent.type === 'scrollRankList') {
+                                if (data.rankListData || Array.isArray(data)) {
+                                    updates.rankListData = data.rankListData || data
+                                }
+                            } else if (selectedComponent.type === 'carouselList') {
+                                if (data.carouselListData || Array.isArray(data)) {
+                                    updates.carouselListData = data.carouselListData || data
+                                }
+                            } else if (selectedComponent.type === 'table') {
+                                if (data.tableData || Array.isArray(data)) {
+                                    updates.tableData = data.tableData || data
+                                }
+                                if (data.tableColumns) {
+                                    updates.tableColumns = data.tableColumns
+                                }
+                            }
+
+                            if (Object.keys(updates).length > 0) {
+                                Object.entries(updates).forEach(([key, value]) => {
+                                    handleChange(`props.${key}`, value)
+                                })
+                            }
+                        }}
+                    />
+                </div>
+            )}
+            
             {['text', 'button', 'tag', 'card'].includes(selectedComponent.type) && (
                 <Form.Item label="内容">
                     <Input
@@ -2209,23 +2317,28 @@ export default function PropertyPanel() {
             )}
             {selectedComponent.type === 'table' && (
                 <>
-                    <Form.Item label="表头配置">
-                        <JsonEditor
-                            value={selectedComponent.props.tableColumns || []}
-                            onChange={(v) => handleChange('props.tableColumns', v)}
-                            placeholder='[{"title":"Name","dataIndex":"name","key":"name"}]'
-                        />
-                    </Form.Item>
-                    <Form.Item label="表格数据">
-                        <JsonEditor
-                            value={selectedComponent.props.tableData || []}
-                            onChange={(v) => handleChange('props.tableData', v)}
-                            placeholder='[{"key":"1","name":"John Brown"}]'
-                        />
-                    </Form.Item>
+                    {selectedComponent.props.dataSource?.type !== 'api' && (
+                        <Form.Item label="表头配置">
+                            <JsonEditor
+                                value={selectedComponent.props.tableColumns || []}
+                                onChange={(v) => handleChange('props.tableColumns', v)}
+                                placeholder='[{"title":"Name","dataIndex":"name","key":"name"}]'
+                            />
+                        </Form.Item>
+                    )}
+                    {selectedComponent.props.dataSource?.type !== 'api' && (
+                        <Form.Item label="表格数据">
+                            <JsonEditor
+                                value={selectedComponent.props.tableData || []}
+                                onChange={(v) => handleChange('props.tableData', v)}
+                                placeholder='[{"key":"1","name":"John Brown"}]'
+                            />
+                        </Form.Item>
+                    )}
                 </>
             )}
-            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type) && (
+            {/* 图表数据配置 - 只在模拟数据模式下显示 */}
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type) && selectedComponent.props.dataSource?.type !== 'api' && (
                 <>
                     <Form.Item label="X轴数据">
                         <JsonEditor
@@ -2243,7 +2356,7 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
-            {selectedComponent.type === 'radarChart' && (
+            {selectedComponent.type === 'radarChart' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <>
                     <Form.Item label="指示器配置">
                         <JsonEditor
@@ -2283,7 +2396,7 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
-            {['pieChart', 'halfPieChart'].includes(selectedComponent.type) && (
+            {['pieChart', 'halfPieChart'].includes(selectedComponent.type) && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="饼图数据">
                     <JsonEditor
                         value={selectedComponent.props.pieData || []}
@@ -2292,7 +2405,7 @@ export default function PropertyPanel() {
                     />
                 </Form.Item>
             )}
-            {selectedComponent.type === 'funnelChart' && (
+            {selectedComponent.type === 'funnelChart' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="漏斗图数据">
                     <JsonEditor
                         value={selectedComponent.props.funnelData || []}
@@ -2301,7 +2414,7 @@ export default function PropertyPanel() {
                     />
                 </Form.Item>
             )}
-            {selectedComponent.type === 'wordCloudChart' && (
+            {selectedComponent.type === 'wordCloudChart' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="词云数据">
                     <JsonEditor
                         value={selectedComponent.props.wordCloudData || []}
@@ -2323,16 +2436,18 @@ export default function PropertyPanel() {
                             }
                         />
                     </Form.Item>
-                    <Form.Item label="地图数据">
-                        <JsonEditor
-                            value={selectedComponent.props.mapData || []}
-                            onChange={(v) => handleChange('props.mapData', v)}
-                            placeholder='[{"name":"北京","value":100}]'
-                        />
-                    </Form.Item>
+                    {selectedComponent.props.dataSource?.type !== 'api' && (
+                        <Form.Item label="地图数据">
+                            <JsonEditor
+                                value={selectedComponent.props.mapData || []}
+                                onChange={(v) => handleChange('props.mapData', v)}
+                                placeholder='[{"name":"北京","value":100}]'
+                            />
+                        </Form.Item>
+                    )}
                 </>
             )}
-            {selectedComponent.type === 'calendarChart' && (
+            {selectedComponent.type === 'calendarChart' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="热力数据">
                     <JsonEditor
                         value={selectedComponent.props.calendarData || []}
@@ -2341,7 +2456,7 @@ export default function PropertyPanel() {
                     />
                 </Form.Item>
             )}
-            {selectedComponent.type === 'scrollRankList' && (
+            {selectedComponent.type === 'scrollRankList' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="排名数据">
                     <JsonEditor
                         value={selectedComponent.props.rankListData || []}
@@ -2362,13 +2477,15 @@ export default function PropertyPanel() {
                             placeholder='[{"title":"名称","key":"name","width":80}]'
                         />
                     </Form.Item>
-                    <Form.Item label="列表数据">
-                        <JsonEditor
-                            value={selectedComponent.props.carouselListData || []}
-                            onChange={(v) => handleChange('props.carouselListData', v)}
-                            placeholder='[{"name":"张三","dept":"技术部"}]'
-                        />
-                    </Form.Item>
+                    {selectedComponent.props.dataSource?.type !== 'api' && (
+                        <Form.Item label="列表数据">
+                            <JsonEditor
+                                value={selectedComponent.props.carouselListData || []}
+                                onChange={(v) => handleChange('props.carouselListData', v)}
+                                placeholder='[{"name":"张三","dept":"技术部"}]'
+                            />
+                        </Form.Item>
+                    )}
                 </>
             )}
             {['gaugeChart', 'progress'].includes(selectedComponent.type) && (

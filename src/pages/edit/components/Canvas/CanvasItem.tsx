@@ -1,4 +1,4 @@
-import { useRef, Suspense, lazy, useState, useMemo } from 'react'
+import { useRef, Suspense, lazy, useState, useMemo, useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 import { Button, Input, Select, Switch, Progress, Tag, Badge, Avatar, Card, Table } from 'antd'
 import ReactECharts from 'echarts-for-react'
@@ -17,6 +17,7 @@ import { TextureLoader } from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
+import { fetchChartData, dataRefreshManager } from '../../utils/dataSource'
 import type { ComponentItem } from '../../types'
 import WordCloudChart from './WordCloudChart'
 import LayoutCell from './LayoutCell'
@@ -49,19 +50,100 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
     const isSelected = state.selectedId === item.id || (state.selectedIds || []).includes(item.id)
     const ref = useRef<HTMLDivElement>(null)
     const [isLocalDragging, setIsLocalDragging] = useState(false)
+    const [dynamicData, setDynamicData] = useState<any>(null)
+
+    // 处理数据源获取
+    useEffect(() => {
+        const loadData = async () => {
+            if (item.props.dataSource && item.props.dataSource.type === 'api') {
+                try {
+                    const data = await fetchChartData(item.props.dataSource)
+                    setDynamicData(data)
+                } catch (error) {
+                    console.error('获取图表数据失败:', error)
+                    setDynamicData(null)
+                }
+            } else {
+                setDynamicData(null)
+            }
+        }
+
+        loadData()
+
+        // 设置自动刷新
+        if (item.props.dataSource) {
+            dataRefreshManager.setAutoRefresh(item.id, item.props.dataSource, (data) => {
+                setDynamicData(data)
+            })
+        }
+
+        return () => {
+            dataRefreshManager.clearAutoRefresh(item.id)
+        }
+    }, [item.id, item.props.dataSource])
+
+    // 获取最终的图表数据
+    const getFinalChartData = () => {
+        if (dynamicData) {
+            // 使用动态数据
+            const finalProps = { ...item.props }
+            
+            if (['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(item.type)) {
+                if (dynamicData.xAxisData) finalProps.xAxisData = dynamicData.xAxisData
+                if (dynamicData.seriesData) finalProps.seriesData = dynamicData.seriesData
+            } else if (['pieChart', 'halfPieChart'].includes(item.type)) {
+                if (dynamicData.pieData || Array.isArray(dynamicData)) {
+                    finalProps.pieData = dynamicData.pieData || dynamicData
+                }
+            } else if (item.type === 'funnelChart') {
+                if (dynamicData.funnelData || Array.isArray(dynamicData)) {
+                    finalProps.funnelData = dynamicData.funnelData || dynamicData
+                }
+            } else if (item.type === 'mapChart') {
+                if (dynamicData.mapData || Array.isArray(dynamicData)) {
+                    finalProps.mapData = dynamicData.mapData || dynamicData
+                }
+            } else if (item.type === 'wordCloudChart') {
+                if (dynamicData.wordCloudData || Array.isArray(dynamicData)) {
+                    finalProps.wordCloudData = dynamicData.wordCloudData || dynamicData
+                }
+            } else if (item.type === 'scrollRankList') {
+                if (dynamicData.rankListData || Array.isArray(dynamicData)) {
+                    finalProps.rankListData = dynamicData.rankListData || dynamicData
+                }
+            } else if (item.type === 'carouselList') {
+                if (dynamicData.carouselListData || Array.isArray(dynamicData)) {
+                    finalProps.carouselListData = dynamicData.carouselListData || dynamicData
+                }
+            } else if (item.type === 'table') {
+                if (dynamicData.tableData || Array.isArray(dynamicData)) {
+                    finalProps.tableData = dynamicData.tableData || dynamicData
+                }
+                if (dynamicData.tableColumns) {
+                    finalProps.tableColumns = dynamicData.tableColumns
+                }
+            }
+            
+            return finalProps
+        }
+        
+        // 使用静态数据
+        return item.props
+    }
 
     // 缓存的图表配置
     const chartOption = useMemo(() => {
         const chartTypes = ['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 
             'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'gaugeChart', 'radarChart', 'scatterChart']
         if (chartTypes.includes(item.type)) {
-            return item.props.chartOption || getCachedChartOption(item.type, item.props)
+            const finalProps = getFinalChartData()
+            return finalProps.chartOption || getCachedChartOption(item.type, finalProps)
         }
         if (item.type === 'calendarChart') {
             return getCalendarOption(item.props)
         }
         return null
-    }, [item.type, item.props])
+    }, [item.type, item.props, dynamicData])
 
     // 只有在非预览模式下才使用useDrag
     const [isDragging] = !previewMode ? (() => {
@@ -333,22 +415,24 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 )
 
             case 'wordCloudChart':
+                const finalWordCloudProps = getFinalChartData()
                 return (
                     <WordCloudChart
-                        data={item.props.wordCloudData || []}
+                        data={finalWordCloudProps.wordCloudData || []}
                         width={item.style.width}
                         height={item.style.height}
-                        config={item.props.wordCloudConfig}
+                        config={finalWordCloudProps.wordCloudConfig}
                     />
                 )
 
             case 'mapChart':
+                const finalMapProps = getFinalChartData()
                 return (
                     <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载地图...</div>}>
                         <MapChart
-                            mapRegion={item.props.mapRegion || 'china'}
-                            mapData={item.props.mapData}
-                            chartTitle={item.props.chartTitle}
+                            mapRegion={finalMapProps.mapRegion || 'china'}
+                            mapData={finalMapProps.mapData}
+                            chartTitle={finalMapProps.chartTitle}
                         />
                     </Suspense>
                 )
@@ -364,15 +448,16 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             // ... (Antd components continue)
 
             case 'table':
+                const finalTableProps = getFinalChartData()
                 return (
                     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         {/* @ts-ignore */}
                         <Table
-                            columns={item.props.tableColumns || [
+                            columns={finalTableProps.tableColumns || [
                                 { title: '姓名', dataIndex: 'name', key: 'name' },
                                 { title: '年龄', dataIndex: 'age', key: 'age' },
                             ]}
-                            dataSource={item.props.tableData || [
+                            dataSource={finalTableProps.tableData || [
                                 { key: '1', name: '张三', age: 32 },
                                 { key: '2', name: '李四', age: 42 },
                             ]}
@@ -382,20 +467,22 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     </div>
                 )
             case 'scrollRankList':
+                const finalRankProps = getFinalChartData()
                 return (
                     <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载中...</div>}>
                         <ScrollRankList
-                            data={item.props.rankListData || []}
-                            config={item.props.rankListConfig}
+                            data={finalRankProps.rankListData || []}
+                            config={finalRankProps.rankListConfig}
                         />
                     </Suspense>
                 )
             case 'carouselList':
+                const finalCarouselProps = getFinalChartData()
                 return (
                     <Suspense fallback={<div style={{ color: '#999', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载中...</div>}>
                         <CarouselList
-                            data={item.props.carouselListData || []}
-                            config={item.props.carouselListConfig}
+                            data={finalCarouselProps.carouselListData || []}
+                            config={finalCarouselProps.carouselListConfig}
                         />
                     </Suspense>
                 )

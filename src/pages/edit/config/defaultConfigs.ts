@@ -5,6 +5,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     // 图表类
     singleLineChart: {
         props: {
+            dataSource: { type: 'mock' },
             xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
             seriesData: [
                 { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210] },
@@ -14,6 +15,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     doubleLineChart: {
         props: {
+            dataSource: { type: 'mock' },
             xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
             seriesData: [
                 { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210] },
@@ -24,6 +26,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     singleBarChart: {
         props: {
+            dataSource: { type: 'mock' },
             xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
             seriesData: [
                 { name: '销售额', data: [500, 300, 400, 600, 250] }
@@ -33,6 +36,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     doubleBarChart: {
         props: {
+            dataSource: { type: 'mock' },
             xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
             seriesData: [
                 { name: '销售额', data: [500, 300, 400, 600, 250] },
@@ -43,6 +47,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     horizontalBarChart: {
         props: {
+            dataSource: { type: 'mock' },
             xAxisData: ['产品A', '产品B', '产品C', '产品D', '产品E'],
             seriesData: [
                 { name: '销售额', data: [500, 300, 400, 600, 250] },
@@ -53,6 +58,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     pieChart: {
         props: {
+            dataSource: { type: 'mock' },
             pieData: [
                 { value: 1048, name: '搜索引擎' },
                 { value: 735, name: '直接访问' },
@@ -90,6 +96,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     halfPieChart: {
         props: {
+            dataSource: { type: 'mock' },
             pieData: [
                 { value: 1048, name: '搜索引擎' },
                 { value: 735, name: '直接访问' },
@@ -127,6 +134,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     funnelChart: {
         props: {
+            dataSource: { type: 'mock' },
             funnelData: [
                 { value: 100, name: '展示' },
                 { value: 80, name: '点击' },
@@ -210,6 +218,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     scatterChart: {
         props: {
+            dataSource: { type: 'mock' },
             seriesData: [
                 {
                     name: '样本A',
@@ -224,6 +233,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     mapChart: {
         props: {
+            dataSource: { type: 'mock' },
             mapRegion: 'china',
             mapData: [
                 { name: '北京', value: 100 },
@@ -276,6 +286,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     card: { props: { content: '这是一个卡片容器，可以展示详细信息。' }, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.1)' } },
     table: {
         props: {
+            dataSource: { type: 'mock' },
             tableColumns: [
                 { title: '姓名', dataIndex: 'name', key: 'name' },
                 { title: '部门', dataIndex: 'dept', key: 'dept' },
@@ -292,6 +303,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     scrollRankList: {
         props: {
+            dataSource: { type: 'mock' },
             rankListData: [
                 { name: '北京市', value: 9850 },
                 { name: '上海市', value: 8720 },
@@ -322,6 +334,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     carouselList: {
         props: {
+            dataSource: { type: 'mock' },
             carouselListData: [
                 { id: '001', name: '张三', dept: '技术部', status: '在线' },
                 { id: '002', name: '李四', dept: '销售部', status: '离线' },
