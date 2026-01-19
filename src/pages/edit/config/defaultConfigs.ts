@@ -540,8 +540,14 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         }, 
         style: { width: 300, height: 200 } 
     },
-    borderBox2: { props: {}, style: { width: 300, height: 200 } },
-    borderBox3: { props: {}, style: { width: 300, height: 200 } },
+    borderBox2: { 
+        props: { 
+            borderColor: '#6586ec', 
+            glowColor: '#2cf7fe', 
+            borderWidth: 2 
+        }, 
+        style: { width: 300, height: 200 } 
+    },
     decoration1: { props: {}, style: { width: 200, height: 60 } },
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },

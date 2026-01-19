@@ -87,7 +87,6 @@ const antdComponents: ComponentConfig[] = [
 const widgetComponents: ComponentConfig[] = [
     { type: 'borderBox1', name: '边框1', icon: <BorderOuterOutlined />, category: 'widget' },
     { type: 'borderBox2', name: '边框2', icon: <BorderOuterOutlined />, category: 'widget' },
-    { type: 'borderBox3', name: '边框3', icon: <BorderOuterOutlined />, category: 'widget' },
     { type: 'decoration1', name: '装饰1', icon: <GatewayOutlined />, category: 'widget' },
     { type: 'decoration2', name: '装饰2', icon: <StarOutlined />, category: 'widget' },
     { type: 'container', name: '容器', icon: <BorderOuterOutlined />, category: 'widget' },

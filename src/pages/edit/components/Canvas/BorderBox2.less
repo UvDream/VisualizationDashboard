@@ -1,0 +1,97 @@
+.border-box-2 {
+    position: relative;
+    overflow: hidden;
+
+    svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .main-border {
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+
+    .dashed-decoration {
+        animation: dashMove 2s linear infinite;
+        opacity: 0.9;
+    }
+
+    .top-left-highlight {
+        animation: glowPulse 2s ease-in-out infinite alternate;
+        filter: drop-shadow(0 0 4px var(--glow-color, #2cf7fe));
+    }
+
+    .bottom-right-highlight {
+        animation: glowPulse 2s ease-in-out infinite alternate 1s;
+        filter: drop-shadow(0 0 4px var(--glow-color, #2cf7fe));
+    }
+
+    .border-content {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        padding: 25px 20px 15px 15px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--border-color, #6586ec);
+    }
+
+    // 虚线移动动画
+    @keyframes dashMove {
+        0% {
+            stroke-dashoffset: 0;
+        }
+        100% {
+            stroke-dashoffset: 15;
+        }
+    }
+
+    // 发光脉冲动画
+    @keyframes glowPulse {
+        0% {
+            opacity: 0.6;
+            stroke-width: var(--border-width, 2px);
+        }
+        100% {
+            opacity: 1;
+            stroke-width: calc(var(--border-width, 2px) + 2px);
+        }
+    }
+
+    // 悬停效果
+    &:hover {
+        .main-border {
+            opacity: 1;
+        }
+        
+        .dashed-decoration {
+            animation-duration: 1s;
+        }
+        
+        .top-left-highlight,
+        .bottom-right-highlight {
+            animation-duration: 1.5s;
+            filter: drop-shadow(0 0 8px var(--glow-color, #2cf7fe));
+        }
+    }
+
+    // 响应式调整
+    @media (max-width: 768px) {
+        .border-content {
+            padding: 20px 15px 12px 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .border-content {
+            padding: 15px 10px 10px 10px;
+        }
+    }
+}

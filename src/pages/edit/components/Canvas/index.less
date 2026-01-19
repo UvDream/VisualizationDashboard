@@ -210,42 +210,8 @@
     }
 }
 
-.border-box-1 {
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        border: 2px solid #1890ff;
-    }
 
-    &::before {
-        top: -5px;
-        left: -5px;
-        border-right: none;
-        border-bottom: none;
-    }
 
-    &::after {
-        bottom: -5px;
-        right: -5px;
-        border-left: none;
-        border-top: none;
-    }
-}
-
-.border-box-2 {
-    border: 2px solid #52c41a;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, transparent 100%);
-}
-
-.border-box-3 {
-    border: 2px solid #faad14;
-    background: linear-gradient(135deg, rgba(250, 173, 20, 0.1) 0%, transparent 100%);
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-}
 
 .decoration {
     width: 100%;

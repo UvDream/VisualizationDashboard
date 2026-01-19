@@ -3560,6 +3560,31 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
+            {selectedComponent.type === 'borderBox2' && (
+                <>
+                    <Form.Item label="边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.borderColor || '#6586ec'}
+                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="发光颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.glowColor || '#2cf7fe'}
+                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="边框宽度">
+                        <InputNumber
+                            value={selectedComponent.props.borderWidth || 2}
+                            onChange={(v) => handleChange('props.borderWidth', v ?? 2)}
+                            min={1}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </>
+            )}
         </Form>
     )
 
