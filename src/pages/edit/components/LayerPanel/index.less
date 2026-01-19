@@ -50,8 +50,32 @@
             opacity: 0.5;
         }
 
-        .layer-item-name {
+        .layer-item-content {
             flex: 1;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .layer-expand-btn {
+            width: 16px;
+            height: 16px;
+            padding: 0;
+            margin-right: 4px;
+            color: #999;
+            
+            &:hover {
+                color: #1890ff;
+            }
+        }
+
+        .layer-expand-placeholder {
+            width: 20px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .layer-item-name {
             color: #fff;
             font-size: 12px;
             overflow: hidden;
@@ -59,9 +83,23 @@
             white-space: nowrap;
         }
 
+        .layer-children-count {
+            color: #999;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+
+        .layer-cell-label {
+            color: #52c41a;
+            font-size: 11px;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
         .layer-item-actions {
             display: flex;
             gap: 2px;
+            flex-shrink: 0;
 
             .ant-btn {
                 color: #999;
@@ -74,6 +112,67 @@
                     color: #ff4d4f;
                 }
             }
+        }
+    }
+
+    .layer-children {
+        .layer-child-item {
+            .layer-item {
+                border-left: 2px solid rgba(82, 196, 26, 0.3);
+                background: rgba(82, 196, 26, 0.05);
+
+                &:hover {
+                    background: rgba(82, 196, 26, 0.1);
+                }
+
+                &.selected {
+                    background: rgba(24, 144, 255, 0.2);
+                    border-left: 3px solid #1890ff;
+                }
+            }
+        }
+    }
+
+    // 组合内的组件样式
+    .layer-item.in-group {
+        border-left: 2px solid rgba(82, 196, 26, 0.3);
+        background: rgba(82, 196, 26, 0.05);
+
+        &:hover {
+            background: rgba(82, 196, 26, 0.1);
+        }
+
+        &.selected {
+            background: rgba(24, 144, 255, 0.2);
+            border-left: 3px solid #1890ff;
+        }
+    }
+
+    // 组合图层特殊样式
+    .layer-group {
+        background: linear-gradient(90deg, rgba(82, 196, 26, 0.1) 0%, transparent 100%);
+        border-left: 3px solid rgba(82, 196, 26, 0.5);
+        padding-left: 9px;
+
+        &:hover {
+            background: linear-gradient(90deg, rgba(82, 196, 26, 0.15) 0%, rgba(42, 42, 42, 1) 100%);
+        }
+
+        &.selected {
+            background: linear-gradient(90deg, rgba(24, 144, 255, 0.2) 0%, rgba(82, 196, 26, 0.1) 100%);
+            border-left: 3px solid #1890ff;
+            box-shadow: inset 0 0 0 1px rgba(82, 196, 26, 0.3);
+        }
+
+        .layer-group-icon {
+            color: #52c41a;
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        .layer-item-name {
+            color: #52c41a;
+            font-weight: 500;
         }
     }
 

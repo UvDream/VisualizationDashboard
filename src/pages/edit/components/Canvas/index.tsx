@@ -449,6 +449,33 @@ interface CanvasProps {
 export default function Canvas({ previewMode = false }: CanvasProps) {
     const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack, groupComponents, ungroupComponents } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
+    const [previewScale, setPreviewScale] = useState(1)
+
+    // 预览模式下计算自适应缩放
+    useEffect(() => {
+        if (previewMode) {
+            const calculatePreviewScale = () => {
+                const canvasWidth = state.canvasConfig?.width || 1920
+                const canvasHeight = state.canvasConfig?.height || 1080
+                const windowWidth = window.innerWidth
+                const windowHeight = window.innerHeight
+                
+                // 计算缩放比例，保持宽高比
+                const scaleX = windowWidth / canvasWidth
+                const scaleY = windowHeight / canvasHeight
+                const scale = Math.min(scaleX, scaleY, 1) // 最大不超过1
+                
+                setPreviewScale(scale)
+            }
+
+            calculatePreviewScale()
+            window.addEventListener('resize', calculatePreviewScale)
+            
+            return () => {
+                window.removeEventListener('resize', calculatePreviewScale)
+            }
+        }
+    }, [previewMode, state.canvasConfig?.width, state.canvasConfig?.height])
 
     // 右键菜单状态
     const [menuVisible, setMenuVisible] = useState(false)
@@ -784,9 +811,12 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     width: state.canvasConfig?.width || 1920,
                     height: state.canvasConfig?.height || 1080,
                     ...getBackgroundStyle(),
-                    transform: `scale(${state.scale}) translate(0px, 0px)`,
+                    transform: previewMode 
+                        ? `scale(${previewScale})` 
+                        : `scale(${state.scale}) translate(0px, 0px)`,
                     top: !previewMode ? 40 : 0,
                     left: !previewMode ? 40 : 0,
+                    transformOrigin: previewMode ? 'center center' : '0 0',
                 }}
                 onClick={handleCanvasClick}
                 onMouseDown={handleCanvasMouseDown}

@@ -41,6 +41,13 @@ const initialState: EditorState = getInitialState()
 // Reducer
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
     switch (action.type) {
+        case 'SYNC_STATE':
+            // 同步整个状态（用于预览页面）
+            return {
+                ...action.payload,
+                selectedIds: action.payload.selectedIds || []
+            }
+
         case 'ADD_COMPONENT':
             return {
                 ...state,
@@ -230,6 +237,15 @@ const HISTORY_ACTIONS = [
     'UNGROUP_COMPONENTS',
 ]
 
+// 需要触发事件的操作类型（排除 SYNC_STATE）
+const EVENT_TRIGGER_ACTIONS = [
+    ...HISTORY_ACTIONS,
+    'SELECT_COMPONENT',
+    'SELECT_COMPONENTS',
+    'SET_SCALE',
+    'SET_SNAP_LINES',
+]
+
 // History Reducer
 function historyReducer(state: HistoryState, action: EditorAction | { type: 'UNDO' } | { type: 'REDO' }): HistoryState {
     const { past, present, future } = state
@@ -246,6 +262,8 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
             }
             // 保存到 localStorage
             localStorage.setItem('editorState', JSON.stringify(newUndoState.present))
+            // 触发自定义事件通知其他页面状态变化
+            window.dispatchEvent(new CustomEvent('editorStateChange'))
             return newUndoState
 
         case 'REDO':
@@ -259,6 +277,8 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
             }
             // 保存到 localStorage
             localStorage.setItem('editorState', JSON.stringify(newRedoState.present))
+            // 触发自定义事件通知其他页面状态变化
+            window.dispatchEvent(new CustomEvent('editorStateChange'))
             return newRedoState
 
         default:
@@ -275,6 +295,10 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
                 }
                 // 保存到 localStorage
                 localStorage.setItem('editorState', JSON.stringify(newHistoryState.present))
+                // 只有非同步操作才触发事件
+                if (EVENT_TRIGGER_ACTIONS.includes(action.type)) {
+                    window.dispatchEvent(new CustomEvent('editorStateChange'))
+                }
                 return newHistoryState
             }
 
@@ -283,8 +307,17 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
                 ...state,
                 present: newPresent,
             }
-            // 保存到 localStorage
-            localStorage.setItem('editorState', JSON.stringify(newOtherState.present))
+            
+            // SYNC_STATE 操作不保存到 localStorage 也不触发事件
+            if (action.type !== 'SYNC_STATE') {
+                // 保存到 localStorage
+                localStorage.setItem('editorState', JSON.stringify(newOtherState.present))
+                // 只有非同步操作才触发事件
+                if (EVENT_TRIGGER_ACTIONS.includes(action.type)) {
+                    window.dispatchEvent(new CustomEvent('editorStateChange'))
+                }
+            }
+            
             return newOtherState
     }
 }

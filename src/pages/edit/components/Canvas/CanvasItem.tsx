@@ -204,6 +204,7 @@ const getChartOption = (type: string, props: ComponentItem['props']) => {
         // Fallback demos if no data provided (should be overridden by defaultConfigs usually)
         if (type === 'singleLineChart' || type === 'doubleLineChart') commonSeries.push({ name: 'Demo', data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true } as any)
         if (type === 'singleBarChart' || type === 'doubleBarChart' || type === 'horizontalBarChart') commonSeries.push({ name: 'Demo', data: [120, 200, 150, 80, 70, 110, 130], type: 'bar' } as any)
+        if (type === 'scatterChart') commonSeries.push({ name: 'Demo', data: [[10, 20], [20, 30], [30, 50], [40, 60], [50, 80], [60, 90]], type: 'scatter' } as any)
     }
 
     switch (type) {

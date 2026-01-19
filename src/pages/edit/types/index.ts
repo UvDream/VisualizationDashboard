@@ -401,6 +401,7 @@ export interface EditorState {
 
 // 编辑器 Action 类型
 export type EditorAction =
+    | { type: 'SYNC_STATE'; payload: EditorState }
     | { type: 'ADD_COMPONENT'; payload: ComponentItem }
     | { type: 'UPDATE_COMPONENT'; payload: { id: string; updates: Partial<ComponentItem> } }
     | { type: 'DELETE_COMPONENT'; payload: string }
