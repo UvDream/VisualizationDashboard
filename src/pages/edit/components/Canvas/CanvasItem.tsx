@@ -24,6 +24,7 @@ import LayoutCell from './LayoutCell'
 import Carousel from './Carousel'
 import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
+import BorderBox3 from './BorderBox3'
 import './index.less'
 
 // 懒加载地图组件
@@ -1044,6 +1045,19 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     >
                         {item.props.content || ''}
                     </BorderBox2>
+                )
+            case 'borderBox3':
+                return (
+                    <BorderBox3
+                        width={item.style.width}
+                        height={item.style.height}
+                        borderColor={item.props.borderColor}
+                        glowColor={item.props.glowColor}
+                        borderWidth={item.props.borderWidth}
+                        animationDuration={item.props.animationDuration}
+                    >
+                        {item.props.content || ''}
+                    </BorderBox3>
                 )
             case 'decoration1':
                 return <div className="decoration decoration-1" />

@@ -548,6 +548,15 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         }, 
         style: { width: 300, height: 200 } 
     },
+    borderBox3: { 
+        props: { 
+            borderColor: '#235fa7', 
+            glowColor: '#4fd2dd', 
+            borderWidth: 1,
+            animationDuration: 3
+        }, 
+        style: { width: 300, height: 200 } 
+    },
     decoration1: { props: {}, style: { width: 200, height: 60 } },
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },

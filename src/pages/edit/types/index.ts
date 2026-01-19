@@ -5,7 +5,7 @@ export type ComponentType =
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
-    | 'borderBox1' | 'borderBox2' | 'decoration1' | 'decoration2'
+    | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2'
     // 图片
     | 'image' | 'carousel'
     // 图标
@@ -173,6 +173,7 @@ export interface ComponentProps {
     glowColor?: string
     cornerSize?: number
     borderWidth?: number
+    animationDuration?: number
 
     // 科技标题属性
     titleColor?: string
