@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart'
+    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart' | 'treeChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
@@ -357,6 +357,67 @@ export interface ComponentProps {
         rotation?: boolean // 是否旋转
         rotationRange?: [number, number] // 旋转角度范围
         gridSize?: number // 网格大小
+    }
+
+    // 树形图配置
+    treeData?: any // 树形数据
+    treeConfig?: {
+        orient?: 'LR' | 'TB' | 'RL' | 'BT' // 布局方向：LR-左右, TB-上下, RL-右左, BT-下上
+        top?: string | number // 上边距
+        left?: string | number // 左边距
+        bottom?: string | number // 下边距
+        right?: string | number // 右边距
+        symbolSize?: number // 节点大小
+        expandAndCollapse?: boolean // 是否支持展开收起
+        animationDuration?: number // 动画时长
+        animationDurationUpdate?: number // 更新动画时长
+        initialTreeDepth?: number // 初始展开层级，-1表示全部展开
+        label?: {
+            show?: boolean // 显示标签
+            position?: 'left' | 'right' | 'top' | 'bottom' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom'
+            verticalAlign?: 'top' | 'middle' | 'bottom'
+            align?: 'left' | 'center' | 'right'
+            fontSize?: number // 字体大小
+            color?: string // 字体颜色
+            fontWeight?: 'normal' | 'bold' // 字体粗细
+            backgroundColor?: string // 背景色
+            borderColor?: string // 边框颜色
+            borderWidth?: number // 边框宽度
+            borderRadius?: number // 边框圆角
+            padding?: number | [number, number] | [number, number, number, number] // 内边距
+        }
+        leaves?: {
+            label?: {
+                show?: boolean
+                position?: 'left' | 'right' | 'top' | 'bottom' | 'inside'
+                verticalAlign?: 'top' | 'middle' | 'bottom'
+                align?: 'left' | 'center' | 'right'
+                fontSize?: number
+                color?: string
+                fontWeight?: 'normal' | 'bold'
+            }
+        }
+        itemStyle?: {
+            color?: string // 节点颜色
+            borderColor?: string // 节点边框颜色
+            borderWidth?: number // 节点边框宽度
+        }
+        lineStyle?: {
+            color?: string // 连线颜色
+            width?: number // 连线宽度
+            curveness?: number // 连线弯曲度
+        }
+        emphasis?: {
+            itemStyle?: {
+                color?: string // 高亮节点颜色
+                borderColor?: string // 高亮节点边框颜色
+                borderWidth?: number // 高亮节点边框宽度
+            }
+            lineStyle?: {
+                color?: string // 高亮连线颜色
+                width?: number // 高亮连线宽度
+            }
+        }
     }
 
     // 布局组件配置

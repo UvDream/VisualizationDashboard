@@ -262,6 +262,77 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 900, height: 220, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    treeChart: {
+        props: {
+            dataSource: { type: 'mock' },
+            treeData: {
+                name: '公司架构',
+                children: [
+                    {
+                        name: '技术部',
+                        children: [
+                            { name: '前端组', value: 15 },
+                            { name: '后端组', value: 20 },
+                            { name: '测试组', value: 8 }
+                        ]
+                    },
+                    {
+                        name: '产品部',
+                        children: [
+                            { name: '产品经理', value: 5 },
+                            { name: 'UI设计', value: 6 },
+                            {
+                                name: '用户研究',
+                                children: [
+                                    { name: '用户调研', value: 3 },
+                                    { name: '数据分析', value: 4 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: '运营部',
+                        children: [
+                            { name: '市场推广', value: 8 },
+                            { name: '客户服务', value: 12 }
+                        ]
+                    }
+                ]
+            },
+            treeConfig: {
+                orient: 'LR',
+                symbolSize: 8,
+                expandAndCollapse: true,
+                initialTreeDepth: -1,
+                label: {
+                    show: true,
+                    position: 'left',
+                    fontSize: 12,
+                    color: '#fff',
+                    fontWeight: 'normal'
+                },
+                leaves: {
+                    label: {
+                        show: true,
+                        position: 'right',
+                        fontSize: 12,
+                        color: '#fff'
+                    }
+                },
+                itemStyle: {
+                    color: '#1890ff',
+                    borderColor: '#fff',
+                    borderWidth: 1
+                },
+                lineStyle: {
+                    color: '#ccc',
+                    width: 1,
+                    curveness: 0.5
+                }
+            }
+        },
+        style: { width: 600, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // Antd 组件
     text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },

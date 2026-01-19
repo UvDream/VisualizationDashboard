@@ -245,6 +245,9 @@ export function getChartOption(type: string, props: ComponentItem['props']): Rec
                 }],
             }
 
+        case 'treeChart':
+            return buildTreeOption(baseOption, props)
+
         default:
             return baseOption
     }
@@ -365,8 +368,119 @@ function buildPieOption(baseOption: any, props: ComponentItem['props'], isHalf: 
 }
 
 /**
- * 构建漏斗图配置
+ * 构建树形图配置
  */
+function buildTreeOption(baseOption: any, props: ComponentItem['props']) {
+    const treeConfig = props.treeConfig || {}
+    
+    // 默认树形数据
+    const defaultTreeData = {
+        name: '根节点',
+        children: [
+            {
+                name: '分支1',
+                children: [
+                    { name: '叶子1-1', value: 10 },
+                    { name: '叶子1-2', value: 15 },
+                    { name: '叶子1-3', value: 8 }
+                ]
+            },
+            {
+                name: '分支2',
+                children: [
+                    { name: '叶子2-1', value: 12 },
+                    { name: '叶子2-2', value: 20 },
+                    {
+                        name: '子分支2-3',
+                        children: [
+                            { name: '叶子2-3-1', value: 5 },
+                            { name: '叶子2-3-2', value: 7 }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: '分支3',
+                children: [
+                    { name: '叶子3-1', value: 18 },
+                    { name: '叶子3-2', value: 9 }
+                ]
+            }
+        ]
+    }
+
+    return {
+        ...baseOption,
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter: (params: any) => {
+                return `${params.name}${params.value ? `: ${params.value}` : ''}`
+            }
+        },
+        series: [{
+            type: 'tree',
+            data: [props.treeData || defaultTreeData],
+            top: treeConfig.top || '10%',
+            left: treeConfig.left || '10%',
+            bottom: treeConfig.bottom || '10%',
+            right: treeConfig.right || '10%',
+            symbolSize: treeConfig.symbolSize || 7,
+            orient: treeConfig.orient || 'LR', // LR: 左右, TB: 上下, RL: 右左, BT: 下上
+            expandAndCollapse: treeConfig.expandAndCollapse !== false,
+            animationDuration: treeConfig.animationDuration || 550,
+            animationDurationUpdate: treeConfig.animationDurationUpdate || 750,
+            initialTreeDepth: treeConfig.initialTreeDepth || -1, // -1 表示展开所有层级
+            label: {
+                show: treeConfig.label?.show !== false,
+                position: treeConfig.label?.position || 'left',
+                verticalAlign: treeConfig.label?.verticalAlign || 'middle',
+                align: treeConfig.label?.align || 'right',
+                fontSize: treeConfig.label?.fontSize || 12,
+                color: treeConfig.label?.color || '#fff',
+                fontWeight: treeConfig.label?.fontWeight || 'normal',
+                backgroundColor: treeConfig.label?.backgroundColor || 'transparent',
+                borderColor: treeConfig.label?.borderColor || 'transparent',
+                borderWidth: treeConfig.label?.borderWidth || 0,
+                borderRadius: treeConfig.label?.borderRadius || 0,
+                padding: treeConfig.label?.padding || [2, 4]
+            },
+            leaves: {
+                label: {
+                    show: treeConfig.leaves?.label?.show !== false,
+                    position: treeConfig.leaves?.label?.position || 'right',
+                    verticalAlign: treeConfig.leaves?.label?.verticalAlign || 'middle',
+                    align: treeConfig.leaves?.label?.align || 'left',
+                    fontSize: treeConfig.leaves?.label?.fontSize || 12,
+                    color: treeConfig.leaves?.label?.color || '#fff',
+                    fontWeight: treeConfig.leaves?.label?.fontWeight || 'normal'
+                }
+            },
+            itemStyle: {
+                color: treeConfig.itemStyle?.color || '#1890ff',
+                borderColor: treeConfig.itemStyle?.borderColor || '#fff',
+                borderWidth: treeConfig.itemStyle?.borderWidth || 1
+            },
+            lineStyle: {
+                color: treeConfig.lineStyle?.color || '#ccc',
+                width: treeConfig.lineStyle?.width || 1,
+                curveness: treeConfig.lineStyle?.curveness || 0.5
+            },
+            emphasis: {
+                focus: 'descendant',
+                itemStyle: {
+                    color: treeConfig.emphasis?.itemStyle?.color || '#ff7875',
+                    borderColor: treeConfig.emphasis?.itemStyle?.borderColor || '#fff',
+                    borderWidth: treeConfig.emphasis?.itemStyle?.borderWidth || 2
+                },
+                lineStyle: {
+                    color: treeConfig.emphasis?.lineStyle?.color || '#ff7875',
+                    width: treeConfig.emphasis?.lineStyle?.width || 2
+                }
+            }
+        }]
+    }
+}
 function buildFunnelOption(baseOption: any, props: ComponentItem['props']) {
     return {
         ...baseOption,

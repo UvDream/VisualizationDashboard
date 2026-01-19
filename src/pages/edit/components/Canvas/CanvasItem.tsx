@@ -134,7 +134,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
     // 缓存的图表配置
     const chartOption = useMemo(() => {
         const chartTypes = ['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 
-            'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'gaugeChart', 'radarChart', 'scatterChart']
+            'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'gaugeChart', 'radarChart', 'scatterChart', 'treeChart']
         if (chartTypes.includes(item.type)) {
             const finalProps = getFinalChartData()
             return finalProps.chartOption || getCachedChartOption(item.type, finalProps)
@@ -438,6 +438,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 )
 
             case 'calendarChart':
+                return (
+                    <ReactECharts
+                        option={chartOption!}
+                        style={{ width: '100%', height: '100%' }}
+                        opts={{ renderer: 'svg' }}
+                    />
+                )
+
+            case 'treeChart':
                 return (
                     <ReactECharts
                         option={chartOption!}

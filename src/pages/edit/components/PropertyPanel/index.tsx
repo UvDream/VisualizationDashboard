@@ -2025,6 +2025,608 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 树形图配置
+        ...(selectedComponent.type === 'treeChart' ? [{
+            key: 'treeLayout',
+            label: '布局配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="布局方向">
+                        <Select
+                            value={selectedComponent.props.treeConfig?.orient || 'LR'}
+                            onChange={(v) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                orient: v
+                            })}
+                            options={[
+                                { value: 'LR', label: '左右 (LR)' },
+                                { value: 'TB', label: '上下 (TB)' },
+                                { value: 'RL', label: '右左 (RL)' },
+                                { value: 'BT', label: '下上 (BT)' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="节点大小">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.symbolSize || 7}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    symbolSize: v
+                                })}
+                                min={3}
+                                max={20}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="初始展开层级">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.initialTreeDepth ?? -1}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    initialTreeDepth: v
+                                })}
+                                min={-1}
+                                max={10}
+                                style={{ width: '100%' }}
+                                placeholder="-1表示全部展开"
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="支持展开收起" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.treeConfig?.expandAndCollapse !== false}
+                            onChange={(v) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                expandAndCollapse: v
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="动画时长(ms)">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.animationDuration || 550}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    animationDuration: v
+                                })}
+                                min={0}
+                                max={2000}
+                                step={50}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="更新动画时长(ms)">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.animationDurationUpdate || 750}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    animationDurationUpdate: v
+                                })}
+                                min={0}
+                                max={2000}
+                                step={50}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        },
+        {
+            key: 'treeStyle',
+            label: '样式配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="节点颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.treeConfig?.itemStyle?.color || '#1890ff'}
+                            onChange={(color) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                itemStyle: {
+                                    ...selectedComponent.props.treeConfig?.itemStyle,
+                                    color: color.toHexString()
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="节点边框颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.treeConfig?.itemStyle?.borderColor || '#fff'}
+                                onChange={(color) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.treeConfig?.itemStyle,
+                                        borderColor: color.toHexString()
+                                    }
+                                })}
+                            />
+                        </Form.Item>
+                        <Form.Item label="节点边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.itemStyle?.borderWidth || 1}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.treeConfig?.itemStyle,
+                                        borderWidth: v
+                                    }
+                                })}
+                                min={0}
+                                max={5}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="连线颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.treeConfig?.lineStyle?.color || '#ccc'}
+                            onChange={(color) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                lineStyle: {
+                                    ...selectedComponent.props.treeConfig?.lineStyle,
+                                    color: color.toHexString()
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="连线宽度">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.lineStyle?.width || 1}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    lineStyle: {
+                                        ...selectedComponent.props.treeConfig?.lineStyle,
+                                        width: v
+                                    }
+                                })}
+                                min={1}
+                                max={5}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="连线弯曲度">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.lineStyle?.curveness || 0.5}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    lineStyle: {
+                                        ...selectedComponent.props.treeConfig?.lineStyle,
+                                        curveness: v
+                                    }
+                                })}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        },
+        {
+            key: 'treeLabel',
+            label: '标签配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示标签" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.treeConfig?.label?.show !== false}
+                            onChange={(v) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                label: {
+                                    ...selectedComponent.props.treeConfig?.label,
+                                    show: v
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.treeConfig?.label?.show !== false && (
+                        <>
+                            <Form.Item label="标签位置">
+                                <Select
+                                    value={selectedComponent.props.treeConfig?.label?.position || 'left'}
+                                    onChange={(v) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        label: {
+                                            ...selectedComponent.props.treeConfig?.label,
+                                            position: v
+                                        }
+                                    })}
+                                    options={[
+                                        { value: 'left', label: '左侧' },
+                                        { value: 'right', label: '右侧' },
+                                        { value: 'top', label: '上方' },
+                                        { value: 'bottom', label: '下方' },
+                                        { value: 'inside', label: '内部' },
+                                        { value: 'insideLeft', label: '内部左' },
+                                        { value: 'insideRight', label: '内部右' },
+                                        { value: 'insideTop', label: '内部上' },
+                                        { value: 'insideBottom', label: '内部下' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="垂直对齐">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.label?.verticalAlign || 'middle'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                verticalAlign: v
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'top', label: '顶部' },
+                                            { value: 'middle', label: '中间' },
+                                            { value: 'bottom', label: '底部' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="水平对齐">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.label?.align || 'right'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                align: v
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'left', label: '左对齐' },
+                                            { value: 'center', label: '居中' },
+                                            { value: 'right', label: '右对齐' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="字体颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.treeConfig?.label?.color || '#fff'}
+                                    onChange={(color) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        label: {
+                                            ...selectedComponent.props.treeConfig?.label,
+                                            color: color.toHexString()
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="字体大小">
+                                    <InputNumber
+                                        value={selectedComponent.props.treeConfig?.label?.fontSize || 12}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                fontSize: v
+                                            }
+                                        })}
+                                        min={8}
+                                        max={24}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="字体粗细">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.label?.fontWeight || 'normal'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                fontWeight: v
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'normal', label: '正常' },
+                                            { value: 'bold', label: '加粗' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="背景颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.treeConfig?.label?.backgroundColor || 'transparent'}
+                                    onChange={(color) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        label: {
+                                            ...selectedComponent.props.treeConfig?.label,
+                                            backgroundColor: color.toHexString()
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="边框颜色">
+                                    <ColorPicker
+                                        value={selectedComponent.props.treeConfig?.label?.borderColor || 'transparent'}
+                                        onChange={(color) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                borderColor: color.toHexString()
+                                            }
+                                        })}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="边框宽度">
+                                    <InputNumber
+                                        value={selectedComponent.props.treeConfig?.label?.borderWidth || 0}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.label,
+                                                borderWidth: v
+                                            }
+                                        })}
+                                        min={0}
+                                        max={5}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="边框圆角">
+                                <InputNumber
+                                    value={selectedComponent.props.treeConfig?.label?.borderRadius || 0}
+                                    onChange={(v) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        label: {
+                                            ...selectedComponent.props.treeConfig?.label,
+                                            borderRadius: v
+                                        }
+                                    })}
+                                    min={0}
+                                    max={20}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form>
+            )
+        },
+        {
+            key: 'treeLeaves',
+            label: '叶子节点配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示叶子标签" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.treeConfig?.leaves?.label?.show !== false}
+                            onChange={(v) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                leaves: {
+                                    ...selectedComponent.props.treeConfig?.leaves,
+                                    label: {
+                                        ...selectedComponent.props.treeConfig?.leaves?.label,
+                                        show: v
+                                    }
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.treeConfig?.leaves?.label?.show !== false && (
+                        <>
+                            <Form.Item label="叶子标签位置">
+                                <Select
+                                    value={selectedComponent.props.treeConfig?.leaves?.label?.position || 'right'}
+                                    onChange={(v) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        leaves: {
+                                            ...selectedComponent.props.treeConfig?.leaves,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                position: v
+                                            }
+                                        }
+                                    })}
+                                    options={[
+                                        { value: 'left', label: '左侧' },
+                                        { value: 'right', label: '右侧' },
+                                        { value: 'top', label: '上方' },
+                                        { value: 'bottom', label: '下方' },
+                                        { value: 'inside', label: '内部' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="垂直对齐">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.leaves?.label?.verticalAlign || 'middle'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            leaves: {
+                                                ...selectedComponent.props.treeConfig?.leaves,
+                                                label: {
+                                                    ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                    verticalAlign: v
+                                                }
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'top', label: '顶部' },
+                                            { value: 'middle', label: '中间' },
+                                            { value: 'bottom', label: '底部' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="水平对齐">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.leaves?.label?.align || 'left'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            leaves: {
+                                                ...selectedComponent.props.treeConfig?.leaves,
+                                                label: {
+                                                    ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                    align: v
+                                                }
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'left', label: '左对齐' },
+                                            { value: 'center', label: '居中' },
+                                            { value: 'right', label: '右对齐' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="叶子字体颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.treeConfig?.leaves?.label?.color || '#fff'}
+                                    onChange={(color) => handleChange('props.treeConfig', {
+                                        ...selectedComponent.props.treeConfig,
+                                        leaves: {
+                                            ...selectedComponent.props.treeConfig?.leaves,
+                                            label: {
+                                                ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                color: color.toHexString()
+                                            }
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="叶子字体大小">
+                                    <InputNumber
+                                        value={selectedComponent.props.treeConfig?.leaves?.label?.fontSize || 12}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            leaves: {
+                                                ...selectedComponent.props.treeConfig?.leaves,
+                                                label: {
+                                                    ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                    fontSize: v
+                                                }
+                                            }
+                                        })}
+                                        min={8}
+                                        max={24}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="叶子字体粗细">
+                                    <Select
+                                        value={selectedComponent.props.treeConfig?.leaves?.label?.fontWeight || 'normal'}
+                                        onChange={(v) => handleChange('props.treeConfig', {
+                                            ...selectedComponent.props.treeConfig,
+                                            leaves: {
+                                                ...selectedComponent.props.treeConfig?.leaves,
+                                                label: {
+                                                    ...selectedComponent.props.treeConfig?.leaves?.label,
+                                                    fontWeight: v
+                                                }
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'normal', label: '正常' },
+                                            { value: 'bold', label: '加粗' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            )
+        },
+        {
+            key: 'treeEmphasis',
+            label: '高亮配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="高亮节点颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.treeConfig?.emphasis?.itemStyle?.color || '#ff7875'}
+                            onChange={(color) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.treeConfig?.emphasis,
+                                    itemStyle: {
+                                        ...selectedComponent.props.treeConfig?.emphasis?.itemStyle,
+                                        color: color.toHexString()
+                                    }
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="高亮边框颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.treeConfig?.emphasis?.itemStyle?.borderColor || '#fff'}
+                                onChange={(color) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    emphasis: {
+                                        ...selectedComponent.props.treeConfig?.emphasis,
+                                        itemStyle: {
+                                            ...selectedComponent.props.treeConfig?.emphasis?.itemStyle,
+                                            borderColor: color.toHexString()
+                                        }
+                                    }
+                                })}
+                            />
+                        </Form.Item>
+                        <Form.Item label="高亮边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.treeConfig?.emphasis?.itemStyle?.borderWidth || 2}
+                                onChange={(v) => handleChange('props.treeConfig', {
+                                    ...selectedComponent.props.treeConfig,
+                                    emphasis: {
+                                        ...selectedComponent.props.treeConfig?.emphasis,
+                                        itemStyle: {
+                                            ...selectedComponent.props.treeConfig?.emphasis?.itemStyle,
+                                            borderWidth: v
+                                        }
+                                    }
+                                })}
+                                min={0}
+                                max={5}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="高亮连线颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.treeConfig?.emphasis?.lineStyle?.color || '#ff7875'}
+                            onChange={(color) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.treeConfig?.emphasis,
+                                    lineStyle: {
+                                        ...selectedComponent.props.treeConfig?.emphasis?.lineStyle,
+                                        color: color.toHexString()
+                                    }
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="高亮连线宽度">
+                        <InputNumber
+                            value={selectedComponent.props.treeConfig?.emphasis?.lineStyle?.width || 2}
+                            onChange={(v) => handleChange('props.treeConfig', {
+                                ...selectedComponent.props.treeConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.treeConfig?.emphasis,
+                                    lineStyle: {
+                                        ...selectedComponent.props.treeConfig?.emphasis?.lineStyle,
+                                        width: v
+                                    }
+                                }
+                            })}
+                            min={1}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
         // 布局组件配置
         ...(['layoutTwoColumn', 'layoutThreeColumn', 'layoutHeader', 'layoutSidebar'].includes(selectedComponent.type) ? [{
             key: 'layoutConfig',
@@ -2110,7 +2712,7 @@ export default function PropertyPanel() {
     const dataContent = (
         <Form layout="vertical" size="small" style={{ padding: '0 12px' }}>
             {/* 数据源配置 - 支持数据源的组件类型 */}
-            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table'].includes(selectedComponent.type) && (
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table', 'treeChart'].includes(selectedComponent.type) && (
                 <div style={{ marginBottom: 16, padding: 12, background: 'rgba(24, 144, 255, 0.1)', borderRadius: 6, border: '1px solid rgba(24, 144, 255, 0.3)' }}>
                     <div style={{ marginBottom: 8, color: '#1890ff', fontSize: 14, fontWeight: 500 }}>数据源配置</div>
                     <DataSourceEditor
@@ -2154,6 +2756,10 @@ export default function PropertyPanel() {
                                 }
                                 if (data.tableColumns) {
                                     updates.tableColumns = data.tableColumns
+                                }
+                            } else if (selectedComponent.type === 'treeChart') {
+                                if (data.treeData || (data.name && data.children)) {
+                                    updates.treeData = data.treeData || data
                                 }
                             }
 
@@ -2487,6 +3093,15 @@ export default function PropertyPanel() {
                         </Form.Item>
                     )}
                 </>
+            )}
+            {selectedComponent.type === 'treeChart' && selectedComponent.props.dataSource?.type !== 'api' && (
+                <Form.Item label="树形数据">
+                    <JsonEditor
+                        value={selectedComponent.props.treeData || {}}
+                        onChange={(v) => handleChange('props.treeData', v)}
+                        placeholder='{"name":"根节点","children":[{"name":"子节点1","value":10,"children":[{"name":"叶子节点","value":5}]},{"name":"子节点2","value":20}]}'
+                    />
+                </Form.Item>
             )}
             {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
                 <Form.Item label="数值">
