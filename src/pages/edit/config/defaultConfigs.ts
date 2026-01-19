@@ -245,6 +245,17 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 500, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    cityMapChart: {
+        props: {
+            dataSource: { type: 'mock' },
+            provinceName: 'guangdong',
+            chartTitle: '城市数据分布',
+            showCityData: true,
+            colorScheme: 'blue',
+            mapData: []
+        },
+        style: { width: 500, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
     calendarChart: {
         props: {
             calendarYear: 2025,

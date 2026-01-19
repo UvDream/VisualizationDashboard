@@ -11,9 +11,8 @@ import {
     UserOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
-import { Canvas, useLoader, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Sphere } from '@react-three/drei'
-import { TextureLoader } from 'three'
 import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
@@ -30,6 +29,7 @@ import './index.less'
 
 // 懒加载地图组件
 const MapChart = lazy(() => import('./MapChart'))
+const CityMapChart = lazy(() => import('./CityMapChart'))
 const ScrollRankList = lazy(() => import('./ScrollRankList'))
 const CarouselList = lazy(() => import('./CarouselList'))
 
@@ -441,6 +441,20 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     </Suspense>
                 )
 
+            case 'cityMapChart':
+                const finalCityMapProps = getFinalChartData()
+                return (
+                    <Suspense fallback={<div style={{ color: '#4a90e2', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载城市地图...</div>}>
+                        <CityMapChart
+                            cityName={finalCityMapProps.mapRegion || 'nanjing'}
+                            mapData={finalCityMapProps.mapData}
+                            chartTitle={finalCityMapProps.chartTitle}
+                            showBuiltinData={finalCityMapProps.showBuiltinData !== false}
+                            colorScheme={finalCityMapProps.colorScheme || 'blue'}
+                        />
+                    </Suspense>
+                )
+
             case 'calendarChart':
                 return (
                     <ReactECharts
@@ -531,24 +545,78 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                         options={item.props.selectOptions || [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
                     />
                 )
-                // 地球组件
+                // 蓝色科技主题地球组件
                 function Earth() {
-                    const [colorMap, normalMap, specularMap] = useLoader(TextureLoader, [
-                        'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
-                        'https://unpkg.com/three-globe/example/img/earth-topology.png',
-                        'https://unpkg.com/three-globe/example/img/earth-water.png'
-                    ])
+                    const meshRef = useRef<any>(null)
+                    const atmosphereRef = useRef<any>(null)
+                    const ringRef = useRef<any>(null)
+                    
+                    useFrame((_state) => {
+                        if (meshRef.current) {
+                            meshRef.current.rotation.y += 0.005
+                        }
+                        if (atmosphereRef.current) {
+                            atmosphereRef.current.rotation.y -= 0.003
+                        }
+                        if (ringRef.current) {
+                            ringRef.current.rotation.x += 0.01
+                            ringRef.current.rotation.z += 0.005
+                        }
+                    })
 
                     return (
-                        <mesh>
-                            <sphereGeometry args={[1.2, 64, 64]} />
-                            <meshPhongMaterial
-                                map={colorMap}
-                                normalMap={normalMap}
-                                specularMap={specularMap}
-                                shininess={5}
-                            />
-                        </mesh>
+                        <group>
+                            {/* 主地球 */}
+                            <mesh ref={meshRef}>
+                                <sphereGeometry args={[1.2, 64, 64]} />
+                                <meshStandardMaterial
+                                    color="#1a237e"
+                                    emissive="#0d47a1"
+                                    emissiveIntensity={0.2}
+                                    metalness={0.8}
+                                    roughness={0.2}
+                                    transparent
+                                    opacity={0.9}
+                                />
+                            </mesh>
+                            
+                            {/* 大气层光晕 */}
+                            <mesh ref={atmosphereRef}>
+                                <sphereGeometry args={[1.35, 32, 32]} />
+                                <meshStandardMaterial
+                                    color="#2196f3"
+                                    emissive="#03a9f4"
+                                    emissiveIntensity={0.3}
+                                    transparent
+                                    opacity={0.3}
+                                    side={2} // DoubleSide
+                                />
+                            </mesh>
+                            
+                            {/* 外层光环 */}
+                            <mesh ref={ringRef}>
+                                <torusGeometry args={[1.8, 0.02, 8, 64]} />
+                                <meshStandardMaterial
+                                    color="#00bcd4"
+                                    emissive="#00acc1"
+                                    emissiveIntensity={0.5}
+                                    transparent
+                                    opacity={0.8}
+                                />
+                            </mesh>
+                            
+                            {/* 内层光环 */}
+                            <mesh rotation={[Math.PI / 3, 0, Math.PI / 4]}>
+                                <torusGeometry args={[1.6, 0.015, 6, 48]} />
+                                <meshStandardMaterial
+                                    color="#4fc3f7"
+                                    emissive="#29b6f6"
+                                    emissiveIntensity={0.4}
+                                    transparent
+                                    opacity={0.6}
+                                />
+                            </mesh>
+                        </group>
                     )
                 }
 
@@ -799,29 +867,52 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             // 3D 组件
             case 'threeEarth':
                 return (
-                    <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', position: 'absolute', top: 0, left: 0 }}>
+                    <div style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        pointerEvents: 'auto', 
+                        position: 'absolute', 
+                        top: 0, 
+                        left: 0,
+                        background: 'linear-gradient(135deg, #0a0e27 0%, #1a237e 50%, #0d47a1 100%)'
+                    }}>
                         <Canvas
-                            camera={{ position: [0, 0, 3] }}
+                            camera={{ position: [0, 0, 4] }}
                             style={{ width: '100%', height: '100%' }}
                             resize={{ scroll: false }}
                         >
-                            <ambientLight intensity={0.5} />
-                            <pointLight position={[10, 10, 10]} />
+                            {/* 增强的蓝色科技主题光照 */}
+                            <ambientLight intensity={0.3} color="#4fc3f7" />
+                            <pointLight position={[10, 10, 10]} intensity={1} color="#00bcd4" />
+                            <pointLight position={[-10, -10, -5]} intensity={0.5} color="#2196f3" />
+                            <directionalLight position={[0, 5, 5]} intensity={0.8} color="#03a9f4" />
+                            
                             <Suspense fallback={
                                 <Sphere args={[1.2, 32, 32]} visible>
-                                    <meshStandardMaterial color="#1E90FF" wireframe />
+                                    <meshStandardMaterial 
+                                        color="#1E90FF" 
+                                        emissive="#0066cc"
+                                        emissiveIntensity={0.3}
+                                        wireframe 
+                                    />
                                 </Sphere>
                             }>
                                 <Earth />
                             </Suspense>
-                            <OrbitControls enableZoom={false} autoRotate makeDefault />
-                            <Stars />
+                            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} makeDefault />
+                            <Stars radius={100} depth={50} count={3000} factor={2} saturation={0} fade speed={0.5} />
                         </Canvas>
                         <div style={{
-                            position: 'absolute', top: 10, left: 10, color: 'white',
-                            pointerEvents: 'none', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', fontSize: 10
+                            position: 'absolute', top: 10, left: 10, color: '#4fc3f7',
+                            pointerEvents: 'none', 
+                            background: 'rgba(13, 71, 161, 0.8)', 
+                            padding: '4px 8px', 
+                            fontSize: 11,
+                            borderRadius: '4px',
+                            border: '1px solid rgba(79, 195, 247, 0.3)',
+                            backdropFilter: 'blur(4px)'
                         }}>
-                            3D 地球 (加载中...)
+                            🌍 蓝色科技地球
                         </div>
                     </div>
                 )

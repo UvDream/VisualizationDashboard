@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio } from 'antd'
+import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio, Cascader } from 'antd'
 import { useEditor } from '../../context/EditorContext'
-import { getMapRegionOptions } from '../../utils/mapData'
+import { getMapRegionOptions, getCityMapCascaderOptions, getCityMapCascaderPath } from '../../utils/mapData'
 import { dataRefreshManager } from '../../utils/dataSource'
 import JsonEditor from './JsonEditor'
 import ImageListEditor from './ImageListEditor'
@@ -3458,6 +3458,60 @@ export default function PropertyPanel() {
                                 value={selectedComponent.props.mapData || []}
                                 onChange={(v) => handleChange('props.mapData', v)}
                                 placeholder='[{"name":"北京","value":100}]'
+                            />
+                        </Form.Item>
+                    )}
+                </>
+            )}
+            {selectedComponent.type === 'cityMapChart' && (
+                <>
+                    <Form.Item label="选择城市">
+                        <Cascader
+                            value={getCityMapCascaderPath(selectedComponent.props.mapRegion || 'nanjing') || undefined}
+                            onChange={(value) => {
+                                // value 是 [省份, 城市] 的数组，我们取最后一个值作为城市名
+                                const cityName = value && value.length > 0 ? value[value.length - 1] : 'nanjing'
+                                handleChange('props.mapRegion', cityName)
+                            }}
+                            options={getCityMapCascaderOptions()}
+                            placeholder="请选择省份和城市"
+                            showSearch={{
+                                filter: (inputValue, path) =>
+                                    path.some(option => 
+                                        option.label.toLowerCase().includes(inputValue.toLowerCase())
+                                    )
+                            }}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    
+                    <Form.Item label="颜色主题">
+                        <Select
+                            value={selectedComponent.props.colorScheme || 'blue'}
+                            onChange={(v) => handleChange('props.colorScheme', v)}
+                            options={[
+                                { value: 'blue', label: '蓝色主题' },
+                                { value: 'green', label: '绿色主题' },
+                                { value: 'red', label: '红色主题' },
+                                { value: 'purple', label: '紫色主题' },
+                                { value: 'orange', label: '橙色主题' },
+                            ]}
+                        />
+                    </Form.Item>
+                    
+                    <Form.Item label="显示内置数据">
+                        <Switch
+                            checked={selectedComponent.props.showBuiltinData !== false}
+                            onChange={(checked) => handleChange('props.showBuiltinData', checked)}
+                        />
+                    </Form.Item>
+                    
+                    {selectedComponent.props.dataSource?.type !== 'api' && (
+                        <Form.Item label="自定义区县数据">
+                            <JsonEditor
+                                value={selectedComponent.props.mapData || []}
+                                onChange={(v) => handleChange('props.mapData', v)}
+                                placeholder='[{"name":"玄武区","value":95}, {"name":"秦淮区","value":88}]'
                             />
                         </Form.Item>
                     )}

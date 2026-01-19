@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart' | 'treeChart' | 'sankeyChart'
+    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'cityMapChart' | 'calendarChart' | 'treeChart' | 'sankeyChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
@@ -295,8 +295,16 @@ export interface ComponentProps {
     }
 
     // 地图属性
-    mapRegion?: string // 地图区域：china, beijing, shanghai 等
+    mapRegion?: string // 地图区域：china, beijing, shanghai 等（支持省份和城市）
     mapData?: Array<{ name: string; value: number }> // 地图数据
+
+    // 城市地图属性
+    provinceName?: string // 省份名称（旧版本兼容）
+    showCityData?: boolean // 是否显示城市数据（旧版本兼容）
+    mapType?: 'province' | 'city' // 地图类型：省份城市地图 或 城市区县地图
+    selectedProvince?: string // 选择的省份（用于城市区县地图）
+    showBuiltinData?: boolean // 是否显示内置数据
+    colorScheme?: 'blue' | 'green' | 'red' | 'purple' | 'orange' // 颜色主题
 
     // 日历热力图属性
     calendarYear?: number // 年份

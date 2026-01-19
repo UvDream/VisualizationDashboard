@@ -62,6 +62,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'radarChart', name: '雷达图', icon: <RadarChartOutlined />, category: 'chart' },
     { type: 'scatterChart', name: '散点图', icon: <DotChartOutlined />, category: 'chart' },
     { type: 'mapChart', name: '地图', icon: <HeatMapOutlined />, category: 'chart' },
+    { type: 'cityMapChart', name: '城市地图', icon: <GlobalOutlined />, category: 'chart' },
     { type: 'calendarChart', name: '日历热力图', icon: <CalendarOutlined />, category: 'chart' },
     { type: 'treeChart', name: '树形分布图', icon: <AppstoreOutlined />, category: 'chart' },
     { type: 'sankeyChart', name: '桑基图', icon: <GatewayOutlined />, category: 'chart' },
