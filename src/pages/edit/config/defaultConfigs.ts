@@ -249,7 +249,6 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         props: {
             dataSource: { type: 'mock' },
             provinceName: 'guangdong',
-            chartTitle: '城市数据分布',
             showCityData: true,
             colorScheme: 'blue',
             mapData: []

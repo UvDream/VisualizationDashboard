@@ -47,98 +47,393 @@ export const mapRegions: MapRegionConfig[] = [
     { name: 'hongkong', label: '香港', level: 'province', parent: 'china' },
     { name: 'macao', label: '澳门', level: 'province', parent: 'china' },
 
-    // 城市级（主要城市）
-    // 河北省
+    // 城市级（全国所有地级市）
+    // 河北省（11个）
     { name: 'shijiazhuang', label: '石家庄市', level: 'city', parent: 'hebei' },
+    { name: 'tangshan', label: '唐山市', level: 'city', parent: 'hebei' },
+    { name: 'qinhuangdao', label: '秦皇岛市', level: 'city', parent: 'hebei' },
+    { name: 'handan', label: '邯郸市', level: 'city', parent: 'hebei' },
+    { name: 'xingtai', label: '邢台市', level: 'city', parent: 'hebei' },
+    { name: 'baoding', label: '保定市', level: 'city', parent: 'hebei' },
+    { name: 'zhangjiakou', label: '张家口市', level: 'city', parent: 'hebei' },
+    { name: 'chengde', label: '承德市', level: 'city', parent: 'hebei' },
+    { name: 'cangzhou', label: '沧州市', level: 'city', parent: 'hebei' },
+    { name: 'langfang', label: '廊坊市', level: 'city', parent: 'hebei' },
+    { name: 'hengshui', label: '衡水市', level: 'city', parent: 'hebei' },
     
-    // 山西省
+    // 山西省（11个）
     { name: 'taiyuan', label: '太原市', level: 'city', parent: 'shanxi' },
+    { name: 'datong', label: '大同市', level: 'city', parent: 'shanxi' },
+    { name: 'yangquan', label: '阳泉市', level: 'city', parent: 'shanxi' },
+    { name: 'changzhi', label: '长治市', level: 'city', parent: 'shanxi' },
+    { name: 'jincheng', label: '晋城市', level: 'city', parent: 'shanxi' },
+    { name: 'shuozhou', label: '朔州市', level: 'city', parent: 'shanxi' },
+    { name: 'jinzhong', label: '晋中市', level: 'city', parent: 'shanxi' },
+    { name: 'yuncheng', label: '运城市', level: 'city', parent: 'shanxi' },
+    { name: 'xinzhou', label: '忻州市', level: 'city', parent: 'shanxi' },
+    { name: 'linfen', label: '临汾市', level: 'city', parent: 'shanxi' },
+    { name: 'lvliang', label: '吕梁市', level: 'city', parent: 'shanxi' },
     
-    // 内蒙古
+    // 内蒙古（12个）
     { name: 'huhehaote', label: '呼和浩特市', level: 'city', parent: 'neimenggu' },
+    { name: 'baotou', label: '包头市', level: 'city', parent: 'neimenggu' },
+    { name: 'wuhai', label: '乌海市', level: 'city', parent: 'neimenggu' },
+    { name: 'chifeng', label: '赤峰市', level: 'city', parent: 'neimenggu' },
+    { name: 'tongliao', label: '通辽市', level: 'city', parent: 'neimenggu' },
+    { name: 'eerduosi', label: '鄂尔多斯市', level: 'city', parent: 'neimenggu' },
+    { name: 'hulunbeier', label: '呼伦贝尔市', level: 'city', parent: 'neimenggu' },
+    { name: 'bayannaoer', label: '巴彦淖尔市', level: 'city', parent: 'neimenggu' },
+    { name: 'wulanchabu', label: '乌兰察布市', level: 'city', parent: 'neimenggu' },
+    { name: 'xingan', label: '兴安盟', level: 'city', parent: 'neimenggu' },
+    { name: 'xilingol', label: '锡林郭勒盟', level: 'city', parent: 'neimenggu' },
+    { name: 'alxa', label: '阿拉善盟', level: 'city', parent: 'neimenggu' },
     
-    // 辽宁省
+    // 辽宁省（14个）
     { name: 'shenyang', label: '沈阳市', level: 'city', parent: 'liaoning' },
     { name: 'dalian', label: '大连市', level: 'city', parent: 'liaoning' },
+    { name: 'anshan', label: '鞍山市', level: 'city', parent: 'liaoning' },
+    { name: 'fushun', label: '抚顺市', level: 'city', parent: 'liaoning' },
+    { name: 'benxi', label: '本溪市', level: 'city', parent: 'liaoning' },
+    { name: 'dandong', label: '丹东市', level: 'city', parent: 'liaoning' },
+    { name: 'jinzhou', label: '锦州市', level: 'city', parent: 'liaoning' },
+    { name: 'yingkou', label: '营口市', level: 'city', parent: 'liaoning' },
+    { name: 'fuxin', label: '阜新市', level: 'city', parent: 'liaoning' },
+    { name: 'liaoyang', label: '辽阳市', level: 'city', parent: 'liaoning' },
+    { name: 'panjin', label: '盘锦市', level: 'city', parent: 'liaoning' },
+    { name: 'tieling', label: '铁岭市', level: 'city', parent: 'liaoning' },
+    { name: 'chaoyang', label: '朝阳市', level: 'city', parent: 'liaoning' },
+    { name: 'huludao', label: '葫芦岛市', level: 'city', parent: 'liaoning' },
     
-    // 吉林省
+    // 吉林省（9个）
     { name: 'changchun', label: '长春市', level: 'city', parent: 'jilin' },
+    { name: 'jilin', label: '吉林市', level: 'city', parent: 'jilin' },
+    { name: 'siping', label: '四平市', level: 'city', parent: 'jilin' },
+    { name: 'liaoyuan', label: '辽源市', level: 'city', parent: 'jilin' },
+    { name: 'tonghua', label: '通化市', level: 'city', parent: 'jilin' },
+    { name: 'baishan', label: '白山市', level: 'city', parent: 'jilin' },
+    { name: 'songyuan', label: '松原市', level: 'city', parent: 'jilin' },
+    { name: 'baicheng', label: '白城市', level: 'city', parent: 'jilin' },
+    { name: 'yanbian', label: '延边朝鲜族自治州', level: 'city', parent: 'jilin' },
     
-    // 黑龙江省
+    // 黑龙江省（13个）
     { name: 'haerbin', label: '哈尔滨市', level: 'city', parent: 'heilongjiang' },
+    { name: 'qiqihaer', label: '齐齐哈尔市', level: 'city', parent: 'heilongjiang' },
+    { name: 'jixi', label: '鸡西市', level: 'city', parent: 'heilongjiang' },
+    { name: 'hegang', label: '鹤岗市', level: 'city', parent: 'heilongjiang' },
+    { name: 'shuangyashan', label: '双鸭山市', level: 'city', parent: 'heilongjiang' },
+    { name: 'daqing', label: '大庆市', level: 'city', parent: 'heilongjiang' },
+    { name: 'yichun_hlj', label: '伊春市', level: 'city', parent: 'heilongjiang' },
+    { name: 'jiamusi', label: '佳木斯市', level: 'city', parent: 'heilongjiang' },
+    { name: 'qitaihe', label: '七台河市', level: 'city', parent: 'heilongjiang' },
+    { name: 'mudanjiang', label: '牡丹江市', level: 'city', parent: 'heilongjiang' },
+    { name: 'heihe', label: '黑河市', level: 'city', parent: 'heilongjiang' },
+    { name: 'suihua', label: '绥化市', level: 'city', parent: 'heilongjiang' },
+    { name: 'daxinganling', label: '大兴安岭地区', level: 'city', parent: 'heilongjiang' },
     
-    // 江苏省
+    // 江苏省（13个）
     { name: 'nanjing', label: '南京市', level: 'city', parent: 'jiangsu' },
-    { name: 'suzhou', label: '苏州市', level: 'city', parent: 'jiangsu' },
     { name: 'wuxi', label: '无锡市', level: 'city', parent: 'jiangsu' },
-    { name: 'changzhou', label: '常州市', level: 'city', parent: 'jiangsu' },
     { name: 'xuzhou', label: '徐州市', level: 'city', parent: 'jiangsu' },
+    { name: 'changzhou', label: '常州市', level: 'city', parent: 'jiangsu' },
+    { name: 'suzhou', label: '苏州市', level: 'city', parent: 'jiangsu' },
+    { name: 'nantong', label: '南通市', level: 'city', parent: 'jiangsu' },
+    { name: 'lianyungang', label: '连云港市', level: 'city', parent: 'jiangsu' },
+    { name: 'huaian', label: '淮安市', level: 'city', parent: 'jiangsu' },
+    { name: 'yancheng', label: '盐城市', level: 'city', parent: 'jiangsu' },
+    { name: 'yangzhou', label: '扬州市', level: 'city', parent: 'jiangsu' },
+    { name: 'zhenjiang', label: '镇江市', level: 'city', parent: 'jiangsu' },
+    { name: 'taizhou_js', label: '泰州市', level: 'city', parent: 'jiangsu' },
+    { name: 'suqian', label: '宿迁市', level: 'city', parent: 'jiangsu' },
     
-    // 浙江省
+    // 浙江省（11个）
     { name: 'hangzhou', label: '杭州市', level: 'city', parent: 'zhejiang' },
     { name: 'ningbo', label: '宁波市', level: 'city', parent: 'zhejiang' },
     { name: 'wenzhou', label: '温州市', level: 'city', parent: 'zhejiang' },
-    
-    // 安徽省
+    { name: 'jiaxing', label: '嘉兴市', level: 'city', parent: 'zhejiang' },
+    { name: 'huzhou', label: '湖州市', level: 'city', parent: 'zhejiang' },
+    { name: 'shaoxing', label: '绍兴市', level: 'city', parent: 'zhejiang' },
+    { name: 'jinhua', label: '金华市', level: 'city', parent: 'zhejiang' },
+    { name: 'quzhou', label: '衢州市', level: 'city', parent: 'zhejiang' },
+    { name: 'zhoushan', label: '舟山市', level: 'city', parent: 'zhejiang' },
+    { name: 'taizhou_zj', label: '台州市', level: 'city', parent: 'zhejiang' },
+    { name: 'lishui', label: '丽水市', level: 'city', parent: 'zhejiang' },
+
+    // 安徽省（16个）
     { name: 'hefei', label: '合肥市', level: 'city', parent: 'anhui' },
-    
-    // 福建省
+    { name: 'wuhu', label: '芜湖市', level: 'city', parent: 'anhui' },
+    { name: 'bengbu', label: '蚌埠市', level: 'city', parent: 'anhui' },
+    { name: 'huainan', label: '淮南市', level: 'city', parent: 'anhui' },
+    { name: 'maanshan', label: '马鞍山市', level: 'city', parent: 'anhui' },
+    { name: 'huaibei', label: '淮北市', level: 'city', parent: 'anhui' },
+    { name: 'tongling', label: '铜陵市', level: 'city', parent: 'anhui' },
+    { name: 'anqing', label: '安庆市', level: 'city', parent: 'anhui' },
+    { name: 'huangshan', label: '黄山市', level: 'city', parent: 'anhui' },
+    { name: 'chuzhou', label: '滁州市', level: 'city', parent: 'anhui' },
+    { name: 'fuyang', label: '阜阳市', level: 'city', parent: 'anhui' },
+    { name: 'suzhou_ah', label: '宿州市', level: 'city', parent: 'anhui' },
+    { name: 'luan', label: '六安市', level: 'city', parent: 'anhui' },
+    { name: 'bozhou', label: '亳州市', level: 'city', parent: 'anhui' },
+    { name: 'chizhou', label: '池州市', level: 'city', parent: 'anhui' },
+    { name: 'xuancheng', label: '宣城市', level: 'city', parent: 'anhui' },
+
+    // 福建省（9个）
     { name: 'fuzhou', label: '福州市', level: 'city', parent: 'fujian' },
     { name: 'xiamen', label: '厦门市', level: 'city', parent: 'fujian' },
-    
-    // 江西省
+    { name: 'putian', label: '莆田市', level: 'city', parent: 'fujian' },
+    { name: 'sanming', label: '三明市', level: 'city', parent: 'fujian' },
+    { name: 'quanzhou', label: '泉州市', level: 'city', parent: 'fujian' },
+    { name: 'zhangzhou', label: '漳州市', level: 'city', parent: 'fujian' },
+    { name: 'nanping', label: '南平市', level: 'city', parent: 'fujian' },
+    { name: 'longyan', label: '龙岩市', level: 'city', parent: 'fujian' },
+    { name: 'ningde', label: '宁德市', level: 'city', parent: 'fujian' },
+
+    // 江西省（11个）
     { name: 'nanchang', label: '南昌市', level: 'city', parent: 'jiangxi' },
-    
-    // 山东省
+    { name: 'jingdezhen', label: '景德镇市', level: 'city', parent: 'jiangxi' },
+    { name: 'pingxiang', label: '萍乡市', level: 'city', parent: 'jiangxi' },
+    { name: 'jiujiang', label: '九江市', level: 'city', parent: 'jiangxi' },
+    { name: 'xinyu', label: '新余市', level: 'city', parent: 'jiangxi' },
+    { name: 'yingtan', label: '鹰潭市', level: 'city', parent: 'jiangxi' },
+    { name: 'ganzhou', label: '赣州市', level: 'city', parent: 'jiangxi' },
+    { name: 'jian', label: '吉安市', level: 'city', parent: 'jiangxi' },
+    { name: 'yichun_jx', label: '宜春市', level: 'city', parent: 'jiangxi' },
+    { name: 'fuzhou_jx', label: '抚州市', level: 'city', parent: 'jiangxi' },
+    { name: 'shangrao', label: '上饶市', level: 'city', parent: 'jiangxi' },
+
+    // 山东省（16个）
     { name: 'jinan', label: '济南市', level: 'city', parent: 'shandong' },
     { name: 'qingdao', label: '青岛市', level: 'city', parent: 'shandong' },
-    
-    // 河南省
+    { name: 'zibo', label: '淄博市', level: 'city', parent: 'shandong' },
+    { name: 'zaozhuang', label: '枣庄市', level: 'city', parent: 'shandong' },
+    { name: 'dongying', label: '东营市', level: 'city', parent: 'shandong' },
+    { name: 'yantai', label: '烟台市', level: 'city', parent: 'shandong' },
+    { name: 'weifang', label: '潍坊市', level: 'city', parent: 'shandong' },
+    { name: 'jining', label: '济宁市', level: 'city', parent: 'shandong' },
+    { name: 'taian', label: '泰安市', level: 'city', parent: 'shandong' },
+    { name: 'weihai', label: '威海市', level: 'city', parent: 'shandong' },
+    { name: 'rizhao', label: '日照市', level: 'city', parent: 'shandong' },
+    { name: 'linyi', label: '临沂市', level: 'city', parent: 'shandong' },
+    { name: 'dezhou', label: '德州市', level: 'city', parent: 'shandong' },
+    { name: 'liaocheng', label: '聊城市', level: 'city', parent: 'shandong' },
+    { name: 'binzhou', label: '滨州市', level: 'city', parent: 'shandong' },
+    { name: 'heze', label: '菏泽市', level: 'city', parent: 'shandong' },
+
+    // 河南省（17个）
     { name: 'zhengzhou', label: '郑州市', level: 'city', parent: 'henan' },
-    
-    // 湖北省
+    { name: 'kaifeng', label: '开封市', level: 'city', parent: 'henan' },
+    { name: 'luoyang', label: '洛阳市', level: 'city', parent: 'henan' },
+    { name: 'pingdingshan', label: '平顶山市', level: 'city', parent: 'henan' },
+    { name: 'anyang', label: '安阳市', level: 'city', parent: 'henan' },
+    { name: 'hebi', label: '鹤壁市', level: 'city', parent: 'henan' },
+    { name: 'xinxiang', label: '新乡市', level: 'city', parent: 'henan' },
+    { name: 'jiaozuo', label: '焦作市', level: 'city', parent: 'henan' },
+    { name: 'puyang', label: '濮阳市', level: 'city', parent: 'henan' },
+    { name: 'xuchang', label: '许昌市', level: 'city', parent: 'henan' },
+    { name: 'luohe', label: '漯河市', level: 'city', parent: 'henan' },
+    { name: 'sanmenxia', label: '三门峡市', level: 'city', parent: 'henan' },
+    { name: 'nanyang', label: '南阳市', level: 'city', parent: 'henan' },
+    { name: 'shangqiu', label: '商丘市', level: 'city', parent: 'henan' },
+    { name: 'xinyang', label: '信阳市', level: 'city', parent: 'henan' },
+    { name: 'zhoukou', label: '周口市', level: 'city', parent: 'henan' },
+    { name: 'zhumadian', label: '驻马店市', level: 'city', parent: 'henan' },
+
+    // 湖北省（13个）
     { name: 'wuhan', label: '武汉市', level: 'city', parent: 'hubei' },
-    
-    // 湖南省
+    { name: 'huangshi', label: '黄石市', level: 'city', parent: 'hubei' },
+    { name: 'shiyan', label: '十堰市', level: 'city', parent: 'hubei' },
+    { name: 'yichang', label: '宜昌市', level: 'city', parent: 'hubei' },
+    { name: 'xiangyang', label: '襄阳市', level: 'city', parent: 'hubei' },
+    { name: 'ezhou', label: '鄂州市', level: 'city', parent: 'hubei' },
+    { name: 'jingmen', label: '荆门市', level: 'city', parent: 'hubei' },
+    { name: 'xiaogan', label: '孝感市', level: 'city', parent: 'hubei' },
+    { name: 'jingzhou', label: '荆州市', level: 'city', parent: 'hubei' },
+    { name: 'huanggang', label: '黄冈市', level: 'city', parent: 'hubei' },
+    { name: 'xianning', label: '咸宁市', level: 'city', parent: 'hubei' },
+    { name: 'suizhou', label: '随州市', level: 'city', parent: 'hubei' },
+    { name: 'enshi', label: '恩施土家族苗族自治州', level: 'city', parent: 'hubei' },
+
+    // 湖南省（14个）
     { name: 'changsha', label: '长沙市', level: 'city', parent: 'hunan' },
-    
-    // 广东省
+    { name: 'zhuzhou', label: '株洲市', level: 'city', parent: 'hunan' },
+    { name: 'xiangtan', label: '湘潭市', level: 'city', parent: 'hunan' },
+    { name: 'hengyang', label: '衡阳市', level: 'city', parent: 'hunan' },
+    { name: 'shaoyang', label: '邵阳市', level: 'city', parent: 'hunan' },
+    { name: 'yueyang', label: '岳阳市', level: 'city', parent: 'hunan' },
+    { name: 'changde', label: '常德市', level: 'city', parent: 'hunan' },
+    { name: 'zhangjiajie', label: '张家界市', level: 'city', parent: 'hunan' },
+    { name: 'yiyang', label: '益阳市', level: 'city', parent: 'hunan' },
+    { name: 'chenzhou', label: '郴州市', level: 'city', parent: 'hunan' },
+    { name: 'yongzhou', label: '永州市', level: 'city', parent: 'hunan' },
+    { name: 'huaihua', label: '怀化市', level: 'city', parent: 'hunan' },
+    { name: 'loudi', label: '娄底市', level: 'city', parent: 'hunan' },
+    { name: 'xiangxi', label: '湘西土家族苗族自治州', level: 'city', parent: 'hunan' },
+
+    // 广东省（21个）
     { name: 'guangzhou', label: '广州市', level: 'city', parent: 'guangdong' },
+    { name: 'shaoguan', label: '韶关市', level: 'city', parent: 'guangdong' },
     { name: 'shenzhen', label: '深圳市', level: 'city', parent: 'guangdong' },
+    { name: 'zhuhai', label: '珠海市', level: 'city', parent: 'guangdong' },
+    { name: 'shantou', label: '汕头市', level: 'city', parent: 'guangdong' },
     { name: 'foshan', label: '佛山市', level: 'city', parent: 'guangdong' },
-    
-    // 广西
+    { name: 'jiangmen', label: '江门市', level: 'city', parent: 'guangdong' },
+    { name: 'zhanjiang', label: '湛江市', level: 'city', parent: 'guangdong' },
+    { name: 'maoming', label: '茂名市', level: 'city', parent: 'guangdong' },
+    { name: 'zhaoqing', label: '肇庆市', level: 'city', parent: 'guangdong' },
+    { name: 'huizhou', label: '惠州市', level: 'city', parent: 'guangdong' },
+    { name: 'meizhou', label: '梅州市', level: 'city', parent: 'guangdong' },
+    { name: 'shanwei', label: '汕尾市', level: 'city', parent: 'guangdong' },
+    { name: 'heyuan', label: '河源市', level: 'city', parent: 'guangdong' },
+    { name: 'yangjiang', label: '阳江市', level: 'city', parent: 'guangdong' },
+    { name: 'qingyuan', label: '清远市', level: 'city', parent: 'guangdong' },
+    { name: 'dongguan', label: '东莞市', level: 'city', parent: 'guangdong' },
+    { name: 'zhongshan', label: '中山市', level: 'city', parent: 'guangdong' },
+    { name: 'chaozhou', label: '潮州市', level: 'city', parent: 'guangdong' },
+    { name: 'jieyang', label: '揭阳市', level: 'city', parent: 'guangdong' },
+    { name: 'yunfu', label: '云浮市', level: 'city', parent: 'guangdong' },
+
+    // 广西壮族自治区（14个）
     { name: 'nanning', label: '南宁市', level: 'city', parent: 'guangxi' },
-    
-    // 海南省
+    { name: 'liuzhou', label: '柳州市', level: 'city', parent: 'guangxi' },
+    { name: 'guilin', label: '桂林市', level: 'city', parent: 'guangxi' },
+    { name: 'wuzhou', label: '梧州市', level: 'city', parent: 'guangxi' },
+    { name: 'beihai', label: '北海市', level: 'city', parent: 'guangxi' },
+    { name: 'fangchenggang', label: '防城港市', level: 'city', parent: 'guangxi' },
+    { name: 'qinzhou', label: '钦州市', level: 'city', parent: 'guangxi' },
+    { name: 'guigang', label: '贵港市', level: 'city', parent: 'guangxi' },
+    { name: 'yulin_gx', label: '玉林市', level: 'city', parent: 'guangxi' },
+    { name: 'baise', label: '百色市', level: 'city', parent: 'guangxi' },
+    { name: 'hezhou', label: '贺州市', level: 'city', parent: 'guangxi' },
+    { name: 'hechi', label: '河池市', level: 'city', parent: 'guangxi' },
+    { name: 'laibin', label: '来宾市', level: 'city', parent: 'guangxi' },
+    { name: 'chongzuo', label: '崇左市', level: 'city', parent: 'guangxi' },
+
+    // 海南省（4个地级市）
     { name: 'haikou', label: '海口市', level: 'city', parent: 'hainan' },
-    
-    // 四川省
+    { name: 'sanya', label: '三亚市', level: 'city', parent: 'hainan' },
+    { name: 'sansha', label: '三沙市', level: 'city', parent: 'hainan' },
+    { name: 'danzhou', label: '儋州市', level: 'city', parent: 'hainan' },
+
+    // 四川省（21个）
     { name: 'chengdu', label: '成都市', level: 'city', parent: 'sichuan' },
-    
-    // 贵州省
+    { name: 'zigong', label: '自贡市', level: 'city', parent: 'sichuan' },
+    { name: 'panzhihua', label: '攀枝花市', level: 'city', parent: 'sichuan' },
+    { name: 'luzhou', label: '泸州市', level: 'city', parent: 'sichuan' },
+    { name: 'deyang', label: '德阳市', level: 'city', parent: 'sichuan' },
+    { name: 'mianyang', label: '绵阳市', level: 'city', parent: 'sichuan' },
+    { name: 'guangyuan', label: '广元市', level: 'city', parent: 'sichuan' },
+    { name: 'suining', label: '遂宁市', level: 'city', parent: 'sichuan' },
+    { name: 'neijiang', label: '内江市', level: 'city', parent: 'sichuan' },
+    { name: 'leshan', label: '乐山市', level: 'city', parent: 'sichuan' },
+    { name: 'nanchong', label: '南充市', level: 'city', parent: 'sichuan' },
+    { name: 'meishan', label: '眉山市', level: 'city', parent: 'sichuan' },
+    { name: 'yibin', label: '宜宾市', level: 'city', parent: 'sichuan' },
+    { name: 'guangan', label: '广安市', level: 'city', parent: 'sichuan' },
+    { name: 'dazhou', label: '达州市', level: 'city', parent: 'sichuan' },
+    { name: 'yaan', label: '雅安市', level: 'city', parent: 'sichuan' },
+    { name: 'bazhong', label: '巴中市', level: 'city', parent: 'sichuan' },
+    { name: 'ziyang', label: '资阳市', level: 'city', parent: 'sichuan' },
+    { name: 'aba', label: '阿坝藏族羌族自治州', level: 'city', parent: 'sichuan' },
+    { name: 'ganzi', label: '甘孜藏族自治州', level: 'city', parent: 'sichuan' },
+    { name: 'liangshan', label: '凉山彝族自治州', level: 'city', parent: 'sichuan' },
+
+    // 贵州省（9个）
     { name: 'guiyang', label: '贵阳市', level: 'city', parent: 'guizhou' },
-    
-    // 云南省
+    { name: 'liupanshui', label: '六盘水市', level: 'city', parent: 'guizhou' },
+    { name: 'zunyi', label: '遵义市', level: 'city', parent: 'guizhou' },
+    { name: 'anshun', label: '安顺市', level: 'city', parent: 'guizhou' },
+    { name: 'bijie', label: '毕节市', level: 'city', parent: 'guizhou' },
+    { name: 'tongren', label: '铜仁市', level: 'city', parent: 'guizhou' },
+    { name: 'qianxinan', label: '黔西南布依族苗族自治州', level: 'city', parent: 'guizhou' },
+    { name: 'qiandongnan', label: '黔东南苗族侗族自治州', level: 'city', parent: 'guizhou' },
+    { name: 'qiannan', label: '黔南布依族苗族自治州', level: 'city', parent: 'guizhou' },
+
+    // 云南省（16个）
     { name: 'kunming', label: '昆明市', level: 'city', parent: 'yunnan' },
-    
-    // 西藏
-    { name: 'lhasa', label: '拉萨市', level: 'city', parent: 'xizang' },
-    
-    // 陕西省
+    { name: 'qujing', label: '曲靖市', level: 'city', parent: 'yunnan' },
+    { name: 'yuxi', label: '玉溪市', level: 'city', parent: 'yunnan' },
+    { name: 'baoshan', label: '保山市', level: 'city', parent: 'yunnan' },
+    { name: 'zhaotong', label: '昭通市', level: 'city', parent: 'yunnan' },
+    { name: 'lijiang', label: '丽江市', level: 'city', parent: 'yunnan' },
+    { name: 'puer', label: '普洱市', level: 'city', parent: 'yunnan' },
+    { name: 'lincang', label: '临沧市', level: 'city', parent: 'yunnan' },
+    { name: 'chuxiong', label: '楚雄彝族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'honghe', label: '红河哈尼族彝族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'wenshan', label: '文山壮族苗族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'xishuangbanna', label: '西双版纳傣族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'dali', label: '大理白族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'dehong', label: '德宏傣族景颇族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'nujiang', label: '怒江傈僳族自治州', level: 'city', parent: 'yunnan' },
+    { name: 'diqing', label: '迪庆藏族自治州', level: 'city', parent: 'yunnan' },
+
+    // 西藏自治区（7个）
+    { name: 'lasa', label: '拉萨市', level: 'city', parent: 'xizang' },
+    { name: 'rikaze', label: '日喀则市', level: 'city', parent: 'xizang' },
+    { name: 'changdu', label: '昌都市', level: 'city', parent: 'xizang' },
+    { name: 'linzhi', label: '林芝市', level: 'city', parent: 'xizang' },
+    { name: 'shannan', label: '山南市', level: 'city', parent: 'xizang' },
+    { name: 'naqu', label: '那曲市', level: 'city', parent: 'xizang' },
+    { name: 'ali', label: '阿里地区', level: 'city', parent: 'xizang' },
+
+    // 陕西省（10个）
     { name: 'xian', label: '西安市', level: 'city', parent: 'shaanxi' },
-    
-    // 甘肃省
+    { name: 'tongchuan', label: '铜川市', level: 'city', parent: 'shaanxi' },
+    { name: 'baoji', label: '宝鸡市', level: 'city', parent: 'shaanxi' },
+    { name: 'xianyang', label: '咸阳市', level: 'city', parent: 'shaanxi' },
+    { name: 'weinan', label: '渭南市', level: 'city', parent: 'shaanxi' },
+    { name: 'yanan', label: '延安市', level: 'city', parent: 'shaanxi' },
+    { name: 'hanzhong', label: '汉中市', level: 'city', parent: 'shaanxi' },
+    { name: 'yulin_sx', label: '榆林市', level: 'city', parent: 'shaanxi' },
+    { name: 'ankang', label: '安康市', level: 'city', parent: 'shaanxi' },
+    { name: 'shangluo', label: '商洛市', level: 'city', parent: 'shaanxi' },
+
+    // 甘肃省（14个）
     { name: 'lanzhou', label: '兰州市', level: 'city', parent: 'gansu' },
-    
-    // 青海省
+    { name: 'jiayuguan', label: '嘉峪关市', level: 'city', parent: 'gansu' },
+    { name: 'jinchang', label: '金昌市', level: 'city', parent: 'gansu' },
+    { name: 'baiyin', label: '白银市', level: 'city', parent: 'gansu' },
+    { name: 'tianshui', label: '天水市', level: 'city', parent: 'gansu' },
+    { name: 'wuwei', label: '武威市', level: 'city', parent: 'gansu' },
+    { name: 'zhangye', label: '张掖市', level: 'city', parent: 'gansu' },
+    { name: 'pingliang', label: '平凉市', level: 'city', parent: 'gansu' },
+    { name: 'jiuquan', label: '酒泉市', level: 'city', parent: 'gansu' },
+    { name: 'qingyang', label: '庆阳市', level: 'city', parent: 'gansu' },
+    { name: 'dingxi', label: '定西市', level: 'city', parent: 'gansu' },
+    { name: 'longnan', label: '陇南市', level: 'city', parent: 'gansu' },
+    { name: 'linxia', label: '临夏回族自治州', level: 'city', parent: 'gansu' },
+    { name: 'gannan', label: '甘南藏族自治州', level: 'city', parent: 'gansu' },
+
+    // 青海省（8个）
     { name: 'xining', label: '西宁市', level: 'city', parent: 'qinghai' },
-    
-    // 宁夏
+    { name: 'haidong', label: '海东市', level: 'city', parent: 'qinghai' },
+    { name: 'haibei', label: '海北藏族自治州', level: 'city', parent: 'qinghai' },
+    { name: 'huangnan', label: '黄南藏族自治州', level: 'city', parent: 'qinghai' },
+    { name: 'hainan_qh', label: '海南藏族自治州', level: 'city', parent: 'qinghai' },
+    { name: 'guoluo', label: '果洛藏族自治州', level: 'city', parent: 'qinghai' },
+    { name: 'yushu', label: '玉树藏族自治州', level: 'city', parent: 'qinghai' },
+    { name: 'haixi', label: '海西蒙古族藏族自治州', level: 'city', parent: 'qinghai' },
+
+    // 宁夏回族自治区（5个）
     { name: 'yinchuan', label: '银川市', level: 'city', parent: 'ningxia' },
-    
-    // 新疆
+    { name: 'shizuishan', label: '石嘴山市', level: 'city', parent: 'ningxia' },
+    { name: 'wuzhong', label: '吴忠市', level: 'city', parent: 'ningxia' },
+    { name: 'guyuan', label: '固原市', level: 'city', parent: 'ningxia' },
+    { name: 'zhongwei', label: '中卫市', level: 'city', parent: 'ningxia' },
+
+    // 新疆维吾尔自治区（14个地级市+5个自治州）
     { name: 'wulumuqi', label: '乌鲁木齐市', level: 'city', parent: 'xinjiang' },
+    { name: 'kelamayi', label: '克拉玛依市', level: 'city', parent: 'xinjiang' },
+    { name: 'tulufan', label: '吐鲁番市', level: 'city', parent: 'xinjiang' },
+    { name: 'hami', label: '哈密市', level: 'city', parent: 'xinjiang' },
+    { name: 'changji', label: '昌吉回族自治州', level: 'city', parent: 'xinjiang' },
+    { name: 'boertala', label: '博尔塔拉蒙古自治州', level: 'city', parent: 'xinjiang' },
+    { name: 'bayinguoleng', label: '巴音郭楞蒙古自治州', level: 'city', parent: 'xinjiang' },
+    { name: 'akesu', label: '阿克苏地区', level: 'city', parent: 'xinjiang' },
+    { name: 'kezilesukeerkezi', label: '克孜勒苏柯尔克孜自治州', level: 'city', parent: 'xinjiang' },
+    { name: 'kashi', label: '喀什地区', level: 'city', parent: 'xinjiang' },
+    { name: 'hetian', label: '和田地区', level: 'city', parent: 'xinjiang' },
+    { name: 'yili', label: '伊犁哈萨克自治州', level: 'city', parent: 'xinjiang' },
+    { name: 'tacheng', label: '塔城地区', level: 'city', parent: 'xinjiang' },
+    { name: 'aletai', label: '阿勒泰地区', level: 'city', parent: 'xinjiang' },
 ]
 
 // 主要城市地图数据配置（省份下的城市数据）

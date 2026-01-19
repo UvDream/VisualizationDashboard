@@ -134,6 +134,15 @@ export default function CityMapChart({
 
         return {
             backgroundColor: 'transparent',
+            title: chartTitle ? {
+                text: chartTitle,
+                left: 'center',
+                top: 10,
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 16
+                }
+            } : undefined,
             tooltip: {
                 trigger: 'item',
                 formatter: (params: any) => {
