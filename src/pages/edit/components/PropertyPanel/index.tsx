@@ -2225,7 +2225,7 @@ export default function PropertyPanel() {
                     </Form.Item>
                 </>
             )}
-            {['lineChart', 'barChart'].includes(selectedComponent.type) && (
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(selectedComponent.type) && (
                 <>
                     <Form.Item label="X轴数据">
                         <JsonEditor
