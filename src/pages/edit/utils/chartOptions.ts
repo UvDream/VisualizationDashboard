@@ -248,6 +248,9 @@ export function getChartOption(type: string, props: ComponentItem['props']): Rec
         case 'treeChart':
             return buildTreeOption(baseOption, props)
 
+        case 'sankeyChart':
+            return buildSankeyOption(baseOption, props)
+
         default:
             return baseOption
     }
@@ -481,6 +484,98 @@ function buildTreeOption(baseOption: any, props: ComponentItem['props']) {
         }]
     }
 }
+/**
+ * 构建桑基图配置
+ */
+function buildSankeyOption(baseOption: any, props: ComponentItem['props']) {
+    const sankeyConfig = props.sankeyConfig || {}
+    
+    // 默认桑基图数据
+    const defaultSankeyData = {
+        nodes: [
+            { name: '农业' },
+            { name: '工业' },
+            { name: '服务业' },
+            { name: '出口' },
+            { name: '消费' },
+            { name: '投资' },
+            { name: 'GDP' }
+        ],
+        links: [
+            { source: '农业', target: 'GDP', value: 10 },
+            { source: '工业', target: 'GDP', value: 40 },
+            { source: '服务业', target: 'GDP', value: 50 },
+            { source: 'GDP', target: '出口', value: 20 },
+            { source: 'GDP', target: '消费', value: 60 },
+            { source: 'GDP', target: '投资', value: 20 }
+        ]
+    }
+
+    const sankeyData = props.sankeyData || defaultSankeyData
+
+    return {
+        ...baseOption,
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter: (params: any) => {
+                if (params.dataType === 'edge') {
+                    return `${params.data.source} → ${params.data.target}<br/>数值: ${params.data.value}`
+                } else {
+                    return `${params.name}<br/>数值: ${params.value || '—'}`
+                }
+            }
+        },
+        series: [{
+            type: 'sankey',
+            data: sankeyData.nodes || [],
+            links: sankeyData.links || [],
+            orient: sankeyConfig.orient || 'horizontal',
+            nodeWidth: sankeyConfig.nodeWidth || 20,
+            nodeGap: sankeyConfig.nodeGap || 8,
+            layoutIterations: sankeyConfig.layoutIterations || 32,
+            nodeAlign: sankeyConfig.nodeAlign || 'justify',
+            draggable: sankeyConfig.draggable !== false,
+            focusNodeAdjacency: sankeyConfig.focusNodeAdjacency || 'allEdges',
+            levels: sankeyConfig.levels || [],
+            label: {
+                show: sankeyConfig.label?.show !== false,
+                position: sankeyConfig.label?.position || 'right',
+                color: sankeyConfig.label?.color || '#fff',
+                fontSize: sankeyConfig.label?.fontSize || 12,
+                fontWeight: sankeyConfig.label?.fontWeight || 'normal',
+                formatter: sankeyConfig.label?.formatter || '{b}'
+            },
+            itemStyle: {
+                color: sankeyConfig.itemStyle?.color,
+                borderColor: sankeyConfig.itemStyle?.borderColor || '#fff',
+                borderWidth: sankeyConfig.itemStyle?.borderWidth || 1,
+                borderRadius: sankeyConfig.itemStyle?.borderRadius || 0,
+                opacity: sankeyConfig.itemStyle?.opacity || 0.7
+            },
+            lineStyle: {
+                color: sankeyConfig.lineStyle?.color || 'gradient',
+                opacity: sankeyConfig.lineStyle?.opacity || 0.2,
+                curveness: sankeyConfig.lineStyle?.curveness || 0.5
+            },
+            emphasis: {
+                itemStyle: {
+                    color: sankeyConfig.emphasis?.itemStyle?.color,
+                    borderColor: sankeyConfig.emphasis?.itemStyle?.borderColor || '#fff',
+                    borderWidth: sankeyConfig.emphasis?.itemStyle?.borderWidth || 2
+                },
+                lineStyle: {
+                    opacity: sankeyConfig.emphasis?.lineStyle?.opacity || 0.6
+                },
+                label: {
+                    color: sankeyConfig.emphasis?.label?.color,
+                    fontSize: sankeyConfig.emphasis?.label?.fontSize
+                }
+            }
+        }]
+    }
+}
+
 function buildFunnelOption(baseOption: any, props: ComponentItem['props']) {
     return {
         ...baseOption,

@@ -333,6 +333,56 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 600, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
     },
+    sankeyChart: {
+        props: {
+            dataSource: { type: 'mock' },
+            sankeyData: {
+                nodes: [
+                    { name: '农业' },
+                    { name: '工业' },
+                    { name: '服务业' },
+                    { name: '出口' },
+                    { name: '消费' },
+                    { name: '投资' },
+                    { name: 'GDP' }
+                ],
+                links: [
+                    { source: '农业', target: 'GDP', value: 10 },
+                    { source: '工业', target: 'GDP', value: 40 },
+                    { source: '服务业', target: 'GDP', value: 50 },
+                    { source: 'GDP', target: '出口', value: 20 },
+                    { source: 'GDP', target: '消费', value: 60 },
+                    { source: 'GDP', target: '投资', value: 20 }
+                ]
+            },
+            sankeyConfig: {
+                orient: 'horizontal',
+                nodeWidth: 20,
+                nodeGap: 8,
+                layoutIterations: 32,
+                nodeAlign: 'justify',
+                draggable: true,
+                focusNodeAdjacency: 'allEdges',
+                label: {
+                    show: true,
+                    position: 'right',
+                    fontSize: 12,
+                    color: '#fff',
+                    fontWeight: 'normal'
+                },
+                itemStyle: {
+                    borderColor: '#fff',
+                    borderWidth: 1,
+                    opacity: 0.7
+                },
+                lineStyle: {
+                    opacity: 0.2,
+                    curveness: 0.5
+                }
+            }
+        },
+        style: { width: 800, height: 400, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 
     // Antd 组件
     text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },

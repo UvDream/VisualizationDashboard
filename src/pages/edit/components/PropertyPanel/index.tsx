@@ -36,6 +36,14 @@ export default function PropertyPanel() {
                 if (data.mapData || Array.isArray(data)) {
                     updates.mapData = data.mapData || data
                 }
+            } else if (selectedComponent.type === 'treeChart') {
+                if (data.treeData || (data.name && data.children)) {
+                    updates.treeData = data.treeData || data
+                }
+            } else if (selectedComponent.type === 'sankeyChart') {
+                if (data.sankeyData || (data.nodes && data.links)) {
+                    updates.sankeyData = data.sankeyData || data
+                }
             }
 
             if (Object.keys(updates).length > 0) {
@@ -2627,6 +2635,404 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 桑基图配置
+        ...(selectedComponent.type === 'sankeyChart' ? [{
+            key: 'sankeyLayout',
+            label: '布局配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="布局方向">
+                        <Select
+                            value={selectedComponent.props.sankeyConfig?.orient || 'horizontal'}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                orient: v
+                            })}
+                            options={[
+                                { value: 'horizontal', label: '水平' },
+                                { value: 'vertical', label: '垂直' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="节点宽度">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.nodeWidth || 20}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    nodeWidth: v
+                                })}
+                                min={10}
+                                max={50}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="节点间距">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.nodeGap || 8}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    nodeGap: v
+                                })}
+                                min={4}
+                                max={30}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="节点对齐">
+                        <Select
+                            value={selectedComponent.props.sankeyConfig?.nodeAlign || 'justify'}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                nodeAlign: v
+                            })}
+                            options={[
+                                { value: 'justify', label: '两端对齐' },
+                                { value: 'left', label: '左对齐' },
+                                { value: 'right', label: '右对齐' },
+                                { value: 'center', label: '居中' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="布局迭代次数">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.layoutIterations || 32}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    layoutIterations: v
+                                })}
+                                min={1}
+                                max={100}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="可拖拽" style={{ marginBottom: 8 }}>
+                            <Switch
+                                checked={selectedComponent.props.sankeyConfig?.draggable !== false}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    draggable: v
+                                })}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="高亮相邻节点">
+                        <Select
+                            value={selectedComponent.props.sankeyConfig?.focusNodeAdjacency || 'allEdges'}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                focusNodeAdjacency: v
+                            })}
+                            options={[
+                                { value: false, label: '不高亮' },
+                                { value: 'inEdges', label: '入边' },
+                                { value: 'outEdges', label: '出边' },
+                                { value: 'allEdges', label: '所有边' },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        },
+        {
+            key: 'sankeyStyle',
+            label: '样式配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="节点边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.sankeyConfig?.itemStyle?.borderColor || '#fff'}
+                            onChange={(color) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                itemStyle: {
+                                    ...selectedComponent.props.sankeyConfig?.itemStyle,
+                                    borderColor: color.toHexString()
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="节点边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.itemStyle?.borderWidth || 1}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.itemStyle,
+                                        borderWidth: v
+                                    }
+                                })}
+                                min={0}
+                                max={5}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="节点圆角">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.itemStyle?.borderRadius || 0}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    itemStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.itemStyle,
+                                        borderRadius: v
+                                    }
+                                })}
+                                min={0}
+                                max={20}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="节点透明度">
+                        <InputNumber
+                            value={selectedComponent.props.sankeyConfig?.itemStyle?.opacity || 0.7}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                itemStyle: {
+                                    ...selectedComponent.props.sankeyConfig?.itemStyle,
+                                    opacity: v
+                                }
+                            })}
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="连线透明度">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.lineStyle?.opacity || 0.2}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    lineStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.lineStyle,
+                                        opacity: v
+                                    }
+                                })}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="连线弯曲度">
+                            <InputNumber
+                                value={selectedComponent.props.sankeyConfig?.lineStyle?.curveness || 0.5}
+                                onChange={(v) => handleChange('props.sankeyConfig', {
+                                    ...selectedComponent.props.sankeyConfig,
+                                    lineStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.lineStyle,
+                                        curveness: v
+                                    }
+                                })}
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        },
+        {
+            key: 'sankeyLabel',
+            label: '标签配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="显示标签" style={{ marginBottom: 8 }}>
+                        <Switch
+                            checked={selectedComponent.props.sankeyConfig?.label?.show !== false}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                label: {
+                                    ...selectedComponent.props.sankeyConfig?.label,
+                                    show: v
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.sankeyConfig?.label?.show !== false && (
+                        <>
+                            <Form.Item label="标签位置">
+                                <Select
+                                    value={selectedComponent.props.sankeyConfig?.label?.position || 'right'}
+                                    onChange={(v) => handleChange('props.sankeyConfig', {
+                                        ...selectedComponent.props.sankeyConfig,
+                                        label: {
+                                            ...selectedComponent.props.sankeyConfig?.label,
+                                            position: v
+                                        }
+                                    })}
+                                    options={[
+                                        { value: 'inside', label: '内部' },
+                                        { value: 'outside', label: '外部' },
+                                        { value: 'left', label: '左侧' },
+                                        { value: 'right', label: '右侧' },
+                                        { value: 'top', label: '上方' },
+                                        { value: 'bottom', label: '下方' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item label="字体颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.sankeyConfig?.label?.color || '#fff'}
+                                    onChange={(color) => handleChange('props.sankeyConfig', {
+                                        ...selectedComponent.props.sankeyConfig,
+                                        label: {
+                                            ...selectedComponent.props.sankeyConfig?.label,
+                                            color: color.toHexString()
+                                        }
+                                    })}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="字体大小">
+                                    <InputNumber
+                                        value={selectedComponent.props.sankeyConfig?.label?.fontSize || 12}
+                                        onChange={(v) => handleChange('props.sankeyConfig', {
+                                            ...selectedComponent.props.sankeyConfig,
+                                            label: {
+                                                ...selectedComponent.props.sankeyConfig?.label,
+                                                fontSize: v
+                                            }
+                                        })}
+                                        min={8}
+                                        max={24}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="字体粗细">
+                                    <Select
+                                        value={selectedComponent.props.sankeyConfig?.label?.fontWeight || 'normal'}
+                                        onChange={(v) => handleChange('props.sankeyConfig', {
+                                            ...selectedComponent.props.sankeyConfig,
+                                            label: {
+                                                ...selectedComponent.props.sankeyConfig?.label,
+                                                fontWeight: v
+                                            }
+                                        })}
+                                        options={[
+                                            { value: 'normal', label: '正常' },
+                                            { value: 'bold', label: '加粗' },
+                                        ]}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <Form.Item label="格式化字符串">
+                                <Input
+                                    value={selectedComponent.props.sankeyConfig?.label?.formatter || '{b}'}
+                                    onChange={(e) => handleChange('props.sankeyConfig', {
+                                        ...selectedComponent.props.sankeyConfig,
+                                        label: {
+                                            ...selectedComponent.props.sankeyConfig?.label,
+                                            formatter: e.target.value
+                                        }
+                                    })}
+                                    placeholder="{b}: 节点名称, {c}: 节点值"
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form>
+            )
+        },
+        {
+            key: 'sankeyEmphasis',
+            label: '高亮配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="高亮节点边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.sankeyConfig?.emphasis?.itemStyle?.borderColor || '#fff'}
+                            onChange={(color) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.sankeyConfig?.emphasis,
+                                    itemStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.emphasis?.itemStyle,
+                                        borderColor: color.toHexString()
+                                    }
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="高亮边框宽度">
+                        <InputNumber
+                            value={selectedComponent.props.sankeyConfig?.emphasis?.itemStyle?.borderWidth || 2}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.sankeyConfig?.emphasis,
+                                    itemStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.emphasis?.itemStyle,
+                                        borderWidth: v
+                                    }
+                                }
+                            })}
+                            min={0}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="高亮连线透明度">
+                        <InputNumber
+                            value={selectedComponent.props.sankeyConfig?.emphasis?.lineStyle?.opacity || 0.6}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.sankeyConfig?.emphasis,
+                                    lineStyle: {
+                                        ...selectedComponent.props.sankeyConfig?.emphasis?.lineStyle,
+                                        opacity: v
+                                    }
+                                }
+                            })}
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="高亮标签颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.sankeyConfig?.emphasis?.label?.color || '#fff'}
+                            onChange={(color) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.sankeyConfig?.emphasis,
+                                    label: {
+                                        ...selectedComponent.props.sankeyConfig?.emphasis?.label,
+                                        color: color.toHexString()
+                                    }
+                                }
+                            })}
+                        />
+                    </Form.Item>
+                    <Form.Item label="高亮标签大小">
+                        <InputNumber
+                            value={selectedComponent.props.sankeyConfig?.emphasis?.label?.fontSize || 12}
+                            onChange={(v) => handleChange('props.sankeyConfig', {
+                                ...selectedComponent.props.sankeyConfig,
+                                emphasis: {
+                                    ...selectedComponent.props.sankeyConfig?.emphasis,
+                                    label: {
+                                        ...selectedComponent.props.sankeyConfig?.emphasis?.label,
+                                        fontSize: v
+                                    }
+                                }
+                            })}
+                            min={8}
+                            max={24}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
         // 布局组件配置
         ...(['layoutTwoColumn', 'layoutThreeColumn', 'layoutHeader', 'layoutSidebar'].includes(selectedComponent.type) ? [{
             key: 'layoutConfig',
@@ -2712,7 +3118,7 @@ export default function PropertyPanel() {
     const dataContent = (
         <Form layout="vertical" size="small" style={{ padding: '0 12px' }}>
             {/* 数据源配置 - 支持数据源的组件类型 */}
-            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table', 'treeChart'].includes(selectedComponent.type) && (
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table', 'treeChart', 'sankeyChart'].includes(selectedComponent.type) && (
                 <div style={{ marginBottom: 16, padding: 12, background: 'rgba(24, 144, 255, 0.1)', borderRadius: 6, border: '1px solid rgba(24, 144, 255, 0.3)' }}>
                     <div style={{ marginBottom: 8, color: '#1890ff', fontSize: 14, fontWeight: 500 }}>数据源配置</div>
                     <DataSourceEditor
@@ -2760,6 +3166,10 @@ export default function PropertyPanel() {
                             } else if (selectedComponent.type === 'treeChart') {
                                 if (data.treeData || (data.name && data.children)) {
                                     updates.treeData = data.treeData || data
+                                }
+                            } else if (selectedComponent.type === 'sankeyChart') {
+                                if (data.sankeyData || (data.nodes && data.links)) {
+                                    updates.sankeyData = data.sankeyData || data
                                 }
                             }
 
@@ -3100,6 +3510,15 @@ export default function PropertyPanel() {
                         value={selectedComponent.props.treeData || {}}
                         onChange={(v) => handleChange('props.treeData', v)}
                         placeholder='{"name":"根节点","children":[{"name":"子节点1","value":10,"children":[{"name":"叶子节点","value":5}]},{"name":"子节点2","value":20}]}'
+                    />
+                </Form.Item>
+            )}
+            {selectedComponent.type === 'sankeyChart' && selectedComponent.props.dataSource?.type !== 'api' && (
+                <Form.Item label="桑基图数据">
+                    <JsonEditor
+                        value={selectedComponent.props.sankeyData || {}}
+                        onChange={(v) => handleChange('props.sankeyData', v)}
+                        placeholder='{"nodes":[{"name":"源节点"},{"name":"目标节点"}],"links":[{"source":"源节点","target":"目标节点","value":100}]}'
                     />
                 </Form.Item>
             )}

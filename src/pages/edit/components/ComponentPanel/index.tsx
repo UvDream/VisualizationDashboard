@@ -63,6 +63,7 @@ const chartComponents: ComponentConfig[] = [
     { type: 'mapChart', name: '地图', icon: <HeatMapOutlined />, category: 'chart' },
     { type: 'calendarChart', name: '日历热力图', icon: <CalendarOutlined />, category: 'chart' },
     { type: 'treeChart', name: '树形分布图', icon: <AppstoreOutlined />, category: 'chart' },
+    { type: 'sankeyChart', name: '桑基图', icon: <GatewayOutlined />, category: 'chart' },
 ]
 
 // Antd 组件

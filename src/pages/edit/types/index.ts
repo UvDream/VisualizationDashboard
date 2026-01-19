@@ -1,7 +1,7 @@
 // 组件类型枚举
 export type ComponentType =
     // 图表类 - ECharts
-    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart' | 'treeChart'
+    | 'singleLineChart' | 'doubleLineChart' | 'singleBarChart' | 'doubleBarChart' | 'horizontalBarChart' | 'pieChart' | 'halfPieChart' | 'funnelChart' | 'wordCloudChart' | 'gaugeChart' | 'radarChart' | 'scatterChart' | 'mapChart' | 'calendarChart' | 'treeChart' | 'sankeyChart'
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
@@ -416,6 +416,71 @@ export interface ComponentProps {
             lineStyle?: {
                 color?: string // 高亮连线颜色
                 width?: number // 高亮连线宽度
+            }
+        }
+    }
+
+    // 桑基图配置
+    sankeyData?: {
+        nodes?: Array<{ name: string; value?: number }> // 节点数据
+        links?: Array<{ source: string | number; target: string | number; value: number }> // 连接数据
+    }
+    sankeyConfig?: {
+        orient?: 'horizontal' | 'vertical' // 布局方向
+        nodeWidth?: number // 节点宽度
+        nodeGap?: number // 节点间距
+        layoutIterations?: number // 布局迭代次数
+        nodeAlign?: 'justify' | 'left' | 'right' | 'center' // 节点对齐方式
+        draggable?: boolean // 是否可拖拽
+        focusNodeAdjacency?: boolean | 'inEdges' | 'outEdges' | 'allEdges' // 高亮相邻节点
+        levels?: Array<{
+            depth?: number // 层级深度
+            itemStyle?: {
+                color?: string // 节点颜色
+                borderColor?: string // 边框颜色
+                borderWidth?: number // 边框宽度
+            }
+            lineStyle?: {
+                color?: string // 连线颜色
+                opacity?: number // 透明度
+            }
+            label?: {
+                color?: string // 标签颜色
+                fontSize?: number // 字体大小
+            }
+        }>
+        label?: {
+            show?: boolean // 显示标签
+            position?: 'inside' | 'outside' | 'left' | 'right' | 'top' | 'bottom'
+            color?: string // 字体颜色
+            fontSize?: number // 字体大小
+            fontWeight?: 'normal' | 'bold' // 字体粗细
+            formatter?: string // 格式化字符串
+        }
+        itemStyle?: {
+            color?: string // 节点颜色
+            borderColor?: string // 节点边框颜色
+            borderWidth?: number // 节点边框宽度
+            borderRadius?: number // 节点圆角
+            opacity?: number // 透明度
+        }
+        lineStyle?: {
+            color?: string // 连线颜色
+            opacity?: number // 连线透明度
+            curveness?: number // 连线弯曲度
+        }
+        emphasis?: {
+            itemStyle?: {
+                color?: string // 高亮节点颜色
+                borderColor?: string // 高亮边框颜色
+                borderWidth?: number // 高亮边框宽度
+            }
+            lineStyle?: {
+                opacity?: number // 高亮连线透明度
+            }
+            label?: {
+                color?: string // 高亮标签颜色
+                fontSize?: number // 高亮字体大小
             }
         }
     }
