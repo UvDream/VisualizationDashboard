@@ -144,10 +144,32 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                     />
                 )
             case 'text':
+                const textShadowValue = item.props.textShadow
+                    ? `${item.props.shadowOffsetX || 0}px ${item.props.shadowOffsetY || 0}px ${item.props.shadowBlur || 4}px ${item.props.shadowColor || 'rgba(0,0,0,0.5)'}`
+                    : 'none'
+                
                 return (
                     <span style={{
-                        color: item.style.color || '#fff',
-                        fontSize: item.style.fontSize || 16
+                        color: item.props.color || '#ffffff',
+                        fontSize: `${item.props.fontSize || 16}px`,
+                        fontWeight: item.props.fontWeight || 'normal',
+                        fontStyle: item.props.fontStyle || 'normal',
+                        textDecoration: item.props.textDecoration || 'none',
+                        textTransform: item.props.textTransform || 'none',
+                        letterSpacing: `${item.props.letterSpacing || 0}px`,
+                        lineHeight: item.props.lineHeight || 1.5,
+                        textShadow: textShadowValue,
+                        backgroundColor: item.props.backgroundColor || 'transparent',
+                        borderRadius: `${item.props.borderRadius || 0}px`,
+                        borderWidth: `${item.props.borderWidth || 0}px`,
+                        borderStyle: item.props.borderWidth ? 'solid' : 'none',
+                        borderColor: item.props.borderColor || '#000000',
+                        padding: `${item.props.padding || 8}px`,
+                        opacity: item.props.opacity || 1,
+                        display: 'inline-block',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                        boxSizing: 'border-box',
                     }}>
                         {item.props.content || '文本'}
                     </span>

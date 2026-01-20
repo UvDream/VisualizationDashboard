@@ -149,6 +149,28 @@ export interface ComponentProps {
     // 通用属性
     content?: string
 
+    // 文本组件属性
+    fontSize?: number
+    fontWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
+    color?: string
+    textAlign?: 'left' | 'center' | 'right' | 'justify'
+    textDecoration?: 'none' | 'underline' | 'overline' | 'line-through'
+    textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize'
+    fontStyle?: 'normal' | 'italic' | 'oblique'
+    letterSpacing?: number
+    lineHeight?: number
+    textShadow?: boolean
+    shadowColor?: string
+    shadowBlur?: number
+    shadowOffsetX?: number
+    shadowOffsetY?: number
+    opacity?: number
+    backgroundColor?: string
+    borderRadius?: number
+    borderWidth?: number
+    borderColor?: string
+    padding?: number
+
     // 按钮属性
     buttonType?: 'primary' | 'default' | 'dashed' | 'link'
 
@@ -538,6 +560,13 @@ export interface ComponentProps {
     lineHeight?: number // 行高
     textAlign?: 'left' | 'center' | 'right' // 文本对齐
     fontWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' // 字体粗细
+    textDecoration?: 'none' | 'underline' | 'overline' | 'line-through' // 文字装饰
+    textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize' // 文字转换
+    fontStyle?: 'normal' | 'italic' | 'oblique' // 字体风格
+    textStroke?: boolean // 是否显示文字描边
+    strokeColor?: string // 描边颜色
+    strokeWidth?: number // 描边宽度
+    opacity?: number // 文字透明度
 }
 
 // 画布上的组件项

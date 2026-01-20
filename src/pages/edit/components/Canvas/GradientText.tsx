@@ -12,9 +12,9 @@ export default function GradientText({ props, style }: GradientTextProps) {
         content = '渐变文字',
         fontSize = 32,
         fontWeight = 'bold',
-        gradientType = 'linear', // linear 或 radial
-        gradientAngle = 45, // 线性渐变角度
-        gradientColors = ['#ff0000', '#00ff00', '#0000ff'], // 渐变颜色数组
+        gradientType = 'linear',
+        gradientAngle = 45,
+        gradientColors = ['#ff0000', '#00ff00', '#0000ff'],
         textShadow = false,
         shadowColor = 'rgba(0,0,0,0.5)',
         shadowBlur = 10,
@@ -23,18 +23,22 @@ export default function GradientText({ props, style }: GradientTextProps) {
         letterSpacing = 0,
         lineHeight = 1.2,
         textAlign = 'center',
+        textDecoration = 'none',
+        textTransform = 'none',
+        fontStyle = 'normal',
+        textStroke = false,
+        strokeColor = '#000000',
+        strokeWidth = 1,
+        opacity = 1,
     } = props
 
-    // 使用 useMemo 确保当颜色改变时重新计算渐变
     const gradientId = useMemo(() => `gradient-${Math.random().toString(36).substr(2, 9)}`, [])
     
     const gradientBackground = useMemo(() => {
-        // 确保颜色数组有效且至少有2个颜色
         const validColors = (gradientColors && gradientColors.length >= 2) 
             ? gradientColors.filter(c => c && typeof c === 'string' && c.trim().length > 0)
             : ['#ff0000', '#00ff00', '#0000ff']
         
-        // 如果过滤后少于2个颜色，使用默认颜色
         const colorsToUse = validColors.length >= 2 ? validColors : ['#ff0000', '#00ff00', '#0000ff']
 
         if (gradientType === 'linear') {
@@ -46,7 +50,6 @@ export default function GradientText({ props, style }: GradientTextProps) {
                 .join(', ')
             return `linear-gradient(${gradientAngle}deg, ${colorStops})`
         } else {
-            // radial 渐变
             const colorStops = colorsToUse
                 .map((color, index) => {
                     const percentage = (index / (colorsToUse.length - 1)) * 100
@@ -57,15 +60,24 @@ export default function GradientText({ props, style }: GradientTextProps) {
         }
     }, [gradientColors, gradientType, gradientAngle])
 
-    // 生成文字阴影
     const textShadowValue = useMemo(() => {
         if (!textShadow) return 'none'
         return `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor}`
     }, [textShadow, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor])
 
+    const textStrokeStyle = useMemo(() => {
+        if (!textStroke) return {}
+        return {
+            WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
+        }
+    }, [textStroke, strokeColor, strokeWidth])
+
     const textStyle: React.CSSProperties = {
         fontSize: `${fontSize}px`,
         fontWeight: fontWeight as any,
+        fontStyle: fontStyle as any,
+        textDecoration: textDecoration as any,
+        textTransform: textTransform as any,
         background: gradientBackground,
         backgroundClip: 'text' as any,
         WebkitBackgroundClip: 'text',
@@ -80,8 +92,8 @@ export default function GradientText({ props, style }: GradientTextProps) {
         wordBreak: 'break-word',
         display: 'inline-block',
         width: '100%',
-        // 强制重新渲染
-        key: gradientBackground,
+        opacity: opacity,
+        ...textStrokeStyle,
     } as React.CSSProperties
 
     return (

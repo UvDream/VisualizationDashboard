@@ -395,7 +395,32 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
 
     // Antd 组件
-    text: { props: { content: '请输入文本内容' }, style: { width: 140, height: 40, color: '#ffffff', fontSize: 16 } },
+    text: { 
+        props: { 
+            content: '请输入文本内容',
+            fontSize: 16,
+            fontWeight: 'normal',
+            color: '#ffffff',
+            textAlign: 'left',
+            textDecoration: 'none',
+            textTransform: 'none',
+            fontStyle: 'normal',
+            letterSpacing: 0,
+            lineHeight: 1.5,
+            textShadow: false,
+            shadowColor: 'rgba(0,0,0,0.5)',
+            shadowBlur: 4,
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            opacity: 1,
+            backgroundColor: 'transparent',
+            borderRadius: 0,
+            borderWidth: 0,
+            borderColor: '#000000',
+            padding: 8,
+        }, 
+        style: { width: 200, height: 40, color: '#ffffff', fontSize: 16 } 
+    },
     button: { props: { content: '点击按钮', buttonType: 'primary' }, style: { width: 100, height: 40 } },
     input: { props: { content: '' }, style: { width: 200, height: 40 } },
     select: {
@@ -662,7 +687,14 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             letterSpacing: 0,
             lineHeight: 1.2,
             textAlign: 'center',
+            textDecoration: 'none',
+            textTransform: 'none',
+            fontStyle: 'normal',
+            textStroke: false,
+            strokeColor: '#000000',
+            strokeWidth: 1,
+            opacity: 1,
         },
-        style: { width: 300, height: 80, backgroundColor: 'rgba(0,0,0,0.3)' }
+        style: { width: 300, height: 80, backgroundColor: 'transparent' }
     },
 }
