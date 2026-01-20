@@ -583,7 +583,38 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     </Button>
                 )
             case 'input':
-                return <Input placeholder="输入框" style={{ width: '100%' }} />
+                return (
+                    <Input 
+                        type={item.props.inputType || 'text'}
+                        placeholder={item.props.placeholder || '请输入内容'}
+                        value={item.props.content || ''}
+                        onChange={(e) => {
+                            if (!previewMode) {
+                                updateComponent(item.id, {
+                                    props: {
+                                        ...item.props,
+                                        content: e.target.value
+                                    }
+                                })
+                            }
+                        }}
+                        disabled={item.props.disabled || false}
+                        allowClear={item.props.allowClear !== false}
+                        showCount={item.props.showCount || false}
+                        maxLength={item.props.maxLength || undefined}
+                        style={{
+                            color: item.props.color || '#ffffff',
+                            fontSize: `${item.props.fontSize || 14}px`,
+                            fontWeight: item.props.fontWeight || 'normal',
+                            backgroundColor: item.props.backgroundColor || 'rgba(0,0,0,0.3)',
+                            borderRadius: `${item.props.borderRadius || 4}px`,
+                            borderWidth: `${item.props.borderWidth || 1}px`,
+                            borderColor: item.props.borderColor || '#434343',
+                            padding: `${item.props.padding || 8}px`,
+                            width: '100%',
+                        }}
+                    />
+                )
             case 'select':
                 return (
                     <Select

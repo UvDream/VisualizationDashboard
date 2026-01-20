@@ -178,6 +178,13 @@ export interface ComponentProps {
     block?: boolean
     danger?: boolean
 
+    // 输入框属性
+    placeholder?: string
+    allowClear?: boolean
+    showCount?: boolean
+    maxLength?: number
+    inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url'
+
     // 图片属性
     src?: string
     alt?: string

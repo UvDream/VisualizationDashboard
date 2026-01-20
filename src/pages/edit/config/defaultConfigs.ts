@@ -440,7 +440,26 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         }, 
         style: { width: 100, height: 40 } 
     },
-    input: { props: { content: '' }, style: { width: 200, height: 40 } },
+    input: { 
+        props: { 
+            content: '',
+            placeholder: '请输入内容',
+            fontSize: 14,
+            fontWeight: 'normal',
+            color: '#ffffff',
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            borderRadius: 4,
+            borderWidth: 1,
+            borderColor: '#434343',
+            padding: 8,
+            disabled: false,
+            allowClear: true,
+            showCount: false,
+            maxLength: 0,
+            inputType: 'text',
+        }, 
+        style: { width: 200, height: 40 } 
+    },
     select: {
         props: {
             selectOptions: [
