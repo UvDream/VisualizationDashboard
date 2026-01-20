@@ -1497,9 +1497,13 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             {!previewMode && isSelected && (
                 <>
                     <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />
+                    <div className="resize-handle top" onMouseDown={(e) => handleResizeMouseDown(e, 'top')} />
                     <div className="resize-handle top-right" onMouseDown={(e) => handleResizeMouseDown(e, 'top-right')} />
-                    <div className="resize-handle bottom-left" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-left')} />
+                    <div className="resize-handle right" onMouseDown={(e) => handleResizeMouseDown(e, 'right')} />
                     <div className="resize-handle bottom-right" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-right')} />
+                    <div className="resize-handle bottom" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom')} />
+                    <div className="resize-handle bottom-left" onMouseDown={(e) => handleResizeMouseDown(e, 'bottom-left')} />
+                    <div className="resize-handle left" onMouseDown={(e) => handleResizeMouseDown(e, 'left')} />
                 </>
             )}
         </div>
