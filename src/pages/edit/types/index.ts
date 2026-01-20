@@ -185,6 +185,11 @@ export interface ComponentProps {
     maxLength?: number
     inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url'
 
+    // 标签属性
+    tagColor?: string
+    closable?: boolean
+    icon?: string
+
     // 图片属性
     src?: string
     alt?: string

@@ -3750,6 +3750,89 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 标签组件配置
+        ...(selectedComponent.type === 'tag' ? [{
+            key: 'tagConfig',
+            label: '标签配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="标签颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.tagColor || '#1890ff'}
+                            onChange={(color) => handleChange('props.tagColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="可关闭">
+                        <Switch
+                            checked={selectedComponent.props.closable || false}
+                            onChange={(v) => handleChange('props.closable', v)}
+                        />
+                    </Form.Item>
+                    <Form.Item label="文字颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.color || '#ffffff'}
+                            onChange={(color) => handleChange('props.color', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="字体大小">
+                            <InputNumber
+                                value={selectedComponent.props.fontSize ?? 14}
+                                onChange={(v) => handleChange('props.fontSize', v ?? 14)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="字体粗细">
+                            <Select
+                                value={selectedComponent.props.fontWeight || 'normal'}
+                                onChange={(v) => handleChange('props.fontWeight', v)}
+                                options={[
+                                    { value: 'normal', label: '正常' },
+                                    { value: 'bold', label: '加粗' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="背景颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.backgroundColor || ''}
+                            onChange={(color) => handleChange('props.backgroundColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.borderWidth ?? 0}
+                                onChange={(v) => handleChange('props.borderWidth', v ?? 0)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="边框颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.borderColor || '#000000'}
+                                onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="圆角">
+                            <InputNumber
+                                value={selectedComponent.props.borderRadius ?? 4}
+                                onChange={(v) => handleChange('props.borderRadius', v ?? 4)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="内边距">
+                            <InputNumber
+                                value={selectedComponent.props.padding ?? 4}
+                                onChange={(v) => handleChange('props.padding', v ?? 4)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -3847,23 +3930,11 @@ export default function PropertyPanel() {
                 </Form.Item>
             )}
             {selectedComponent.type === 'tag' && (
-                <Form.Item label="标签颜色">
-                    <Select
-                        value={selectedComponent.props.tagColor || 'blue'}
-                        onChange={(v) => handleChange('props.tagColor', v)}
-                        options={[
-                            { value: 'blue', label: '蓝色' },
-                            { value: 'green', label: '绿色' },
-                            { value: 'red', label: '红色' },
-                            { value: 'orange', label: '橙色' },
-                            { value: 'purple', label: '紫色' },
-                            { value: 'cyan', label: '青色' },
-                            { value: 'gold', label: '金色' },
-                            { value: 'magenta', label: '品红' },
-                            { value: 'volcano', label: '火山' },
-                            { value: 'geekblue', label: '极客蓝' },
-                            { value: 'lime', label: '酸橙' },
-                        ]}
+                <Form.Item label="标签文本">
+                    <Input
+                        value={selectedComponent.props.content}
+                        onChange={(e) => handleChange('props.content', e.target.value)}
+                        placeholder="输入标签文本"
                     />
                 </Form.Item>
             )}

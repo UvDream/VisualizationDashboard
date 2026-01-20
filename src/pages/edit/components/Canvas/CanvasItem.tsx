@@ -1179,7 +1179,24 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             case 'progress':
                 return <Progress percent={item.props.percent || 50} style={{ width: '100%' }} />
             case 'tag':
-                return <Tag color={item.props.tagColor || 'blue'}>{item.props.content || '标签'}</Tag>
+                return (
+                    <Tag 
+                        closable={item.props.closable || false}
+                        style={{
+                            backgroundColor: item.props.tagColor || '#1890ff',
+                            color: item.props.color || '#ffffff',
+                            fontSize: `${item.props.fontSize || 14}px`,
+                            fontWeight: item.props.fontWeight || 'normal',
+                            borderRadius: `${item.props.borderRadius || 4}px`,
+                            borderWidth: `${item.props.borderWidth || 0}px`,
+                            borderStyle: item.props.borderWidth ? 'solid' : 'none',
+                            borderColor: item.props.borderColor || '#000000',
+                            padding: `${item.props.padding || 4}px 8px`,
+                        }}
+                    >
+                        {item.props.content || '标签'}
+                    </Tag>
+                )
             case 'badge':
                 return <Badge count={5}><Avatar shape="square" /></Badge>
             case 'avatar':
