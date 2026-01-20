@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './BorderBox1.less'
 
 interface BorderBox1Props {
-    width: number
-    height: number
+    width?: number
+    height?: number
     borderColor?: string
     glowColor?: string
     borderWidth?: number
@@ -11,14 +11,42 @@ interface BorderBox1Props {
 }
 
 export default function BorderBox1({
-    width,
-    height,
+    width: propWidth,
+    height: propHeight,
     borderColor = '#4fd2dd',
     glowColor = '#235fa7',
     borderWidth = 2,
     children
 }: BorderBox1Props) {
     const containerRef = useRef<HTMLDivElement>(null)
+    const [dimensions, setDimensions] = useState({ width: propWidth || 300, height: propHeight || 200 })
+
+    // 监听容器尺寸变化
+    useEffect(() => {
+        if (!propWidth || !propHeight) {
+            const updateDimensions = () => {
+                if (containerRef.current) {
+                    const { offsetWidth, offsetHeight } = containerRef.current
+                    if (offsetWidth > 0 && offsetHeight > 0) {
+                        setDimensions({ width: offsetWidth, height: offsetHeight })
+                    }
+                }
+            }
+
+            updateDimensions()
+
+            const resizeObserver = new ResizeObserver(updateDimensions)
+            if (containerRef.current) {
+                resizeObserver.observe(containerRef.current)
+            }
+
+            return () => {
+                resizeObserver.disconnect()
+            }
+        } else {
+            setDimensions({ width: propWidth, height: propHeight })
+        }
+    }, [propWidth, propHeight])
 
     useEffect(() => {
         if (containerRef.current) {
@@ -28,6 +56,8 @@ export default function BorderBox1({
             container.style.setProperty('--border-width', `${borderWidth}px`)
         }
     }, [borderColor, glowColor, borderWidth])
+
+    const { width, height } = dimensions
 
     // 根据宽高计算多边形点位
     const getMainPolygonPoints = () => {
@@ -58,7 +88,7 @@ export default function BorderBox1({
         <div
             ref={containerRef}
             className="border-box-1"
-            style={{ width, height }}
+            style={{ width: propWidth || '100%', height: propHeight || '100%' }}
         >
             {/* 主边框 */}
             <svg className="main-border" width={width} height={height}>

@@ -5,6 +5,13 @@ import ReactECharts from 'echarts-for-react'
 import { Button, Progress } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import type { ComponentItem, ComponentType } from '../../types'
+import BorderBox1 from './BorderBox1'
+import BorderBox2 from './BorderBox2'
+import BorderBox3 from './BorderBox3'
+import FullscreenButton from './FullscreenButton'
+import GradientText from './GradientText'
+import FlipCountdown from './FlipCountdown'
+import Carousel from './Carousel'
 
 // 懒加载地图组件
 const MapChart = lazy(() => import('./MapChart'))
@@ -24,9 +31,10 @@ interface LayoutCellProps {
         height?: string
         backgroundColor?: string
     }
+    previewMode?: boolean
 }
 
-export default function LayoutCell({ layoutId, cellIndex, cellLabel, className = '', cellConfig }: LayoutCellProps) {
+export default function LayoutCell({ layoutId, cellIndex, cellLabel, className = '', cellConfig, previewMode = false }: LayoutCellProps) {
     const { state, addComponent, selectComponent } = useEditor()
     const cellRef = useRef<HTMLDivElement>(null)
 
@@ -35,42 +43,48 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
         comp => comp.parentId === layoutId && comp.cellIndex === cellIndex
     )
 
-    const [{ isOver, canDrop }, dropRef] = useDrop(() => ({
-        accept: 'NEW_COMPONENT',
-        drop: (item: { componentType: ComponentType; data?: any }, monitor) => {
-            // 阻止冒泡，防止被画布捕获
-            if (monitor.didDrop()) return
+    // 只在非预览模式下使用 useDrop
+    const [{ isOver, canDrop }, dropRef] = !previewMode ? (() => {
+        const [result, drop] = useDrop(() => ({
+            accept: 'NEW_COMPONENT',
+            drop: (item: { componentType: ComponentType; data?: any }, monitor) => {
+                // 阻止冒泡，防止被画布捕获
+                if (monitor.didDrop()) return
 
-            // 如果单元格已有组件，不再添加
-            if (cellChild) return
+                // 如果单元格已有组件，不再添加
+                if (cellChild) return
 
-            const newComponent: ComponentItem = {
-                id: uuidv4(),
-                type: item.componentType,
-                name: `${item.componentType}_${Date.now()}`,
-                props: { ...item.data },
-                style: {
-                    x: 0,
-                    y: 0,
-                    width: 0,  // 由 CSS 控制，填满单元格
-                    height: 0,
-                },
-                visible: true,
-                locked: false,
-                parentId: layoutId,
-                cellIndex: cellIndex,
-            }
+                const newComponent: ComponentItem = {
+                    id: uuidv4(),
+                    type: item.componentType,
+                    name: `${item.componentType}_${Date.now()}`,
+                    props: { ...item.data },
+                    style: {
+                        x: 0,
+                        y: 0,
+                        width: 0,  // 由 CSS 控制，填满单元格
+                        height: 0,
+                    },
+                    visible: true,
+                    locked: false,
+                    parentId: layoutId,
+                    cellIndex: cellIndex,
+                }
 
-            addComponent(newComponent)
-        },
-        collect: (monitor) => ({
-            isOver: monitor.isOver({ shallow: true }),
-            canDrop: monitor.canDrop(),
-        }),
-    }), [layoutId, cellIndex, addComponent, cellChild])
+                addComponent(newComponent)
+            },
+            collect: (monitor) => ({
+                isOver: monitor.isOver({ shallow: true }),
+                canDrop: monitor.canDrop(),
+            }),
+        }), [layoutId, cellIndex, addComponent, cellChild])
+        return [result, drop]
+    })() : [{ isOver: false, canDrop: false }, undefined]
 
-    // 连接 drop ref
-    dropRef(cellRef)
+    // 连接 drop ref（只在非预览模式下）
+    if (!previewMode && dropRef && cellRef.current) {
+        dropRef(cellRef.current)
+    }
 
     const handleChildClick = (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -266,6 +280,110 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 ) : (
                     <div className="layout-cell-placeholder">图片</div>
                 )
+            case 'carousel':
+                return (
+                    <Carousel
+                        carouselImages={item.props.carouselImages || []}
+                        carouselConfig={item.props.carouselConfig}
+                    />
+                )
+            // 边框组件
+            case 'borderBox1':
+                return (
+                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                        <BorderBox1
+                            borderColor={item.props.borderColor}
+                            glowColor={item.props.glowColor}
+                            borderWidth={item.props.borderWidth}
+                        />
+                    </div>
+                )
+            case 'borderBox2':
+                return (
+                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                        <BorderBox2
+                            borderColor={item.props.borderColor}
+                            glowColor={item.props.glowColor}
+                            borderWidth={item.props.borderWidth}
+                        />
+                    </div>
+                )
+            case 'borderBox3':
+                return (
+                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                        <BorderBox3
+                            borderColor={item.props.borderColor}
+                            glowColor={item.props.glowColor}
+                            borderWidth={item.props.borderWidth}
+                            animationDuration={item.props.animationDuration}
+                        />
+                    </div>
+                )
+            case 'fullscreenButton':
+                return (
+                    <FullscreenButton
+                        buttonSize={item.props.buttonSize}
+                        iconSize={item.props.iconSize}
+                        buttonColor={item.props.buttonColor}
+                        hoverColor={item.props.hoverColor}
+                        position={item.props.position}
+                        customIcon={item.props.customIcon}
+                        showText={item.props.showText}
+                        content={item.props.content}
+                    />
+                )
+            case 'gradientText':
+                return (
+                    <GradientText
+                        props={item.props}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    />
+                )
+            case 'flipCountdown':
+                return (
+                    <FlipCountdown
+                        countdownMode={item.props.countdownMode}
+                        targetDate={item.props.targetDate}
+                        countdownDuration={item.props.countdownDuration}
+                        showDays={item.props.showDays}
+                        showHours={item.props.showHours}
+                        showMinutes={item.props.showMinutes}
+                        showSeconds={item.props.showSeconds}
+                        cardWidth={item.props.cardWidth}
+                        cardHeight={item.props.cardHeight}
+                        fontSize={item.props.fontSize}
+                        cardColorType={item.props.cardColorType}
+                        cardSolidColor={item.props.cardSolidColor}
+                        cardGradientStart={item.props.cardGradientStart}
+                        cardGradientEnd={item.props.cardGradientEnd}
+                        textColor={item.props.textColor}
+                        labelColor={item.props.labelColor}
+                        showLabels={item.props.showLabels}
+                        separator={item.props.separator}
+                    />
+                )
+            case 'container':
+                return (
+                    <div 
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: item.style.backgroundColor || 'rgba(255,255,255,0.05)',
+                            borderRadius: item.style.borderRadius || 8,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <span className="layout-cell-label">容器</span>
+                    </div>
+                )
             // 布局组件嵌套支持
             case 'layoutTwoColumn':
                 return (
@@ -278,8 +396,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
                     </div>
                 )
             case 'layoutThreeColumn':
@@ -293,9 +411,9 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
-                        <LayoutCell layoutId={item.id} cellIndex={2} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'} cellConfig={item.props.layoutConfig?.cells?.[2]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'} cellConfig={item.props.layoutConfig?.cells?.[0]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={1} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'} cellConfig={item.props.layoutConfig?.cells?.[1]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={2} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'} cellConfig={item.props.layoutConfig?.cells?.[2]} />
                     </div>
                 )
             case 'layoutHeader':
@@ -309,8 +427,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'} className="layout-header-top" cellConfig={item.props.layoutConfig?.cells?.[0]} />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-header-content" cellConfig={item.props.layoutConfig?.cells?.[1]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'} className="layout-header-top" cellConfig={item.props.layoutConfig?.cells?.[0]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-header-content" cellConfig={item.props.layoutConfig?.cells?.[1]} />
                     </div>
                 )
             case 'layoutSidebar':
@@ -324,8 +442,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'} className="layout-sidebar-left" cellConfig={item.props.layoutConfig?.cells?.[0]} />
-                        <LayoutCell layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-sidebar-content" cellConfig={item.props.layoutConfig?.cells?.[1]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={0} cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'} className="layout-sidebar-left" cellConfig={item.props.layoutConfig?.cells?.[0]} />
+                        <LayoutCell previewMode={previewMode} layoutId={item.id} cellIndex={1} cellLabel="内容区" className="layout-sidebar-content" cellConfig={item.props.layoutConfig?.cells?.[1]} />
                     </div>
                 )
             default:
@@ -357,10 +475,23 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
 
 // 图表配置生成函数
 function getLineChartOption(item: ComponentItem) {
+    const isDouble = item.type === 'doubleLineChart'
+    const defaultSeries = isDouble ? [
+        { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210], type: 'line', smooth: true },
+        { name: '订单量', data: [220, 182, 191, 234, 290, 330, 310], type: 'line', smooth: true }
+    ] : [
+        { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210], type: 'line', smooth: true }
+    ]
+
     return {
         backgroundColor: 'transparent',
         grid: { top: 20, right: 20, bottom: 30, left: 40 },
         tooltip: { trigger: 'axis' },
+        legend: isDouble ? { 
+            data: item.props.seriesData?.map((s: any) => s.name) || ['访问量', '订单量'],
+            textStyle: { color: '#aaa', fontSize: 10 },
+            top: 0
+        } : undefined,
         xAxis: {
             type: 'category',
             data: item.props.xAxisData || ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
@@ -376,30 +507,52 @@ function getLineChartOption(item: ComponentItem) {
             ...s,
             type: 'line',
             smooth: true,
-        })) || [{ data: [120, 132, 101, 134, 90, 230, 210], type: 'line', smooth: true }],
+        })) || defaultSeries,
     }
 }
 
 function getBarChartOption(item: ComponentItem) {
     const isHorizontal = item.type === 'horizontalBarChart'
+    const isDouble = item.type === 'doubleBarChart' || item.type === 'horizontalBarChart'
+    
+    const defaultSeries = isDouble ? [
+        { name: '销售额', data: [500, 300, 400, 600, 250], type: 'bar' },
+        { name: '利润', data: [200, 150, 180, 280, 100], type: 'bar' }
+    ] : [
+        { name: '销售额', data: [500, 300, 400, 600, 250], type: 'bar' }
+    ]
+
     return {
         backgroundColor: 'transparent',
         grid: { top: 20, right: 20, bottom: 30, left: 40 },
         tooltip: { trigger: 'axis' },
-        xAxis: isHorizontal ? { type: 'value' } : {
+        legend: isDouble ? { 
+            data: item.props.seriesData?.map((s: any) => s.name) || ['销售额', '利润'],
+            textStyle: { color: '#aaa', fontSize: 10 },
+            top: 0
+        } : undefined,
+        xAxis: isHorizontal ? { 
+            type: 'value',
+            axisLabel: { color: '#aaa', fontSize: 10 },
+            splitLine: { lineStyle: { color: '#333' } }
+        } : {
             type: 'category',
-            data: item.props.xAxisData || ['A', 'B', 'C', 'D', 'E'],
+            data: item.props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E'],
             axisLabel: { color: '#aaa', fontSize: 10 },
         },
         yAxis: isHorizontal ? {
             type: 'category',
-            data: item.props.xAxisData || ['A', 'B', 'C', 'D', 'E'],
+            data: item.props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E'],
             axisLabel: { color: '#aaa', fontSize: 10 },
-        } : { type: 'value', axisLabel: { color: '#aaa', fontSize: 10 }, splitLine: { lineStyle: { color: '#333' } } },
+        } : { 
+            type: 'value', 
+            axisLabel: { color: '#aaa', fontSize: 10 }, 
+            splitLine: { lineStyle: { color: '#333' } } 
+        },
         series: item.props.seriesData?.map((s: any) => ({
             ...s,
             type: 'bar',
-        })) || [{ data: [500, 300, 400, 600, 250], type: 'bar' }],
+        })) || defaultSeries,
     }
 }
 

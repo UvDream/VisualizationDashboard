@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './BorderBox2.less'
 
 interface BorderBox2Props {
-    width: number
-    height: number
+    width?: number
+    height?: number
     borderColor?: string
     glowColor?: string
     borderWidth?: number
@@ -11,14 +11,42 @@ interface BorderBox2Props {
 }
 
 export default function BorderBox2({
-    width,
-    height,
+    width: propWidth,
+    height: propHeight,
     borderColor = '#6586ec',
     glowColor = '#2cf7fe',
     borderWidth = 2,
     children
 }: BorderBox2Props) {
     const containerRef = useRef<HTMLDivElement>(null)
+    const [dimensions, setDimensions] = useState({ width: propWidth || 300, height: propHeight || 200 })
+
+    // 监听容器尺寸变化
+    useEffect(() => {
+        if (!propWidth || !propHeight) {
+            const updateDimensions = () => {
+                if (containerRef.current) {
+                    const { offsetWidth, offsetHeight } = containerRef.current
+                    if (offsetWidth > 0 && offsetHeight > 0) {
+                        setDimensions({ width: offsetWidth, height: offsetHeight })
+                    }
+                }
+            }
+
+            updateDimensions()
+
+            const resizeObserver = new ResizeObserver(updateDimensions)
+            if (containerRef.current) {
+                resizeObserver.observe(containerRef.current)
+            }
+
+            return () => {
+                resizeObserver.disconnect()
+            }
+        } else {
+            setDimensions({ width: propWidth, height: propHeight })
+        }
+    }, [propWidth, propHeight])
 
     useEffect(() => {
         if (containerRef.current) {
@@ -28,6 +56,8 @@ export default function BorderBox2({
             container.style.setProperty('--border-width', `${borderWidth}px`)
         }
     }, [borderColor, glowColor, borderWidth])
+
+    const { width, height } = dimensions
 
     // 根据宽高计算主边框路径
     const getMainBorderPath = () => {
@@ -57,7 +87,7 @@ export default function BorderBox2({
         <div
             ref={containerRef}
             className="border-box-2"
-            style={{ width, height }}
+            style={{ width: propWidth || '100%', height: propHeight || '100%' }}
         >
             <svg width={width} height={height}>
                 {/* 主边框 */}

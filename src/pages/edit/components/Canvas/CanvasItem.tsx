@@ -1292,13 +1292,13 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={0} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={1} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
@@ -1315,19 +1315,19 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={0} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={1} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[1]}
                         />
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={2} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
@@ -1344,14 +1344,14 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={0} 
                             cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'} 
                             className="layout-header-top"
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={1} 
                             cellLabel="内容区" 
@@ -1369,14 +1369,14 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={0} 
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'} 
                             className="layout-sidebar-left"
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell 
+                        <LayoutCell previewMode={previewMode} 
                             layoutId={item.id} 
                             cellIndex={1} 
                             cellLabel="内容区" 
