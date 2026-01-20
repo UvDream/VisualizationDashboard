@@ -561,7 +561,24 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 )
             case 'button':
                 return (
-                    <Button type={item.props.buttonType || 'primary'}>
+                    <Button 
+                        type={item.props.buttonType || 'primary'}
+                        disabled={item.props.disabled || false}
+                        loading={item.props.loading || false}
+                        block={item.props.block || false}
+                        danger={item.props.danger || false}
+                        style={{
+                            color: item.props.color || '#ffffff',
+                            fontSize: `${item.props.fontSize || 14}px`,
+                            fontWeight: item.props.fontWeight || 'normal',
+                            backgroundColor: item.props.backgroundColor || 'transparent',
+                            borderRadius: `${item.props.borderRadius || 4}px`,
+                            borderWidth: `${item.props.borderWidth || 0}px`,
+                            borderColor: item.props.borderColor || '#000000',
+                            padding: `${item.props.padding || 8}px`,
+                            width: item.props.block ? '100%' : 'auto',
+                        }}
+                    >
                         {item.props.content || '按钮'}
                     </Button>
                 )

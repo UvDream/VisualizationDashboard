@@ -173,6 +173,10 @@ export interface ComponentProps {
 
     // 按钮属性
     buttonType?: 'primary' | 'default' | 'dashed' | 'link'
+    disabled?: boolean
+    loading?: boolean
+    block?: boolean
+    danger?: boolean
 
     // 图片属性
     src?: string

@@ -421,7 +421,25 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         }, 
         style: { width: 200, height: 40, color: '#ffffff', fontSize: 16 } 
     },
-    button: { props: { content: '点击按钮', buttonType: 'primary' }, style: { width: 100, height: 40 } },
+    button: { 
+        props: { 
+            content: '点击按钮', 
+            buttonType: 'primary',
+            fontSize: 14,
+            fontWeight: 'normal',
+            color: '#ffffff',
+            backgroundColor: 'transparent',
+            borderRadius: 4,
+            borderWidth: 0,
+            borderColor: '#000000',
+            padding: 8,
+            disabled: false,
+            loading: false,
+            block: false,
+            danger: false,
+        }, 
+        style: { width: 100, height: 40 } 
+    },
     input: { props: { content: '' }, style: { width: 200, height: 40 } },
     select: {
         props: {

@@ -3517,6 +3517,117 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 按钮组件配置
+        ...(selectedComponent.type === 'button' ? [{
+            key: 'buttonConfig',
+            label: '按钮配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="按钮类型">
+                        <Select
+                            value={selectedComponent.props.buttonType || 'primary'}
+                            onChange={(v) => handleChange('props.buttonType', v)}
+                            options={[
+                                { value: 'primary', label: '主要' },
+                                { value: 'default', label: '默认' },
+                                { value: 'dashed', label: '虚线' },
+                                { value: 'link', label: '链接' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="禁用">
+                            <Switch
+                                checked={selectedComponent.props.disabled || false}
+                                onChange={(v) => handleChange('props.disabled', v)}
+                            />
+                        </Form.Item>
+                        <Form.Item label="加载中">
+                            <Switch
+                                checked={selectedComponent.props.loading || false}
+                                onChange={(v) => handleChange('props.loading', v)}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="危险状态">
+                            <Switch
+                                checked={selectedComponent.props.danger || false}
+                                onChange={(v) => handleChange('props.danger', v)}
+                            />
+                        </Form.Item>
+                        <Form.Item label="块级按钮">
+                            <Switch
+                                checked={selectedComponent.props.block || false}
+                                onChange={(v) => handleChange('props.block', v)}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="字体颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.color || '#ffffff'}
+                            onChange={(color) => handleChange('props.color', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="字体大小">
+                            <InputNumber
+                                value={selectedComponent.props.fontSize ?? 14}
+                                onChange={(v) => handleChange('props.fontSize', v ?? 14)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="字体粗细">
+                            <Select
+                                value={selectedComponent.props.fontWeight || 'normal'}
+                                onChange={(v) => handleChange('props.fontWeight', v)}
+                                options={[
+                                    { value: 'normal', label: '正常' },
+                                    { value: 'bold', label: '加粗' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </div>
+                    <Form.Item label="背景颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.backgroundColor || 'transparent'}
+                            onChange={(color) => handleChange('props.backgroundColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <div className="form-row">
+                        <Form.Item label="边框宽度">
+                            <InputNumber
+                                value={selectedComponent.props.borderWidth ?? 0}
+                                onChange={(v) => handleChange('props.borderWidth', v ?? 0)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="边框颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.borderColor || '#000000'}
+                                onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="form-row">
+                        <Form.Item label="圆角">
+                            <InputNumber
+                                value={selectedComponent.props.borderRadius ?? 4}
+                                onChange={(v) => handleChange('props.borderRadius', v ?? 4)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                        <Form.Item label="内边距">
+                            <InputNumber
+                                value={selectedComponent.props.padding ?? 8}
+                                onChange={(v) => handleChange('props.padding', v ?? 8)}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    </div>
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -3587,11 +3698,20 @@ export default function PropertyPanel() {
                 </div>
             )}
             
-            {['button', 'tag', 'card'].includes(selectedComponent.type) && (
+            {['tag', 'card'].includes(selectedComponent.type) && (
                 <Form.Item label="内容">
                     <Input
                         value={selectedComponent.props.content}
                         onChange={(e) => handleChange('props.content', e.target.value)}
+                    />
+                </Form.Item>
+            )}
+            {selectedComponent.type === 'button' && (
+                <Form.Item label="按钮文本">
+                    <Input
+                        value={selectedComponent.props.content}
+                        onChange={(e) => handleChange('props.content', e.target.value)}
+                        placeholder="输入按钮文本"
                     />
                 </Form.Item>
             )}
@@ -3630,20 +3750,6 @@ export default function PropertyPanel() {
                         value={selectedComponent.props.src}
                         onChange={(e) => handleChange('props.src', e.target.value)}
                         placeholder="输入图片URL"
-                    />
-                </Form.Item>
-            )}
-            {selectedComponent.type === 'button' && (
-                <Form.Item label="按钮类型">
-                    <Select
-                        value={selectedComponent.props.buttonType || 'primary'}
-                        onChange={(v) => handleChange('props.buttonType', v)}
-                        options={[
-                            { value: 'primary', label: '主要' },
-                            { value: 'default', label: '默认' },
-                            { value: 'dashed', label: '虚线' },
-                            { value: 'link', label: '链接' },
-                        ]}
                     />
                 </Form.Item>
             )}
