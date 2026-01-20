@@ -1,4 +1,4 @@
-import { Button, ColorPicker, Space, Popconfirm } from 'antd'
+import { Button, ColorPicker,  Popconfirm } from 'antd'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import './ColorArrayEditor.less'
 
