@@ -211,10 +211,8 @@ export interface ComponentProps {
 
     // 装饰边框属性
     borderStyle?: number
-    borderColor?: string
     glowColor?: string
     cornerSize?: number
-    borderWidth?: number
     animationDuration?: number
 
     // 全屏按钮属性
@@ -228,13 +226,9 @@ export interface ComponentProps {
 
     // 科技标题属性
     titleColor?: string
-    fontSize?: number
 
     // 进度条
     percent?: number
-
-    // 标签
-    tagColor?: string
 
     // 表格属性
     tableColumns?: Array<{ title: string; dataIndex: string; key: string }>
@@ -569,22 +563,9 @@ export interface ComponentProps {
     gradientType?: 'linear' | 'radial' // 渐变类型：线性或径向
     gradientAngle?: number // 线性渐变角度 (0-360)
     gradientColors?: string[] // 渐变颜色数组
-    textShadow?: boolean // 是否显示文字阴影
-    shadowColor?: string // 阴影颜色
-    shadowBlur?: number // 阴影模糊度
-    shadowOffsetX?: number // 阴影X偏移
-    shadowOffsetY?: number // 阴影Y偏移
-    letterSpacing?: number // 字间距
-    lineHeight?: number // 行高
-    textAlign?: 'left' | 'center' | 'right' // 文本对齐
-    fontWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' // 字体粗细
-    textDecoration?: 'none' | 'underline' | 'overline' | 'line-through' // 文字装饰
-    textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize' // 文字转换
-    fontStyle?: 'normal' | 'italic' | 'oblique' // 字体风格
     textStroke?: boolean // 是否显示文字描边
     strokeColor?: string // 描边颜色
     strokeWidth?: number // 描边宽度
-    opacity?: number // 文字透明度
 
     // 倒计时配置
     countdownMode?: 'target' | 'duration' // 倒计时模式：目标时间 或 时长

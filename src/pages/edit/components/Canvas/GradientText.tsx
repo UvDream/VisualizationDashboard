@@ -31,8 +31,6 @@ export default function GradientText({ props, style }: GradientTextProps) {
         strokeWidth = 1,
         opacity = 1,
     } = props
-
-    const gradientId = useMemo(() => `gradient-${Math.random().toString(36).substr(2, 9)}`, [])
     
     const gradientBackground = useMemo(() => {
         const validColors = (gradientColors && gradientColors.length >= 2) 
