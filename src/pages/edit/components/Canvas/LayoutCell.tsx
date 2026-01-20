@@ -1,10 +1,17 @@
-import React, { useRef } from 'react'
+import React, { useRef, Suspense, lazy } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import ReactECharts from 'echarts-for-react'
 import { Button, Progress } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import type { ComponentItem, ComponentType } from '../../types'
+
+// 懒加载地图组件
+const MapChart = lazy(() => import('./MapChart'))
+const CityMapChart = lazy(() => import('./CityMapChart'))
+const ScrollRankList = lazy(() => import('./ScrollRankList'))
+const CarouselList = lazy(() => import('./CarouselList'))
+const WordCloudChart = lazy(() => import('./WordCloudChart'))
 
 interface LayoutCellProps {
     layoutId: string
@@ -142,6 +149,55 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
                     />
+                )
+            case 'mapChart':
+                return (
+                    <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
+                        <MapChart
+                            mapRegion={item.props.mapRegion || 'china'}
+                            mapData={item.props.mapData || []}
+                            chartTitle={item.props.chartTitle}
+                        />
+                    </Suspense>
+                )
+            case 'cityMapChart':
+                return (
+                    <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
+                        <CityMapChart
+                            cityName={item.props.provinceName || item.props.selectedProvince || 'nanjing'}
+                            mapData={item.props.mapData || []}
+                            showBuiltinData={item.props.showBuiltinData}
+                            colorScheme={item.props.colorScheme}
+                            chartTitle={item.props.chartTitle}
+                        />
+                    </Suspense>
+                )
+            case 'wordCloudChart':
+                return (
+                    <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
+                        <WordCloudChart
+                            wordCloudData={item.props.wordCloudData || []}
+                            wordCloudConfig={item.props.wordCloudConfig}
+                        />
+                    </Suspense>
+                )
+            case 'scrollRankList':
+                return (
+                    <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
+                        <ScrollRankList
+                            rankListData={item.props.rankListData || []}
+                            rankListConfig={item.props.rankListConfig}
+                        />
+                    </Suspense>
+                )
+            case 'carouselList':
+                return (
+                    <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
+                        <CarouselList
+                            carouselListData={item.props.carouselListData || []}
+                            carouselListConfig={item.props.carouselListConfig}
+                        />
+                    </Suspense>
                 )
             case 'text':
                 const textShadowValue = item.props.textShadow
