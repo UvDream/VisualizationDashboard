@@ -18,6 +18,8 @@ export type ComponentType =
     | 'threeEarth' | 'threeParticles' | 'threeCube' | 'threeDNA' | 'threeWave' | 'threeTorus' | 'threeGalaxy' | 'threeTunnel' | 'threeMatrix' | 'threePlasma'
     // 特效文字
     | 'gradientText'
+    // 倒计时
+    | 'flipCountdown'
 
 // 组件分类
 export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
@@ -583,6 +585,25 @@ export interface ComponentProps {
     strokeColor?: string // 描边颜色
     strokeWidth?: number // 描边宽度
     opacity?: number // 文字透明度
+
+    // 倒计时配置
+    countdownMode?: 'target' | 'duration' // 倒计时模式：目标时间 或 时长
+    targetDate?: string // 目标日期时间
+    countdownDuration?: number // 倒计时时长（秒）
+    showDays?: boolean // 显示天数
+    showHours?: boolean // 显示小时
+    showMinutes?: boolean // 显示分钟
+    showSeconds?: boolean // 显示秒数
+    cardWidth?: number // 卡片宽度
+    cardHeight?: number // 卡片高度
+    cardColorType?: 'solid' | 'gradient' // 卡片颜色类型：纯色 或 渐变
+    cardSolidColor?: string // 卡片纯色
+    cardGradientStart?: string // 卡片渐变起始色
+    cardGradientEnd?: string // 卡片渐变结束色
+    textColor?: string // 文字颜色
+    labelColor?: string // 标签颜色
+    showLabels?: boolean // 显示标签
+    separator?: string // 分隔符
 }
 
 // 画布上的组件项

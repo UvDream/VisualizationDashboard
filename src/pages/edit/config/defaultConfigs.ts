@@ -750,4 +750,29 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 300, height: 80, backgroundColor: 'transparent' }
     },
+
+    // 倒计时
+    flipCountdown: {
+        props: {
+            countdownMode: 'target',
+            targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            countdownDuration: 3600,
+            showDays: false,
+            showHours: true,
+            showMinutes: true,
+            showSeconds: true,
+            cardWidth: 60,
+            cardHeight: 80,
+            fontSize: 48,
+            cardColorType: 'gradient',
+            cardSolidColor: '#2a4a6a',
+            cardGradientStart: '#2a4a6a',
+            cardGradientEnd: '#0a2a4a',
+            textColor: '#ffffff',
+            labelColor: 'rgba(255, 255, 255, 0.6)',
+            showLabels: true,
+            separator: ':',
+        },
+        style: { width: 400, height: 120, backgroundColor: 'transparent' }
+    },
 }

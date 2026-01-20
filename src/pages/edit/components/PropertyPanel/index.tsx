@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio, Cascader } from 'antd'
+import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio, Cascader, DatePicker } from 'antd'
+import dayjs from 'dayjs'
 import { useEditor } from '../../context/EditorContext'
 import { getMapRegionOptions, getCityMapCascaderOptions, getCityMapCascaderPath } from '../../utils/mapData'
 import { dataRefreshManager } from '../../utils/dataSource'
@@ -1721,6 +1722,183 @@ export default function PropertyPanel() {
                             min={0}
                             max={1}
                             step={0.1}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
+        // 倒计时配置
+        ...(selectedComponent.type === 'flipCountdown' ? [{
+            key: 'flipCountdown',
+            label: '倒计时配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="倒计时模式">
+                        <Radio.Group
+                            value={selectedComponent.props.countdownMode || 'target'}
+                            onChange={(e) => handleChange('props.countdownMode', e.target.value)}
+                        >
+                            <Radio value="target">目标时间</Radio>
+                            <Radio value="duration">固定时长</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    {selectedComponent.props.countdownMode === 'target' ? (
+                        <Form.Item label="目标时间">
+                            <DatePicker
+                                showTime
+                                format="YYYY-MM-DD HH:mm:ss"
+                                value={selectedComponent.props.targetDate ? dayjs(selectedComponent.props.targetDate) : null}
+                                onChange={(date) => {
+                                    if (date) {
+                                        handleChange('props.targetDate', date.toISOString())
+                                    }
+                                }}
+                                style={{ width: '100%' }}
+                                placeholder="选择目标时间"
+                            />
+                        </Form.Item>
+                    ) : (
+                        <Form.Item label="倒计时时长（秒）">
+                            <InputNumber
+                                value={selectedComponent.props.countdownDuration || 3600}
+                                onChange={(v) => handleChange('props.countdownDuration', v ?? 3600)}
+                                style={{ width: '100%' }}
+                                min={1}
+                                max={86400}
+                            />
+                        </Form.Item>
+                    )}
+
+                    <Form.Item label="显示单位">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Switch
+                                    checked={selectedComponent.props.showDays !== false}
+                                    onChange={(v) => handleChange('props.showDays', v)}
+                                />
+                                <span>显示天数</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Switch
+                                    checked={selectedComponent.props.showHours !== false}
+                                    onChange={(v) => handleChange('props.showHours', v)}
+                                />
+                                <span>显示小时</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Switch
+                                    checked={selectedComponent.props.showMinutes !== false}
+                                    onChange={(v) => handleChange('props.showMinutes', v)}
+                                />
+                                <span>显示分钟</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Switch
+                                    checked={selectedComponent.props.showSeconds !== false}
+                                    onChange={(v) => handleChange('props.showSeconds', v)}
+                                />
+                                <span>显示秒数</span>
+                            </div>
+                        </div>
+                    </Form.Item>
+
+                    <Form.Item label="显示标签">
+                        <Switch
+                            checked={selectedComponent.props.showLabels !== false}
+                            onChange={(v) => handleChange('props.showLabels', v)}
+                        />
+                    </Form.Item>
+
+                    <Form.Item label="分隔符">
+                        <Input
+                            value={selectedComponent.props.separator || ':'}
+                            onChange={(e) => handleChange('props.separator', e.target.value)}
+                            maxLength={1}
+                        />
+                    </Form.Item>
+
+                    <div className="form-row">
+                        <Form.Item label="卡片宽度">
+                            <InputNumber
+                                value={selectedComponent.props.cardWidth || 60}
+                                onChange={(v) => handleChange('props.cardWidth', v ?? 60)}
+                                style={{ width: '100%' }}
+                                min={40}
+                                max={120}
+                            />
+                        </Form.Item>
+                        <Form.Item label="卡片高度">
+                            <InputNumber
+                                value={selectedComponent.props.cardHeight || 80}
+                                onChange={(v) => handleChange('props.cardHeight', v ?? 80)}
+                                style={{ width: '100%' }}
+                                min={60}
+                                max={150}
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item label="字体大小">
+                        <InputNumber
+                            value={selectedComponent.props.fontSize || 48}
+                            onChange={(v) => handleChange('props.fontSize', v ?? 48)}
+                            style={{ width: '100%' }}
+                            min={24}
+                            max={80}
+                        />
+                    </Form.Item>
+
+                    <Form.Item label="卡片颜色类型">
+                        <Radio.Group
+                            value={selectedComponent.props.cardColorType || 'gradient'}
+                            onChange={(e) => handleChange('props.cardColorType', e.target.value)}
+                        >
+                            <Radio value="solid">纯色</Radio>
+                            <Radio value="gradient">渐变</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    {selectedComponent.props.cardColorType === 'solid' ? (
+                        <Form.Item label="卡片颜色">
+                            <ColorPicker
+                                value={selectedComponent.props.cardSolidColor || '#2a4a6a'}
+                                onChange={(color) => handleChange('props.cardSolidColor', color.toHexString())}
+                                showText
+                            />
+                        </Form.Item>
+                    ) : (
+                        <>
+                            <Form.Item label="渐变起始色">
+                                <ColorPicker
+                                    value={selectedComponent.props.cardGradientStart || '#2a4a6a'}
+                                    onChange={(color) => handleChange('props.cardGradientStart', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+                            <Form.Item label="渐变结束色">
+                                <ColorPicker
+                                    value={selectedComponent.props.cardGradientEnd || '#0a2a4a'}
+                                    onChange={(color) => handleChange('props.cardGradientEnd', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+
+                    <Form.Item label="文字颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.textColor || '#ffffff'}
+                            onChange={(color) => handleChange('props.textColor', color.toHexString())}
+                            showText
+                        />
+                    </Form.Item>
+
+                    <Form.Item label="标签颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.labelColor || 'rgba(255, 255, 255, 0.6)'}
+                            onChange={(color) => handleChange('props.labelColor', color.toRgbString())}
+                            showText
                         />
                     </Form.Item>
                 </Form>

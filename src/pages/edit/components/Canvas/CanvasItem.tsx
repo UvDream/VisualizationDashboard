@@ -26,6 +26,7 @@ import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
 import FullscreenButton from './FullscreenButton'
 import GradientText from './GradientText'
+import FlipCountdown from './FlipCountdown'
 import './index.less'
 
 // 懒加载地图组件
@@ -1462,6 +1463,30 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
+                    />
+                )
+
+            case 'flipCountdown':
+                return (
+                    <FlipCountdown
+                        countdownMode={item.props.countdownMode}
+                        targetDate={item.props.targetDate}
+                        countdownDuration={item.props.countdownDuration}
+                        showDays={item.props.showDays}
+                        showHours={item.props.showHours}
+                        showMinutes={item.props.showMinutes}
+                        showSeconds={item.props.showSeconds}
+                        cardWidth={item.props.cardWidth}
+                        cardHeight={item.props.cardHeight}
+                        fontSize={item.props.fontSize}
+                        cardColorType={item.props.cardColorType}
+                        cardSolidColor={item.props.cardSolidColor}
+                        cardGradientStart={item.props.cardGradientStart}
+                        cardGradientEnd={item.props.cardGradientEnd}
+                        textColor={item.props.textColor}
+                        labelColor={item.props.labelColor}
+                        showLabels={item.props.showLabels}
+                        separator={item.props.separator}
                     />
                 )
 
