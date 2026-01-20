@@ -16,6 +16,8 @@ export type ComponentType =
     | 'layoutTwoColumn' | 'layoutThreeColumn' | 'layoutHeader' | 'layoutSidebar'
     // 3D组件
     | 'threeEarth' | 'threeParticles' | 'threeCube' | 'threeDNA' | 'threeWave' | 'threeTorus' | 'threeGalaxy' | 'threeTunnel' | 'threeMatrix' | 'threePlasma'
+    // 特效文字
+    | 'gradientText'
 
 // 组件分类
 export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
@@ -522,6 +524,20 @@ export interface ComponentProps {
             backgroundColor?: string // 背景色
         }>
     }
+
+    // 渐变文字配置
+    gradientType?: 'linear' | 'radial' // 渐变类型：线性或径向
+    gradientAngle?: number // 线性渐变角度 (0-360)
+    gradientColors?: string[] // 渐变颜色数组
+    textShadow?: boolean // 是否显示文字阴影
+    shadowColor?: string // 阴影颜色
+    shadowBlur?: number // 阴影模糊度
+    shadowOffsetX?: number // 阴影X偏移
+    shadowOffsetY?: number // 阴影Y偏移
+    letterSpacing?: number // 字间距
+    lineHeight?: number // 行高
+    textAlign?: 'left' | 'center' | 'right' // 文本对齐
+    fontWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' // 字体粗细
 }
 
 // 画布上的组件项

@@ -71,6 +71,7 @@ const chartComponents: ComponentConfig[] = [
 // Antd 组件
 const antdComponents: ComponentConfig[] = [
     { type: 'text', name: '文本', icon: <FontSizeOutlined />, category: 'component' },
+    { type: 'gradientText', name: '渐变文字', icon: <FontSizeOutlined />, category: 'component' },
     { type: 'button', name: '按钮', icon: <BorderOutlined />, category: 'component' },
     { type: 'input', name: '输入框', icon: <EditOutlined />, category: 'component' },
     { type: 'select', name: '选择器', icon: <SelectOutlined />, category: 'component' },

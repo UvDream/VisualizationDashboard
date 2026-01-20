@@ -644,4 +644,25 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
 
     // 图标
     icon: { props: { iconType: 'smile' }, style: { width: 60, height: 60, fontSize: 32, color: '#1890ff' } },
+
+    // 渐变文字
+    gradientText: {
+        props: {
+            content: '渐变文字效果',
+            fontSize: 32,
+            fontWeight: 'bold',
+            gradientType: 'linear',
+            gradientAngle: 45,
+            gradientColors: ['#ff0000', '#00ff00', '#0000ff'],
+            textShadow: false,
+            shadowColor: 'rgba(0,0,0,0.5)',
+            shadowBlur: 10,
+            shadowOffsetX: 2,
+            shadowOffsetY: 2,
+            letterSpacing: 0,
+            lineHeight: 1.2,
+            textAlign: 'center',
+        },
+        style: { width: 300, height: 80, backgroundColor: 'rgba(0,0,0,0.3)' }
+    },
 }

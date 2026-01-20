@@ -1,0 +1,18 @@
+.color-array-editor {
+    .color-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .color-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        :deep(.ant-color-picker) {
+            flex: 1;
+        }
+    }
+}

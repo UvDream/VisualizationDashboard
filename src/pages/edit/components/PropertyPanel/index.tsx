@@ -6,6 +6,7 @@ import { dataRefreshManager } from '../../utils/dataSource'
 import JsonEditor from './JsonEditor'
 import ImageListEditor from './ImageListEditor'
 import DataSourceEditor from './DataSourceEditor'
+import ColorArrayEditor from './ColorArrayEditor'
 import './index.less'
 
 export default function PropertyPanel() {
@@ -1521,6 +1522,139 @@ export default function PropertyPanel() {
                 </Form>
             ),
         },
+        // 渐变文字配置
+        ...(selectedComponent.type === 'gradientText' ? [{
+            key: 'gradientText',
+            label: '渐变配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="字体大小">
+                        <InputNumber
+                            value={selectedComponent.props.fontSize || 32}
+                            onChange={(v) => handleChange('props.fontSize', v ?? 32)}
+                            style={{ width: '100%' }}
+                            min={8}
+                            max={200}
+                        />
+                    </Form.Item>
+                    <Form.Item label="字体粗细">
+                        <Select
+                            value={selectedComponent.props.fontWeight || 'bold'}
+                            onChange={(v) => handleChange('props.fontWeight', v)}
+                            options={[
+                                { value: 'normal', label: '正常' },
+                                { value: 'bold', label: '加粗' },
+                                { value: '100', label: '100' },
+                                { value: '200', label: '200' },
+                                { value: '300', label: '300' },
+                                { value: '400', label: '400' },
+                                { value: '500', label: '500' },
+                                { value: '600', label: '600' },
+                                { value: '700', label: '700' },
+                                { value: '800', label: '800' },
+                                { value: '900', label: '900' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="渐变类型">
+                        <Select
+                            value={selectedComponent.props.gradientType || 'linear'}
+                            onChange={(v) => handleChange('props.gradientType', v)}
+                            options={[
+                                { value: 'linear', label: '线性渐变' },
+                                { value: 'radial', label: '径向渐变' },
+                            ]}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.gradientType === 'linear' && (
+                        <Form.Item label="渐变角度">
+                            <InputNumber
+                                value={selectedComponent.props.gradientAngle || 45}
+                                onChange={(v) => handleChange('props.gradientAngle', v ?? 45)}
+                                style={{ width: '100%' }}
+                                min={0}
+                                max={360}
+                            />
+                        </Form.Item>
+                    )}
+                    <Form.Item label="渐变颜色">
+                        <ColorArrayEditor
+                            value={selectedComponent.props.gradientColors || ['#ff0000', '#00ff00', '#0000ff']}
+                            onChange={(v) => handleChange('props.gradientColors', v)}
+                        />
+                    </Form.Item>
+                    <Form.Item label="文字阴影">
+                        <Switch
+                            checked={selectedComponent.props.textShadow || false}
+                            onChange={(v) => handleChange('props.textShadow', v)}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.textShadow && (
+                        <>
+                            <Form.Item label="阴影颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.shadowColor || 'rgba(0,0,0,0.5)'}
+                                    onChange={(color) => handleChange('props.shadowColor', color.toRgbString())}
+                                />
+                            </Form.Item>
+                            <Form.Item label="阴影模糊度">
+                                <InputNumber
+                                    value={selectedComponent.props.shadowBlur || 10}
+                                    onChange={(v) => handleChange('props.shadowBlur', v ?? 10)}
+                                    style={{ width: '100%' }}
+                                    min={0}
+                                    max={50}
+                                />
+                            </Form.Item>
+                            <div className="form-row">
+                                <Form.Item label="阴影X偏移">
+                                    <InputNumber
+                                        value={selectedComponent.props.shadowOffsetX || 2}
+                                        onChange={(v) => handleChange('props.shadowOffsetX', v ?? 2)}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="阴影Y偏移">
+                                    <InputNumber
+                                        value={selectedComponent.props.shadowOffsetY || 2}
+                                        onChange={(v) => handleChange('props.shadowOffsetY', v ?? 2)}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </div>
+                        </>
+                    )}
+                    <Form.Item label="字间距">
+                        <InputNumber
+                            value={selectedComponent.props.letterSpacing || 0}
+                            onChange={(v) => handleChange('props.letterSpacing', v ?? 0)}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="行高">
+                        <InputNumber
+                            value={selectedComponent.props.lineHeight || 1.2}
+                            onChange={(v) => handleChange('props.lineHeight', v ?? 1.2)}
+                            style={{ width: '100%' }}
+                            step={0.1}
+                            min={0.5}
+                            max={3}
+                        />
+                    </Form.Item>
+                    <Form.Item label="文本对齐">
+                        <Select
+                            value={selectedComponent.props.textAlign || 'center'}
+                            onChange={(v) => handleChange('props.textAlign', v)}
+                            options={[
+                                { value: 'left', label: '左对齐' },
+                                { value: 'center', label: '居中' },
+                                { value: 'right', label: '右对齐' },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
         // 日历热力图配置
         ...(selectedComponent.type === 'calendarChart' ? [{
             key: 'calendar',
@@ -3748,6 +3882,17 @@ export default function PropertyPanel() {
                         </Form.Item>
                     )}
                 </>
+            )}
+            {selectedComponent.type === 'gradientText' && (
+                <Form.Item label="文本内容">
+                    <Input.TextArea
+                        value={selectedComponent.props.content || '渐变文字效果'}
+                        onChange={(e) => handleChange('props.content', e.target.value)}
+                        placeholder="输入文本内容"
+                        rows={2}
+                        style={{ width: '100%' }}
+                    />
+                </Form.Item>
             )}
         </Form>
     )

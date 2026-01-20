@@ -25,6 +25,7 @@ import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
 import FullscreenButton from './FullscreenButton'
+import GradientText from './GradientText'
 import './index.less'
 
 // 懒加载地图组件
@@ -1352,6 +1353,20 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                     <div className="canvas-item-icon" style={{ fontSize: item.style.fontSize || 32, color: item.style.color || '#1890ff' }}>
                         {IconComp}
                     </div>
+                )
+
+            case 'gradientText':
+                return (
+                    <GradientText
+                        props={item.props}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    />
                 )
 
             default:
