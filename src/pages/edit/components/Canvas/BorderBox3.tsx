@@ -85,7 +85,7 @@ export default function BorderBox3({
         <div
             ref={containerRef}
             className="border-box-3"
-            style={{ width, height }}
+            style={{ width: propWidth || '100%', height: propHeight || '100%' }}
         >
             <svg width={width} height={height}>
                 <defs>
