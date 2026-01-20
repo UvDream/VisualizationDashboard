@@ -4,11 +4,23 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
+    background: transparent !important;
 
     p {
         width: 100%;
         height: auto;
         max-width: 100%;
+        margin: 0;
+        padding: 0;
+        
+        // 确保渐变文字正确显示
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        
+        // 确保文字可见
+        display: inline-block;
+        width: 100%;
     }
 }

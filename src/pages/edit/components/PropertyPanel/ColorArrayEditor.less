@@ -12,7 +12,13 @@
         gap: 8px;
 
         :deep(.ant-color-picker) {
+            flex-shrink: 0;
+        }
+
+        :deep(.ant-input) {
             flex: 1;
+            min-width: 0;
         }
     }
 }
+

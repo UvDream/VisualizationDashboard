@@ -1,4 +1,4 @@
-import { Button, ColorPicker,  Popconfirm } from 'antd'
+import { Button, ColorPicker, Popconfirm, Input } from 'antd'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import './ColorArrayEditor.less'
 
@@ -8,11 +8,31 @@ interface ColorArrayEditorProps {
 }
 
 export default function ColorArrayEditor({ value, onChange }: ColorArrayEditorProps) {
-    const colors = value || ['#ff0000', '#00ff00', '#0000ff']
+    const colors = (value && value.length > 0) ? value : ['#ff0000', '#00ff00', '#0000ff']
 
-    const handleColorChange = (index: number, color: string) => {
+    const handleColorChange = (index: number, colorObj: any) => {
         const newColors = [...colors]
-        newColors[index] = color
+        
+        // Ant Design ColorPicker 返回 Color 对象，使用 toHexString() 方法
+        let colorValue = '#000000'
+        try {
+            if (colorObj && typeof colorObj.toHexString === 'function') {
+                colorValue = colorObj.toHexString()
+            } else if (typeof colorObj === 'string') {
+                colorValue = colorObj
+            }
+        } catch (e) {
+            console.error('Error getting color value:', e)
+            colorValue = '#000000'
+        }
+        
+        newColors[index] = colorValue
+        onChange(newColors)
+    }
+
+    const handleColorInputChange = (index: number, inputValue: string) => {
+        const newColors = [...colors]
+        newColors[index] = inputValue
         onChange(newColors)
     }
 
@@ -34,9 +54,16 @@ export default function ColorArrayEditor({ value, onChange }: ColorArrayEditorPr
                 {colors.map((color, index) => (
                     <div key={index} className="color-item">
                         <ColorPicker
-                            value={color}
-                            onChange={(colorObj) => handleColorChange(index, colorObj.toHexString())}
+                            value={color || '#000000'}
+                            onChange={(colorObj) => handleColorChange(index, colorObj)}
                             showText
+                        />
+                        <Input
+                            value={color || '#000000'}
+                            onChange={(e) => handleColorInputChange(index, e.target.value)}
+                            placeholder="#000000"
+                            size="small"
+                            style={{ width: '100px' }}
                         />
                         {colors.length > 2 && (
                             <Popconfirm
@@ -70,3 +97,4 @@ export default function ColorArrayEditor({ value, onChange }: ColorArrayEditorPr
         </div>
     )
 }
+

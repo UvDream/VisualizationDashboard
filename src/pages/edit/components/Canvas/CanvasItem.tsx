@@ -1358,6 +1358,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
             case 'gradientText':
                 return (
                     <GradientText
+                        key={`${item.id}-${JSON.stringify(item.props.gradientColors)}`}
                         props={item.props}
                         style={{
                             width: '100%',
@@ -1386,7 +1387,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
                 top: item.style.y,
                 width: item.style.width,
                 height: item.style.height,
-                backgroundColor: item.style.backgroundColor,
+                backgroundColor: item.type === 'gradientText' ? 'transparent' : item.style.backgroundColor,
                 borderRadius: item.style.borderRadius,
                 opacity: isDragging && !previewMode ? 0.5 : (item.style.opacity ?? 1),
                 zIndex: item.style.zIndex,
