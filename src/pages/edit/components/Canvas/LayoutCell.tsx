@@ -5,6 +5,7 @@ import ReactECharts from 'echarts-for-react'
 import { Button, Progress } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import type { ComponentItem, ComponentType } from '../../types'
+import { defaultConfigs } from '../../config/defaultConfigs'
 import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
@@ -12,6 +13,7 @@ import FullscreenButton from './FullscreenButton'
 import GradientText from './GradientText'
 import FlipCountdown from './FlipCountdown'
 import Carousel from './Carousel'
+import CanvasItem from './CanvasItem'
 
 // 懒加载地图组件
 const MapChart = lazy(() => import('./MapChart'))
@@ -38,10 +40,18 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
     const { state, addComponent, selectComponent } = useEditor()
     const cellRef = useRef<HTMLDivElement>(null)
 
-    // 获取该单元格中的子组件（只取第一个，每个单元格只放一个组件）
-    const cellChild = state.components.find(
+    // 获取该单元格中的所有子组件
+    const cellChildren = state.components.filter(
         comp => comp.parentId === layoutId && comp.cellIndex === cellIndex
     )
+
+    // 判断是否为布局组件
+    const isLayoutComponent = (type: ComponentType) => {
+        return ['layoutTwoColumn', 'layoutThreeColumn', 'layoutHeader', 'layoutSidebar'].includes(type)
+    }
+
+    // 检查单元格中是否已有布局组件
+    const hasLayoutChild = cellChildren.some(child => isLayoutComponent(child.type))
 
     // 只在非预览模式下使用 useDrop
     const [{ isOver, canDrop }, dropRef] = !previewMode ? (() => {
@@ -51,33 +61,73 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 // 阻止冒泡，防止被画布捕获
                 if (monitor.didDrop()) return
 
-                // 如果单元格已有组件，不再添加
-                if (cellChild) return
+                const isLayoutType = isLayoutComponent(item.componentType)
 
-                const newComponent: ComponentItem = {
-                    id: uuidv4(),
-                    type: item.componentType,
-                    name: `${item.componentType}_${Date.now()}`,
-                    props: { ...item.data },
-                    style: {
-                        x: 0,
-                        y: 0,
-                        width: 0,  // 由 CSS 控制，填满单元格
-                        height: 0,
-                    },
-                    visible: true,
-                    locked: false,
-                    parentId: layoutId,
-                    cellIndex: cellIndex,
+                // 如果拖入的是布局组件
+                if (isLayoutType) {
+                    // 如果单元格已有任何组件，不允许添加布局
+                    if (cellChildren.length > 0) return
+
+                    const newComponent: ComponentItem = {
+                        id: uuidv4(),
+                        type: item.componentType,
+                        name: `${item.componentType}_${Date.now()}`,
+                        props: { ...item.data },
+                        style: {
+                            x: 0,
+                            y: 0,
+                            width: 0,  // 由 CSS 控制，填满单元格
+                            height: 0,
+                        },
+                        visible: true,
+                        locked: false,
+                        parentId: layoutId,
+                        cellIndex: cellIndex,
+                    }
+
+                    addComponent(newComponent)
+                } else {
+                    // 如果拖入的是普通组件
+                    // 如果单元格已有布局组件，不允许添加
+                    if (hasLayoutChild) return
+
+                    // 获取鼠标在单元格内的相对位置
+                    const offset = monitor.getClientOffset()
+                    const cellRect = cellRef.current?.getBoundingClientRect()
+
+                    if (offset && cellRect) {
+                        const x = (offset.x - cellRect.left) / state.scale
+                        const y = (offset.y - cellRect.top) / state.scale
+
+                        const config = defaultConfigs[item.componentType] || { props: {}, style: { width: 200, height: 150 } }
+
+                        const newComponent: ComponentItem = {
+                            id: uuidv4(),
+                            type: item.componentType,
+                            name: `${item.componentType}_${Date.now()}`,
+                            props: { ...config.props, ...item.data },
+                            style: {
+                                x,
+                                y,
+                                width: config.style.width || 200,
+                                height: config.style.height || 150,
+                                ...config.style,
+                            },
+                            visible: true,
+                            locked: false,
+                            parentId: layoutId,
+                            cellIndex: cellIndex,
+                        }
+
+                        addComponent(newComponent)
+                    }
                 }
-
-                addComponent(newComponent)
             },
             collect: (monitor) => ({
                 isOver: monitor.isOver({ shallow: true }),
                 canDrop: monitor.canDrop(),
             }),
-        }), [layoutId, cellIndex, addComponent, cellChild])
+        }), [layoutId, cellIndex, addComponent, cellChildren, hasLayoutChild, state.scale])
         return [result, drop]
     })() : [{ isOver: false, canDrop: false }, undefined]
 
@@ -86,20 +136,15 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
         dropRef(cellRef.current)
     }
 
-    const handleChildClick = (e: React.MouseEvent) => {
+    const handleChildClick = (e: React.MouseEvent, childId?: string) => {
         e.stopPropagation()
-        if (cellChild) {
-            selectComponent(cellChild.id)
+        if (childId) {
+            selectComponent(childId)
         }
     }
 
-    // 渲染单元格内的组件
-    const renderCellContent = () => {
-        if (!cellChild) {
-            return <span className="layout-cell-label">{cellLabel}</span>
-        }
-
-        const item = cellChild
+    // 渲染单个组件
+    const renderComponent = (item: ComponentItem) => {
 
         // 根据组件类型渲染
         switch (item.type) {
@@ -190,8 +235,10 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 return (
                     <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
                         <WordCloudChart
-                            wordCloudData={item.props.wordCloudData || []}
-                            wordCloudConfig={item.props.wordCloudConfig}
+                            data={item.props.wordCloudData || []}
+                            width={0}
+                            height={0}
+                            config={item.props.wordCloudConfig}
                         />
                     </Suspense>
                 )
@@ -199,8 +246,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 return (
                     <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
                         <ScrollRankList
-                            rankListData={item.props.rankListData || []}
-                            rankListConfig={item.props.rankListConfig}
+                            data={item.props.rankListData || []}
+                            config={item.props.rankListConfig}
                         />
                     </Suspense>
                 )
@@ -208,8 +255,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 return (
                     <Suspense fallback={<div className="layout-cell-placeholder">加载中...</div>}>
                         <CarouselList
-                            carouselListData={item.props.carouselListData || []}
-                            carouselListConfig={item.props.carouselListConfig}
+                            data={item.props.carouselListData || []}
+                            config={item.props.carouselListConfig}
                         />
                     </Suspense>
                 )
@@ -283,8 +330,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
             case 'carousel':
                 return (
                     <Carousel
-                        carouselImages={item.props.carouselImages || []}
-                        carouselConfig={item.props.carouselConfig}
+                        images={item.props.carouselImages || []}
+                        config={item.props.carouselConfig}
                     />
                 )
             // 边框组件
@@ -329,8 +376,9 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                         position={item.props.position}
                         customIcon={item.props.customIcon}
                         showText={item.props.showText}
-                        content={item.props.content}
-                    />
+                    >
+                        {item.props.showText ? (item.props.content || '点击全屏') : null}
+                    </FullscreenButton>
                 )
             case 'gradientText':
                 return (
@@ -451,7 +499,45 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
         }
     }
 
-    const isSelected = cellChild && state.selectedId === cellChild.id
+    // 渲染单元格内容
+    const renderCellContent = () => {
+        // 如果没有子组件，显示占位符
+        if (cellChildren.length === 0) {
+            return <span className="layout-cell-label">{cellLabel}</span>
+        }
+
+        // 如果有布局组件，直接渲染（填满整个单元格）
+        const layoutChild = cellChildren.find(child => isLayoutComponent(child.type))
+        if (layoutChild) {
+            return (
+                <div
+                    className={`layout-cell-child ${state.selectedId === layoutChild.id ? 'selected' : ''}`}
+                    onClick={(e) => handleChildClick(e, layoutChild.id)}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'relative',
+                    }}
+                >
+                    {renderComponent(layoutChild)}
+                </div>
+            )
+        }
+
+        // 如果有普通组件，渲染为可拖拽调整大小的组件
+        return (
+            <>
+                {cellChildren.map(child => (
+                    <CanvasItem
+                        key={child.id}
+                        item={child}
+                        previewMode={previewMode}
+                        isInLayoutCell={true}
+                    />
+                ))}
+            </>
+        )
+    }
 
     // 计算单元格样式
     const cellStyle: React.CSSProperties = {
@@ -464,9 +550,17 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
     return (
         <div
             ref={cellRef}
-            className={`layout-cell ${className} ${isOver && canDrop ? 'layout-cell-hover' : ''} ${cellChild ? 'has-child' : ''} ${isSelected ? 'child-selected' : ''}`}
-            style={cellStyle}
-            onClick={handleChildClick}
+            className={`layout-cell ${className} ${isOver && canDrop ? 'layout-cell-hover' : ''} ${cellChildren.length > 0 ? 'has-child' : ''}`}
+            style={{
+                ...cellStyle,
+                position: 'relative',
+            }}
+            onClick={(e) => {
+                // 点击空白区域取消选择
+                if (e.target === e.currentTarget) {
+                    selectComponent(null)
+                }
+            }}
         >
             {renderCellContent()}
         </div>

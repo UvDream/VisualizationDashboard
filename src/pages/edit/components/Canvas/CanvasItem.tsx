@@ -39,6 +39,7 @@ interface CanvasItemProps {
     item: ComponentItem
     onContextMenu?: (e: React.MouseEvent) => void
     previewMode?: boolean
+    isInLayoutCell?: boolean // 是否在布局单元格内
 }
 
 // 图标映射
@@ -51,7 +52,7 @@ const iconMap: Record<string, React.ReactNode> = {
     user: <UserOutlined />,
 }
 
-export default function CanvasItem({ item, onContextMenu, previewMode = false }: CanvasItemProps) {
+export default function CanvasItem({ item, onContextMenu, previewMode = false, isInLayoutCell = false }: CanvasItemProps) {
     const { state, selectComponent, selectComponents, moveComponent, updateComponent, setSnapLines } = useEditor()
     const isSelected = state.selectedId === item.id || (state.selectedIds || []).includes(item.id)
     const ref = useRef<HTMLDivElement>(null)
@@ -1501,8 +1502,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false }:
         <div
             ref={ref}
             data-component-id={item.id}
-            className={`canvas-item ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''} ${!previewMode && item.groupId ? 'grouped' : ''} ${!previewMode && item.isGroup ? 'group-main' : ''}`}
+            className={`canvas-item ${isInLayoutCell ? 'in-layout-cell' : ''} ${!previewMode && isSelected ? 'selected' : ''} ${item.locked ? 'locked' : ''} ${!previewMode && item.groupId ? 'grouped' : ''} ${!previewMode && item.isGroup ? 'group-main' : ''}`}
             style={{
+                position: isInLayoutCell ? 'absolute' : 'absolute',
                 left: item.style.x,
                 top: item.style.y,
                 width: item.style.width,
