@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Radio, Cascader, DatePicker, Segmented } from 'antd'
+import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Cascader, DatePicker, Segmented } from 'antd'
 import dayjs from 'dayjs'
 import { useEditor } from '../../context/EditorContext'
 import { getMapRegionOptions, getCityMapCascaderOptions, getCityMapCascaderPath } from '../../utils/mapData'
@@ -1155,19 +1155,19 @@ export default function PropertyPanel() {
             children: (
                 <Form layout="vertical" size="small">
                     <Form.Item label="饼图类型">
-                        <Radio.Group
+                        <Segmented
                             value={selectedComponent.props.pieConfig?.roseType || false}
-                            onChange={(e) => handleChange('props.pieConfig', {
+                            onChange={(value) => handleChange('props.pieConfig', {
                                 ...selectedComponent.props.pieConfig,
-                                roseType: e.target.value
+                                roseType: value
                             })}
-                            optionType="button"
-                            size="small"
-                        >
-                            <Radio value={false}>普通</Radio>
-                            <Radio value="radius">玫瑰图</Radio>
-                            <Radio value="area">面积玫瑰</Radio>
-                        </Radio.Group>
+                            options={[
+                                { label: '普通', value: false },
+                                { label: '玫瑰图', value: 'radius' },
+                                { label: '面积玫瑰', value: 'area' }
+                            ]}
+                            block
+                        />
                     </Form.Item>
                     <div className="form-row">
                         <Form.Item label="内半径">
@@ -1297,19 +1297,19 @@ export default function PropertyPanel() {
                     {selectedComponent.props.pieConfig?.label?.show !== false && (
                         <>
                             <Form.Item label="标签位置">
-                                <Radio.Group
+                                <Segmented
                                     value={selectedComponent.props.pieConfig?.label?.position || 'outside'}
-                                    onChange={(e) => handleChange('props.pieConfig', {
+                                    onChange={(value) => handleChange('props.pieConfig', {
                                         ...selectedComponent.props.pieConfig,
-                                        label: { ...selectedComponent.props.pieConfig?.label, position: e.target.value }
+                                        label: { ...selectedComponent.props.pieConfig?.label, position: value }
                                     })}
-                                    optionType="button"
-                                    size="small"
-                                >
-                                    <Radio value="outside">外部</Radio>
-                                    <Radio value="inside">内部</Radio>
-                                    <Radio value="center">中心</Radio>
-                                </Radio.Group>
+                                    options={[
+                                        { label: '外部', value: 'outside' },
+                                        { label: '内部', value: 'inside' },
+                                        { label: '中心', value: 'center' }
+                                    ]}
+                                    block
+                                />
                             </Form.Item>
                             <Form.Item label="标签格式">
                                 <Select
@@ -1516,18 +1516,18 @@ export default function PropertyPanel() {
                         />
                     </Form.Item>
                     <Form.Item label="字体粗细">
-                        <Radio.Group
+                        <Segmented
                             value={selectedComponent.props.wordCloudConfig?.fontWeight || 'bold'}
-                            onChange={(e) => handleChange('props.wordCloudConfig', {
+                            onChange={(value) => handleChange('props.wordCloudConfig', {
                                 ...selectedComponent.props.wordCloudConfig,
-                                fontWeight: e.target.value
+                                fontWeight: value
                             })}
-                            optionType="button"
-                            size="small"
-                        >
-                            <Radio value="normal">正常</Radio>
-                            <Radio value="bold">加粗</Radio>
-                        </Radio.Group>
+                            options={[
+                                { label: '正常', value: 'normal' },
+                                { label: '加粗', value: 'bold' }
+                            ]}
+                            block
+                        />
                     </Form.Item>
                     <Form.Item label="文字旋转" style={{ marginBottom: 8 }}>
                         <Switch
@@ -1568,15 +1568,15 @@ export default function PropertyPanel() {
                     {selectedComponent.props.legend?.show && (
                         <>
                             <Form.Item label="布局方向">
-                                <Radio.Group
+                                <Segmented
                                     value={selectedComponent.props.legend?.orient || 'horizontal'}
-                                    onChange={(e) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: e.target.value })}
-                                    optionType="button"
-                                    size="small"
-                                >
-                                    <Radio value="horizontal">水平</Radio>
-                                    <Radio value="vertical">垂直</Radio>
-                                </Radio.Group>
+                                    onChange={(value) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: value })}
+                                    options={[
+                                        { label: '水平', value: 'horizontal' },
+                                        { label: '垂直', value: 'vertical' }
+                                    ]}
+                                    block
+                                />
                             </Form.Item>
                             <div className="form-row">
                                 <Form.Item label="水平位置">
@@ -1883,13 +1883,15 @@ export default function PropertyPanel() {
             children: (
                 <Form layout="vertical" size="small">
                     <Form.Item label="倒计时模式">
-                        <Radio.Group
+                        <Segmented
                             value={selectedComponent.props.countdownMode || 'target'}
-                            onChange={(e) => handleChange('props.countdownMode', e.target.value)}
-                        >
-                            <Radio value="target">目标时间</Radio>
-                            <Radio value="duration">固定时长</Radio>
-                        </Radio.Group>
+                            onChange={(value) => handleChange('props.countdownMode', value)}
+                            options={[
+                                { label: '目标时间', value: 'target' },
+                                { label: '固定时长', value: 'duration' }
+                            ]}
+                            block
+                        />
                     </Form.Item>
 
                     {selectedComponent.props.countdownMode === 'target' ? (
@@ -1999,13 +2001,15 @@ export default function PropertyPanel() {
                     </Form.Item>
 
                     <Form.Item label="卡片颜色类型">
-                        <Radio.Group
+                        <Segmented
                             value={selectedComponent.props.cardColorType || 'gradient'}
-                            onChange={(e) => handleChange('props.cardColorType', e.target.value)}
-                        >
-                            <Radio value="solid">纯色</Radio>
-                            <Radio value="gradient">渐变</Radio>
-                        </Radio.Group>
+                            onChange={(value) => handleChange('props.cardColorType', value)}
+                            options={[
+                                { label: '纯色', value: 'solid' },
+                                { label: '渐变', value: 'gradient' }
+                            ]}
+                            block
+                        />
                     </Form.Item>
 
                     {selectedComponent.props.cardColorType === 'solid' ? (
@@ -2127,15 +2131,15 @@ export default function PropertyPanel() {
                     {selectedComponent.props.legend?.show !== false && (
                         <>
                             <Form.Item label="布局方向">
-                                <Radio.Group
+                                <Segmented
                                     value={selectedComponent.props.legend?.orient || 'horizontal'}
-                                    onChange={(e) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: e.target.value })}
-                                    optionType="button"
-                                    size="small"
-                                >
-                                    <Radio value="horizontal">水平</Radio>
-                                    <Radio value="vertical">垂直</Radio>
-                                </Radio.Group>
+                                    onChange={(value) => handleChange('props.legend', { ...selectedComponent.props.legend, orient: value })}
+                                    options={[
+                                        { label: '水平', value: 'horizontal' },
+                                        { label: '垂直', value: 'vertical' }
+                                    ]}
+                                    block
+                                />
                             </Form.Item>
                             <div className="form-row">
                                 <Form.Item label="水平位置">
@@ -3572,18 +3576,20 @@ export default function PropertyPanel() {
             children: (
                 <Form layout="vertical" size="small">
                     <Form.Item label="布局方向">
-                        <Radio.Group
+                        <Segmented
                             value={selectedComponent.props.layoutConfig?.direction || (
                                 ['layoutTwoRow', 'layoutHeader'].includes(selectedComponent.type) ? 'vertical' : 'horizontal'
                             )}
-                            onChange={(e) => handleChange('props.layoutConfig', {
+                            onChange={(value) => handleChange('props.layoutConfig', {
                                 ...selectedComponent.props.layoutConfig,
-                                direction: e.target.value
+                                direction: value
                             })}
-                        >
-                            <Radio.Button value="horizontal">左右</Radio.Button>
-                            <Radio.Button value="vertical">上下</Radio.Button>
-                        </Radio.Group>
+                            options={[
+                                { label: '左右', value: 'horizontal' },
+                                { label: '上下', value: 'vertical' }
+                            ]}
+                            block
+                        />
                     </Form.Item>
                     <Form.Item label="栏间距">
                         <InputNumber
