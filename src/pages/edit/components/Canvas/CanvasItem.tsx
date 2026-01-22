@@ -216,6 +216,10 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
         const startPosX = item.style.x
         const startPosY = item.style.y
 
+        // 获取画布尺寸
+        const canvasWidth = state.canvasConfig?.width || 1920
+        const canvasHeight = state.canvasConfig?.height || 1080
+
         // 获取需要一起拖拽的组件
         // 如果当前组件在多选列表中，拖拽所有选中的组件
         // 否则，只拖拽当前组件
@@ -253,8 +257,12 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
 
             // 更新所有需要拖拽的组件位置
             componentsToDrag.forEach((comp, index) => {
-                const newX = initialPositions[index].startX + actualDeltaX
-                const newY = initialPositions[index].startY + actualDeltaY
+                let newX = initialPositions[index].startX + actualDeltaX
+                let newY = initialPositions[index].startY + actualDeltaY
+                
+                // 边界限制：确保组件不会超出画布
+                newX = Math.max(0, Math.min(newX, canvasWidth - comp.style.width))
+                newY = Math.max(0, Math.min(newY, canvasHeight - comp.style.height))
                 
                 // 直接更新DOM以避免重新渲染
                 const compElement = document.querySelector(`[data-component-id="${comp.id}"]`) as HTMLElement
@@ -290,8 +298,12 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
 
             // 更新所有需要拖拽的组件位置到状态
             componentsToDrag.forEach((comp, index) => {
-                const newX = initialPositions[index].startX + actualDeltaX
-                const newY = initialPositions[index].startY + actualDeltaY
+                let newX = initialPositions[index].startX + actualDeltaX
+                let newY = initialPositions[index].startY + actualDeltaY
+                
+                // 边界限制：确保组件不会超出画布
+                newX = Math.max(0, Math.min(newX, canvasWidth - comp.style.width))
+                newY = Math.max(0, Math.min(newY, canvasHeight - comp.style.height))
                 
                 // Only update if changed
                 if (newX !== comp.style.x || newY !== comp.style.y) {
@@ -318,6 +330,10 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
         const startWidth = item.style.width
         const startHeight = item.style.height
 
+        // 获取画布尺寸
+        const canvasWidth = state.canvasConfig?.width || 1920
+        const canvasHeight = state.canvasConfig?.height || 1080
+
         // Closure variables to track final state
         let currentX = startItemX
         let currentY = startItemY
@@ -339,20 +355,38 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 if (h > 10) {
                     newHeight = h
                     newY = startItemY + deltaY
+                    // 边界限制：不能超出画布顶部
+                    if (newY < 0) {
+                        newY = 0
+                        newHeight = startItemY + startHeight
+                    }
                 }
             }
             if (direction.includes('bottom')) {
                 newHeight = Math.max(10, startHeight + deltaY)
+                // 边界限制：不能超出画布底部
+                if (startItemY + newHeight > canvasHeight) {
+                    newHeight = canvasHeight - startItemY
+                }
             }
             if (direction.includes('left')) {
                 const w = startWidth - deltaX
                 if (w > 10) {
                     newWidth = w
                     newX = startItemX + deltaX
+                    // 边界限制：不能超出画布左侧
+                    if (newX < 0) {
+                        newX = 0
+                        newWidth = startItemX + startWidth
+                    }
                 }
             }
             if (direction.includes('right')) {
                 newWidth = Math.max(10, startWidth + deltaX)
+                // 边界限制：不能超出画布右侧
+                if (startItemX + newWidth > canvasWidth) {
+                    newWidth = canvasWidth - startItemX
+                }
             }
 
             // Update closure vars

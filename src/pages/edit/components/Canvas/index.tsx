@@ -97,21 +97,33 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                 const canvasRect = customCanvasRef.current?.getBoundingClientRect()
 
                 if (offset && canvasRect) {
-                    // 计算缩放后的坐标 [Logic X = (Screen X - Canvas Left) / Scale]
-                    const x = (offset.x - canvasRect.left) / state.scale
-                    const y = (offset.y - canvasRect.top) / state.scale
-
                     const config = defaultConfigs[item.componentType] || { props: {}, style: { width: 100, height: 100 } }
+                    const componentWidth = config.style.width || 100
+                    const componentHeight = config.style.height || 100
+                    
+                    // 计算缩放后的坐标，并将组件中心对齐到鼠标位置
+                    // [Logic X = (Screen X - Canvas Left) / Scale - Width / 2]
+                    const x = (offset.x - canvasRect.left) / state.scale - componentWidth / 2
+                    const y = (offset.y - canvasRect.top) / state.scale - componentHeight / 2
+
+                    // 获取画布尺寸用于边界限制
+                    const canvasWidth = state.canvasConfig?.width || 1920
+                    const canvasHeight = state.canvasConfig?.height || 1080
+
+                    // 应用边界限制，确保组件不会超出画布
+                    const boundedX = Math.max(0, Math.min(x, canvasWidth - componentWidth))
+                    const boundedY = Math.max(0, Math.min(y, canvasHeight - componentHeight))
+
                     const newComponent: ComponentItem = {
                         id: uuidv4(),
                         type: item.componentType,
                         name: `${item.componentType}_${Date.now()}`,
                         props: { ...config.props, ...item.data }, // 合并拖拽携带的数据
                         style: {
-                            x,
-                            y,
-                            width: config.style.width || 100,
-                            height: config.style.height || 100,
+                            x: boundedX,
+                            y: boundedY,
+                            width: componentWidth,
+                            height: componentHeight,
                             ...config.style,
                         },
                         visible: true,
