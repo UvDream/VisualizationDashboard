@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
+import { Button, Slider, Tooltip } from 'antd'
+import { ZoomInOutlined, ZoomOutOutlined, ReloadOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
 import Ruler from '../Ruler'
 import type { ComponentType, ComponentItem } from '../../types'
@@ -13,7 +15,7 @@ interface CanvasProps {
 }
 
 export default function Canvas({ previewMode = false }: CanvasProps) {
-    const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack, groupComponents, ungroupComponents } = useEditor()
+    const { state, addComponent, selectComponent, selectComponents, deleteComponent, deleteComponents, bringForward, sendBackward, bringToFront, sendToBack, groupComponents, ungroupComponents, setScale, toggleZenMode } = useEditor()
     const customCanvasRef = useRef<HTMLDivElement>(null)
     const [previewScale, setPreviewScale] = useState(1)
 
@@ -59,6 +61,13 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
         if (previewMode) return
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            // ESC 键退出禅模式
+            if (e.key === 'Escape' && state.zenMode) {
+                e.preventDefault()
+                toggleZenMode(false)
+                return
+            }
+
             // Delete 或 Backspace 键删除选中组件
             if ((e.key === 'Delete' || e.key === 'Backspace') && !e.repeat) {
                 // 检查焦点是否在输入框等元素上
@@ -77,7 +86,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
 
         window.addEventListener('keydown', handleKeyDown)
         return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [previewMode, state.selectedIds, deleteComponents])
+    }, [previewMode, state.selectedIds, state.zenMode, deleteComponents, toggleZenMode])
 
     // 只有在非预览模式下才使用useDrop
     const [dropRef, isOver] = !previewMode ? (() => {
@@ -361,6 +370,21 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
         return baseStyle
     }
 
+    // 禅模式缩放控制
+    const handleZenZoomOut = () => {
+        const newScale = Math.max(0.2, state.scale - 0.1)
+        setScale(parseFloat(newScale.toFixed(1)))
+    }
+
+    const handleZenZoomIn = () => {
+        const newScale = Math.min(2.0, state.scale + 0.1)
+        setScale(parseFloat(newScale.toFixed(1)))
+    }
+
+    const handleZenResetZoom = () => {
+        setScale(1.0)
+    }
+
     return (
         <div className="canvas-wrapper">
             {!previewMode && (
@@ -509,6 +533,56 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                             </>
                         )
                     })()}
+                </div>
+            )}
+
+            {/* 禅模式浮动缩放控制器 */}
+            {!previewMode && state.zenMode && (
+                <div className="zen-zoom-controls">
+                    <Tooltip title="退出禅模式 (ESC)">
+                        <Button 
+                            icon={<FullscreenExitOutlined />} 
+                            onClick={() => toggleZenMode(false)}
+                            size="small"
+                            type="primary"
+                        />
+                    </Tooltip>
+                    <div className="zen-divider" />
+                    <Tooltip title="缩小">
+                        <Button 
+                            icon={<ZoomOutOutlined />} 
+                            onClick={handleZenZoomOut}
+                            size="small"
+                        />
+                    </Tooltip>
+                    <div className="zen-zoom-slider">
+                        <Slider
+                            min={0.2}
+                            max={2.0}
+                            step={0.1}
+                            value={state.scale}
+                            onChange={setScale}
+                            tooltip={{ formatter: (value) => `${Math.round((value || 0) * 100)}%` }}
+                            style={{ width: 120 }}
+                        />
+                    </div>
+                    <Tooltip title="放大">
+                        <Button 
+                            icon={<ZoomInOutlined />} 
+                            onClick={handleZenZoomIn}
+                            size="small"
+                        />
+                    </Tooltip>
+                    <Tooltip title="重置缩放">
+                        <Button 
+                            icon={<ReloadOutlined />} 
+                            onClick={handleZenResetZoom}
+                            size="small"
+                        />
+                    </Tooltip>
+                    <span className="zen-zoom-percentage">
+                        {Math.round(state.scale * 100)}%
+                    </span>
                 </div>
             )}
         </div>

@@ -33,7 +33,8 @@ const getInitialState = (): EditorState => {
             backgroundType: 'color',
             backgroundImageMode: 'cover',
             backgroundImageOpacity: 1,
-        }
+        },
+        zenMode: false,
     }
 }
 
@@ -205,6 +206,12 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 },
             }
 
+        case 'TOGGLE_ZEN_MODE':
+            return {
+                ...state,
+                zenMode: action.payload,
+            }
+
         default:
             return state
     }
@@ -348,6 +355,7 @@ interface EditorContextType {
     copyComponent: (id: string) => void
     groupComponents: (ids: string[]) => void
     ungroupComponents: (id: string) => void
+    toggleZenMode: (enabled: boolean) => void
     undo: () => void
     redo: () => void
     canUndo: boolean
@@ -523,6 +531,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         addComponent(newComponent)
     }, [state.components, addComponent])
 
+    const toggleZenMode = React.useCallback((enabled: boolean) => {
+        dispatch({ type: 'TOGGLE_ZEN_MODE', payload: enabled })
+    }, [dispatch])
+
     const contextValue = React.useMemo(() => ({
         state,
         dispatch,
@@ -547,6 +559,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         copyComponent,
         groupComponents,
         ungroupComponents,
+        toggleZenMode,
         undo,
         redo,
         canUndo: history.past.length > 0,
@@ -575,6 +588,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         copyComponent,
         groupComponents,
         ungroupComponents,
+        toggleZenMode,
         undo,
         redo,
         history.past.length,

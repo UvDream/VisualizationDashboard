@@ -13,6 +13,8 @@ import {
     SettingOutlined,
     GithubOutlined,
     UploadOutlined,
+    FullscreenOutlined,
+    FullscreenExitOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
@@ -21,7 +23,7 @@ import './index.less'
 export default function Toolbar() {
     const navigate = useNavigate()
 
-    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent } = useEditor()
+    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent, toggleZenMode } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form] = Form.useForm()
 
@@ -54,6 +56,10 @@ export default function Toolbar() {
 
     const handleResetZoom = () => {
         setScale(1.0)
+    }
+
+    const handleToggleZenMode = () => {
+        toggleZenMode(!state.zenMode)
     }
 
     const handleOpenSettings = () => {
@@ -153,6 +159,13 @@ export default function Toolbar() {
                         <span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>
                             {Math.round(state.scale * 100)}%
                         </span>
+                        <Tooltip title={state.zenMode ? "退出禅模式" : "进入禅模式"}>
+                            <Button 
+                                icon={state.zenMode ? <FullscreenExitOutlined /> : <FullscreenOutlined />} 
+                                onClick={handleToggleZenMode}
+                                type={state.zenMode ? "primary" : "default"}
+                            />
+                        </Tooltip>
                     </Space>
                 </Space>
             </div>

@@ -631,6 +631,7 @@ export interface EditorState {
     scale: number // 画布缩放比例
     snapLines: SnapLine[] // 当前显示的吸附辅助线
     canvasConfig: CanvasConfig // 画布配置
+    zenMode?: boolean // 禅模式
 }
 
 // 编辑器 Action 类型
@@ -651,6 +652,7 @@ export type EditorAction =
     | { type: 'SET_CANVAS_CONFIG'; payload: Partial<CanvasConfig> }
     | { type: 'GROUP_COMPONENTS'; payload: string[] }
     | { type: 'UNGROUP_COMPONENTS'; payload: string }
+    | { type: 'TOGGLE_ZEN_MODE'; payload: boolean }
 
 // 拖拽项类型
 export interface DragItem {
