@@ -33,6 +33,11 @@ const getInitialState = (): EditorState => {
             backgroundType: 'color',
             backgroundImageMode: 'cover',
             backgroundImageOpacity: 1,
+            chartTheme: {
+                type: 'preset',
+                presetName: 'default',
+                customColors: []
+            }
         },
         zenMode: false,
     }

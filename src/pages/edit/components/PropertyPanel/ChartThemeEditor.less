@@ -1,0 +1,232 @@
+.chart-theme-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 4px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    .theme-card {
+        padding: 16px 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px solid #303030;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(24, 144, 255, 0.3);
+        }
+
+        &.active {
+            border-color: #1890ff;
+            background: rgba(24, 144, 255, 0.08);
+            box-shadow: 0 0 0 1px rgba(24, 144, 255, 0.2);
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #1890ff, #52c41a);
+                border-radius: 0 0 10px 10px;
+            }
+        }
+
+        .theme-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+
+            .theme-name {
+                font-size: 15px;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.85);
+            }
+
+            .add-icon {
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.45);
+                transition: all 0.2s ease;
+            }
+        }
+
+        &:hover .add-icon {
+            color: #1890ff;
+            transform: rotate(90deg);
+        }
+
+        .theme-colors {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .color-dot {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                transition: transform 0.2s ease;
+            }
+        }
+
+        &:hover .color-dot {
+            transform: translateY(-2px);
+        }
+    }
+}
+
+.chart-theme-modal {
+    .ant-modal-body {
+        padding: 20px;
+        background: #1f1f1f;
+    }
+
+    .theme-modal-content {
+        display: flex;
+        gap: 20px;
+        min-height: 400px;
+
+        .theme-editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .theme-name-input {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid #303030;
+                border-radius: 4px;
+
+                span {
+                    color: rgba(255, 255, 255, 0.85);
+                    font-size: 13px;
+                }
+
+                .color-count {
+                    margin-left: auto;
+                    color: rgba(255, 255, 255, 0.45);
+                }
+            }
+
+            .color-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid #303030;
+                border-radius: 4px;
+
+                .color-item-box {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 4px 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid #303030;
+                    border-radius: 4px;
+                }
+
+                .add-color-btn {
+                    height: 32px;
+                    border-color: #303030;
+                    color: rgba(255, 255, 255, 0.65);
+
+                    &:hover {
+                        border-color: #1890ff;
+                        color: #1890ff;
+                    }
+                }
+            }
+
+            .color-palette-section {
+                display: flex;
+                gap: 12px;
+                flex: 1;
+
+                .palette-column {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+
+                    .palette-title {
+                        color: rgba(255, 255, 255, 0.65);
+                        font-size: 12px;
+                    }
+
+                    .palette-grid {
+                        display: grid;
+                        grid-template-columns: repeat(9, 1fr);
+                        gap: 4px;
+                        padding: 8px;
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid #303030;
+                        border-radius: 4px;
+
+                        .palette-color {
+                            width: 100%;
+                            aspect-ratio: 1;
+                            border-radius: 2px;
+                            cursor: pointer;
+                            transition: transform 0.2s ease;
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+
+                            &:hover {
+                                transform: scale(1.1);
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .theme-preview-section {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #303030;
+            border-radius: 4px;
+            padding: 12px;
+
+            .ant-tabs {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+
+                .ant-tabs-content {
+                    flex: 1;
+                }
+            }
+        }
+    }
+}

@@ -17,6 +17,7 @@ import { useEditor } from '../../context/EditorContext'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
 import { fetchChartData, dataRefreshManager } from '../../utils/dataSource'
+import { getCurrentThemeColors } from '../../config/chartThemes'
 import type { ComponentItem } from '../../types'
 import WordCloudChart from './WordCloudChart'
 import LayoutCell from './LayoutCell'
@@ -144,13 +145,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'gaugeChart', 'radarChart', 'scatterChart', 'treeChart', 'sankeyChart']
         if (chartTypes.includes(item.type)) {
             const finalProps = getFinalChartData()
-            return finalProps.chartOption || getCachedChartOption(item.type, finalProps)
+            // 获取当前主题颜色
+            const themeColors = getCurrentThemeColors(state.canvasConfig)
+            return finalProps.chartOption || getCachedChartOption(item.type, finalProps, themeColors)
         }
         if (item.type === 'calendarChart') {
             return getCalendarOption(item.props)
         }
         return null
-    }, [item.type, item.props, dynamicData])
+    }, [item.type, item.props, dynamicData, state.canvasConfig?.chartTheme])
 
     // 只有在非预览模式下才使用useDrag
     const [isDragging] = !previewMode ? (() => {

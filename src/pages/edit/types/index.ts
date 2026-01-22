@@ -621,6 +621,12 @@ export interface CanvasConfig {
     backgroundImage?: string // 图片URL或base64格式的图片数据
     backgroundImageMode?: 'tile' | 'stretch' | 'cover' | 'contain' | 'center' // 背景图片模式
     backgroundImageOpacity?: number // 背景图片透明度 0-1
+    // 图表主题配置
+    chartTheme?: {
+        type: 'preset' | 'custom' // 主题类型：预设或自定义
+        presetName?: string // 预设主题名称
+        customColors?: string[] // 自定义颜色数组
+    }
 }
 
 // 编辑器状态

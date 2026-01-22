@@ -164,11 +164,13 @@ const buildSeriesData = (type: string, props: ComponentItem['props']) => {
  * 获取图表配置
  * @param type 图表类型
  * @param props 组件属性
+ * @param themeColors 主题颜色数组（可选）
  * @returns ECharts 配置对象
  */
-export function getChartOption(type: string, props: ComponentItem['props']): Record<string, any> {
+export function getChartOption(type: string, props: ComponentItem['props'], themeColors?: string[]): Record<string, any> {
     const baseOption = {
         backgroundColor: 'transparent',
+        color: themeColors, // 应用主题颜色
         title: props.chartTitle ? { text: props.chartTitle, left: 'center', textStyle: { color: '#fff' } } : undefined,
         grid: {
             top: props.chartTitle ? 40 : 30,
@@ -756,15 +758,15 @@ const CACHE_TTL = 5000 // 5秒缓存
 /**
  * 获取缓存的图表配置
  */
-export function getCachedChartOption(type: string, props: ComponentItem['props']): Record<string, any> {
-    const key = createChartOptionKey(type, props)
+export function getCachedChartOption(type: string, props: ComponentItem['props'], themeColors?: string[]): Record<string, any> {
+    const key = createChartOptionKey(type, props) + (themeColors ? JSON.stringify(themeColors) : '')
     const cached = chartOptionCache.get(key)
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
         return cached.option
     }
     
-    const option = getChartOption(type, props)
+    const option = getChartOption(type, props, themeColors)
     chartOptionCache.set(key, { option, timestamp: Date.now() })
     
     // 限制缓存大小
