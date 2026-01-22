@@ -27,18 +27,18 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                 const canvasHeight = state.canvasConfig?.height || 1080
                 const windowWidth = window.innerWidth
                 const windowHeight = window.innerHeight
-                
+
                 // 计算缩放比例，保持宽高比
                 const scaleX = windowWidth / canvasWidth
                 const scaleY = windowHeight / canvasHeight
                 const scale = Math.min(scaleX, scaleY, 1) // 最大不超过1
-                
+
                 setPreviewScale(scale)
             }
 
             calculatePreviewScale()
             window.addEventListener('resize', calculatePreviewScale)
-            
+
             return () => {
                 window.removeEventListener('resize', calculatePreviewScale)
             }
@@ -100,7 +100,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     const config = defaultConfigs[item.componentType] || { props: {}, style: { width: 100, height: 100 } }
                     const componentWidth = config.style.width || 100
                     const componentHeight = config.style.height || 100
-                    
+
                     // 计算缩放后的坐标，并将组件中心对齐到鼠标位置
                     // [Logic X = (Screen X - Canvas Left) / Scale - Width / 2]
                     const x = (offset.x - canvasRect.left) / state.scale - componentWidth / 2
@@ -141,13 +141,19 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     })() : [undefined, false]
 
     const handleCanvasClick = (e: React.MouseEvent) => {
-        if (!previewMode && !isSelecting && !hasSelectedByBox) {
-            // 只有点击画布空白区域才清空选择
-            if (e.target === e.currentTarget) {
-                selectComponent(null)
-            }
+        if (!previewMode) {
             // 点击画布关闭右键菜单
             setMenuVisible(false)
+
+            // 检查点击的元素是否是组件
+            const target = e.target as HTMLElement
+            const isComponentClick = target.closest('.canvas-item')
+
+            // 如果不是点击组件，且当前不在框选中（普通的点击动作），则取消选中
+            // hasSelectedByBox 会在 MouseUp 中根据移动距离判断
+            if (!isComponentClick && !isSelecting && !hasSelectedByBox) {
+                selectComponent(null)
+            }
         }
         // 重置框选标记
         setHasSelectedByBox(false)
@@ -211,10 +217,14 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     const handleCanvasMouseUp = () => {
         if (isSelecting) {
             setIsSelecting(false)
-            // 如果选中了组件，标记为通过框选选中
-            const selectedIds = state.selectedIds || []
-            if (selectedIds.length > 0) {
+            // 只有当框选区域有一定大小（超过5像素）时，才认为是通过框选选中的
+            // 这样可以区分普通的“点击画布”和“框选操作”
+            const dx = Math.abs(selectionEnd.x - selectionStart.x)
+            const dy = Math.abs(selectionEnd.y - selectionStart.y)
+            if (dx > 5 || dy > 5) {
                 setHasSelectedByBox(true)
+            } else {
+                setHasSelectedByBox(false)
             }
         }
     }
@@ -251,7 +261,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
         closeMenu()
 
         const selectedIds = state.selectedIds || []
-        
+
         // 组合操作 - 需要多选
         if (action === 'group') {
             if (selectedIds.length >= 2) {
@@ -398,7 +408,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
     }
 
     return (
-        <div className="canvas-wrapper">
+        <div className="canvas-wrapper" onClick={handleCanvasClick}>
             {!previewMode && (
                 <>
                     <div className="ruler-corner" />
@@ -414,14 +424,13 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     width: state.canvasConfig?.width || 1920,
                     height: state.canvasConfig?.height || 1080,
                     ...getBackgroundStyle(),
-                    transform: previewMode 
-                        ? `scale(${previewScale})` 
+                    transform: previewMode
+                        ? `scale(${previewScale})`
                         : `scale(${state.scale}) translate(0px, 0px)`,
                     top: !previewMode ? 40 : 0,
                     left: !previewMode ? 40 : 0,
                     transformOrigin: previewMode ? 'center center' : '0 0',
                 }}
-                onClick={handleCanvasClick}
                 onMouseDown={handleCanvasMouseDown}
                 onMouseMove={handleCanvasMouseMove}
                 onMouseUp={handleCanvasMouseUp}
@@ -480,7 +489,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                             const comp = state.components.find(c => c.id === id)
                             return comp?.groupId
                         })
-                        
+
                         return (
                             <>
                                 {/* 组合相关操作 */}
@@ -495,7 +504,7 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                                         <div className="context-menu-divider" />
                                     </>
                                 )}
-                                
+
                                 {isGrouped && (
                                     <>
                                         <div
@@ -552,8 +561,8 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
             {!previewMode && state.zenMode && (
                 <div className="zen-zoom-controls">
                     <Tooltip title="退出禅模式 (ESC)">
-                        <Button 
-                            icon={<FullscreenExitOutlined />} 
+                        <Button
+                            icon={<FullscreenExitOutlined />}
                             onClick={() => toggleZenMode(false)}
                             size="small"
                             type="primary"
@@ -561,8 +570,8 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     </Tooltip>
                     <div className="zen-divider" />
                     <Tooltip title="缩小">
-                        <Button 
-                            icon={<ZoomOutOutlined />} 
+                        <Button
+                            icon={<ZoomOutOutlined />}
                             onClick={handleZenZoomOut}
                             size="small"
                         />
@@ -579,15 +588,15 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                         />
                     </div>
                     <Tooltip title="放大">
-                        <Button 
-                            icon={<ZoomInOutlined />} 
+                        <Button
+                            icon={<ZoomInOutlined />}
                             onClick={handleZenZoomIn}
                             size="small"
                         />
                     </Tooltip>
                     <Tooltip title="重置缩放">
-                        <Button 
-                            icon={<ReloadOutlined />} 
+                        <Button
+                            icon={<ReloadOutlined />}
                             onClick={handleZenResetZoom}
                             size="small"
                         />

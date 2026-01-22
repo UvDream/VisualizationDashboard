@@ -11,7 +11,7 @@ import ColorArrayEditor from './ColorArrayEditor'
 import './index.less'
 
 export default function PropertyPanel() {
-    const { getSelectedComponent, updateComponent } = useEditor()
+    const { state, getSelectedComponent, updateComponent, setCanvasConfig } = useEditor()
     const selectedComponent = getSelectedComponent()
     const [selectedSeriesIndex, setSelectedSeriesIndex] = useState(0)
 
@@ -71,12 +71,105 @@ export default function PropertyPanel() {
         }
     }, [selectedComponent?.id, selectedComponent?.props.dataSource])
 
+    // 当没有选中组件时，显示页面配置
     if (!selectedComponent) {
+        const handleCanvasConfigChange = (field: string, value: unknown) => {
+            setCanvasConfig({ [field]: value })
+        }
+
         return (
             <div className="property-panel">
-                <div className="property-panel-header">属性</div>
-                <div className="property-panel-empty">
-                    请选择一个组件
+                <div className="property-panel-header">页面配置</div>
+                <div className="property-panel-content">
+                    <Collapse
+                        defaultActiveKey={['canvas']}
+                        items={[
+                            {
+                                key: 'canvas',
+                                label: '画布设置',
+                                children: (
+                                    <Form layout="vertical" size="small">
+                                        <Form.Item label="页面名称">
+                                            <Input
+                                                value={state.canvasConfig?.name}
+                                                onChange={(e) => handleCanvasConfigChange('name', e.target.value)}
+                                                placeholder="请输入页面名称"
+                                            />
+                                        </Form.Item>
+                                        <div className="form-row">
+                                            <Form.Item label="画布宽度">
+                                                <InputNumber
+                                                    value={state.canvasConfig?.width}
+                                                    onChange={(v) => handleCanvasConfigChange('width', v ?? 1920)}
+                                                    style={{ width: '100%' }}
+                                                    min={100}
+                                                />
+                                            </Form.Item>
+                                            <Form.Item label="画布高度">
+                                                <InputNumber
+                                                    value={state.canvasConfig?.height}
+                                                    onChange={(v) => handleCanvasConfigChange('height', v ?? 1080)}
+                                                    style={{ width: '100%' }}
+                                                    min={100}
+                                                />
+                                            </Form.Item>
+                                        </div>
+                                        <Form.Item label="背景类型">
+                                            <Radio.Group
+                                                value={state.canvasConfig?.backgroundType || 'color'}
+                                                onChange={(e) => handleCanvasConfigChange('backgroundType', e.target.value)}
+                                            >
+                                                <Radio value="color">纯色</Radio>
+                                                <Radio value="image">图片</Radio>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                        {state.canvasConfig?.backgroundType === 'color' ? (
+                                            <Form.Item label="背景颜色">
+                                                <ColorPicker
+                                                    value={state.canvasConfig?.backgroundColor}
+                                                    onChange={(color) => handleCanvasConfigChange('backgroundColor', color.toHexString())}
+                                                    showText
+                                                />
+                                            </Form.Item>
+                                        ) : (
+                                            <>
+                                                <Form.Item label="背景图片">
+                                                    <Input
+                                                        value={state.canvasConfig?.backgroundImage}
+                                                        onChange={(e) => handleCanvasConfigChange('backgroundImage', e.target.value)}
+                                                        placeholder="请输入图片URL"
+                                                    />
+                                                </Form.Item>
+                                                <Form.Item label="图片模式">
+                                                    <Select
+                                                        value={state.canvasConfig?.backgroundImageMode || 'cover'}
+                                                        onChange={(v) => handleCanvasConfigChange('backgroundImageMode', v)}
+                                                        options={[
+                                                            { value: 'cover', label: '覆盖' },
+                                                            { value: 'contain', label: '包含' },
+                                                            { value: 'stretch', label: '拉伸' },
+                                                            { value: 'tile', label: '平铺' },
+                                                            { value: 'center', label: '居中' },
+                                                        ]}
+                                                    />
+                                                </Form.Item>
+                                                <Form.Item label="图片透明度">
+                                                    <InputNumber
+                                                        value={state.canvasConfig?.backgroundImageOpacity ?? 1}
+                                                        onChange={(v) => handleCanvasConfigChange('backgroundImageOpacity', v ?? 1)}
+                                                        min={0}
+                                                        max={1}
+                                                        step={0.1}
+                                                        style={{ width: '100%' }}
+                                                    />
+                                                </Form.Item>
+                                            </>
+                                        )}
+                                    </Form>
+                                ),
+                            },
+                        ]}
+                    />
                 </div>
             </div>
         )
