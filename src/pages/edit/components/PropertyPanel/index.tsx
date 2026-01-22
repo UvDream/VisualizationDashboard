@@ -4011,6 +4011,128 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 边框组件配置
+        ...(selectedComponent.type === 'borderBox1' ? [{
+            key: 'borderBox1Config',
+            label: '边框配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.borderColor || '#4fd2dd'}
+                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="发光颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.glowColor || '#235fa7'}
+                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="边框宽度">
+                        <InputNumber
+                            value={selectedComponent.props.borderWidth || 2}
+                            onChange={(v) => handleChange('props.borderWidth', v ?? 2)}
+                            min={1}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="内容文本">
+                        <Input.TextArea
+                            value={selectedComponent.props.content || ''}
+                            onChange={(e) => handleChange('props.content', e.target.value)}
+                            placeholder="请输入内容"
+                            rows={3}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
+        ...(selectedComponent.type === 'borderBox2' ? [{
+            key: 'borderBox2Config',
+            label: '边框配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.borderColor || '#6586ec'}
+                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="发光颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.glowColor || '#2cf7fe'}
+                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="边框宽度">
+                        <InputNumber
+                            value={selectedComponent.props.borderWidth || 2}
+                            onChange={(v) => handleChange('props.borderWidth', v ?? 2)}
+                            min={1}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="内容文本">
+                        <Input.TextArea
+                            value={selectedComponent.props.content || ''}
+                            onChange={(e) => handleChange('props.content', e.target.value)}
+                            placeholder="请输入内容"
+                            rows={3}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
+        ...(selectedComponent.type === 'borderBox3' ? [{
+            key: 'borderBox3Config',
+            label: '边框配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="边框颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.borderColor || '#235fa7'}
+                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="发光颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.glowColor || '#4fd2dd'}
+                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
+                        />
+                    </Form.Item>
+                    <Form.Item label="边框宽度">
+                        <InputNumber
+                            value={selectedComponent.props.borderWidth || 1}
+                            onChange={(v) => handleChange('props.borderWidth', v ?? 1)}
+                            min={1}
+                            max={5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="动画时长(秒)">
+                        <InputNumber
+                            value={selectedComponent.props.animationDuration || 3}
+                            onChange={(v) => handleChange('props.animationDuration', v ?? 3)}
+                            min={1}
+                            max={10}
+                            step={0.5}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="内容文本">
+                        <Input.TextArea
+                            value={selectedComponent.props.content || ''}
+                            onChange={(e) => handleChange('props.content', e.target.value)}
+                            placeholder="请输入内容"
+                            rows={3}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -4460,92 +4582,6 @@ export default function PropertyPanel() {
                         style={{ width: '100%' }}
                     />
                 </Form.Item>
-            )}
-            {/* 边框组件配置 */}
-            {selectedComponent.type === 'borderBox1' && (
-                <>
-                    <Form.Item label="边框颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.borderColor || '#4fd2dd'}
-                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="发光颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.glowColor || '#235fa7'}
-                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="边框宽度">
-                        <InputNumber
-                            value={selectedComponent.props.borderWidth || 2}
-                            onChange={(v) => handleChange('props.borderWidth', v ?? 2)}
-                            min={1}
-                            max={5}
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
-                </>
-            )}
-            {selectedComponent.type === 'borderBox2' && (
-                <>
-                    <Form.Item label="边框颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.borderColor || '#6586ec'}
-                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="发光颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.glowColor || '#2cf7fe'}
-                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="边框宽度">
-                        <InputNumber
-                            value={selectedComponent.props.borderWidth || 2}
-                            onChange={(v) => handleChange('props.borderWidth', v ?? 2)}
-                            min={1}
-                            max={5}
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
-                </>
-            )}
-            {selectedComponent.type === 'borderBox3' && (
-                <>
-                    <Form.Item label="边框颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.borderColor || '#235fa7'}
-                            onChange={(color) => handleChange('props.borderColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="发光颜色">
-                        <ColorPicker
-                            value={selectedComponent.props.glowColor || '#4fd2dd'}
-                            onChange={(color) => handleChange('props.glowColor', color.toHexString())}
-                        />
-                    </Form.Item>
-                    <Form.Item label="边框宽度">
-                        <InputNumber
-                            value={selectedComponent.props.borderWidth || 1}
-                            onChange={(v) => handleChange('props.borderWidth', v ?? 1)}
-                            min={1}
-                            max={5}
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
-                    <Form.Item label="动画时长(秒)">
-                        <InputNumber
-                            value={selectedComponent.props.animationDuration || 3}
-                            onChange={(v) => handleChange('props.animationDuration', v ?? 3)}
-                            min={1}
-                            max={10}
-                            step={0.5}
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
-                </>
             )}
             {selectedComponent.type === 'fullscreenButton' && (
                 <>
