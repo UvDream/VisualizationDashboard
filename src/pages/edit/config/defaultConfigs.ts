@@ -395,8 +395,8 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
 
     // Antd 组件
-    text: { 
-        props: { 
+    text: {
+        props: {
             content: '请输入文本内容',
             fontSize: 16,
             fontWeight: 'normal',
@@ -418,12 +418,12 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             borderWidth: 0,
             borderColor: '#000000',
             padding: 8,
-        }, 
-        style: { width: 200, height: 40, color: '#ffffff', fontSize: 16 } 
+        },
+        style: { width: 200, height: 40, color: '#ffffff', fontSize: 16 }
     },
-    button: { 
-        props: { 
-            content: '点击按钮', 
+    button: {
+        props: {
+            content: '点击按钮',
             buttonType: 'primary',
             fontSize: 14,
             fontWeight: 'normal',
@@ -437,11 +437,11 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             loading: false,
             block: false,
             danger: false,
-        }, 
-        style: { width: 100, height: 40 } 
+        },
+        style: { width: 100, height: 40 }
     },
-    input: { 
-        props: { 
+    input: {
+        props: {
             content: '',
             placeholder: '请输入内容',
             fontSize: 14,
@@ -457,8 +457,8 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             showCount: false,
             maxLength: 0,
             inputType: 'text',
-        }, 
-        style: { width: 200, height: 40 } 
+        },
+        style: { width: 200, height: 40 }
     },
     select: {
         props: {
@@ -473,9 +473,9 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     switch: { props: { checked: true }, style: { width: 60, height: 30 } },
     progress: { props: { percent: 70 }, style: { width: 200, height: 30 } },
-    tag: { 
-        props: { 
-            content: 'Project A', 
+    tag: {
+        props: {
+            content: 'Project A',
             tagColor: '#1890ff',
             fontSize: 14,
             fontWeight: 'normal',
@@ -487,8 +487,8 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             padding: 4,
             closable: false,
             icon: '',
-        }, 
-        style: { width: 80, height: 30 } 
+        },
+        style: { width: 80, height: 30 }
     },
     badge: { props: { content: '99+' }, style: { width: 60, height: 60 } },
     avatar: { props: {}, style: { width: 64, height: 64 } },
@@ -620,30 +620,30 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
 
     // 小组件
-    borderBox1: { 
-        props: { 
-            borderColor: '#4fd2dd', 
-            glowColor: '#235fa7', 
-            borderWidth: 2 
-        }, 
-        style: { width: 300, height: 200 } 
+    borderBox1: {
+        props: {
+            borderColor: '#4fd2dd',
+            glowColor: '#235fa7',
+            borderWidth: 2
+        },
+        style: { width: 300, height: 200 }
     },
-    borderBox2: { 
-        props: { 
-            borderColor: '#6586ec', 
-            glowColor: '#2cf7fe', 
-            borderWidth: 2 
-        }, 
-        style: { width: 300, height: 200 } 
+    borderBox2: {
+        props: {
+            borderColor: '#6586ec',
+            glowColor: '#2cf7fe',
+            borderWidth: 2
+        },
+        style: { width: 300, height: 200 }
     },
-    borderBox3: { 
-        props: { 
-            borderColor: '#235fa7', 
-            glowColor: '#4fd2dd', 
+    borderBox3: {
+        props: {
+            borderColor: '#235fa7',
+            glowColor: '#4fd2dd',
             borderWidth: 1,
             animationDuration: 3
-        }, 
-        style: { width: 300, height: 200 } 
+        },
+        style: { width: 300, height: 200 }
     },
     fullscreenButton: {
         props: {
@@ -661,53 +661,53 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     decoration1: { props: {}, style: { width: 200, height: 60 } },
     decoration2: { props: {}, style: { width: 200, height: 60 } },
     container: { props: {}, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 } },
-    
+
     // 布局组件
-    layoutTwoColumn: { 
-        props: { 
-            layoutConfig: { 
-                direction: 'horizontal', 
-                gap: 8, 
-                cells: [{ flex: 1 }, { flex: 1 }] 
-            } 
-        }, 
-        style: { width: 600, height: 300, backgroundColor: 'transparent' } 
+    layoutTwoColumn: {
+        props: {
+            layoutConfig: {
+                direction: 'horizontal',
+                gap: 8,
+                cells: [{ flex: 1 }, { flex: 1 }]
+            }
+        },
+        style: { width: 600, height: 300, backgroundColor: 'transparent' }
     },
-    layoutThreeColumn: { 
-        props: { 
-            layoutConfig: { 
-                direction: 'horizontal', 
-                gap: 8, 
-                cells: [{ flex: 1 }, { flex: 1 }, { flex: 1 }] 
-            } 
-        }, 
-        style: { width: 900, height: 300, backgroundColor: 'transparent' } 
+    layoutThreeColumn: {
+        props: {
+            layoutConfig: {
+                direction: 'horizontal',
+                gap: 8,
+                cells: [{ flex: 1 }, { flex: 1 }, { flex: 1 }]
+            }
+        },
+        style: { width: 900, height: 300, backgroundColor: 'transparent' }
     },
-    layoutHeader: { 
-        props: { 
-            layoutConfig: { 
-                direction: 'vertical', 
-                gap: 8, 
-                cells: [{ flex: 0.3 }, { flex: 1 }] 
-            } 
-        }, 
-        style: { width: 600, height: 400, backgroundColor: 'transparent' } 
+    layoutHeader: {
+        props: {
+            layoutConfig: {
+                direction: 'vertical',
+                gap: 8,
+                cells: [{ flex: 0.3 }, { flex: 1 }]
+            }
+        },
+        style: { width: 600, height: 400, backgroundColor: 'transparent' }
     },
-    layoutSidebar: { 
-        props: { 
-            layoutConfig: { 
-                direction: 'horizontal', 
-                gap: 8, 
-                cells: [{ flex: 0.3 }, { flex: 1 }] 
-            } 
-        }, 
-        style: { width: 600, height: 400, backgroundColor: 'transparent' } 
+    layoutSidebar: {
+        props: {
+            layoutConfig: {
+                direction: 'horizontal',
+                gap: 8,
+                cells: [{ flex: 0.3 }, { flex: 1 }]
+            }
+        },
+        style: { width: 600, height: 400, backgroundColor: 'transparent' }
     },
 
     // 图片
     image: { props: { alt: '图片' }, style: { width: 200, height: 150, backgroundColor: '#2a2a2a' } },
-    carousel: { 
-        props: { 
+    carousel: {
+        props: {
             carouselImages: [],
             carouselConfig: {
                 autoplay: true,
@@ -716,8 +716,8 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
                 showArrows: true,
                 effect: 'slide'
             }
-        }, 
-        style: { width: 400, height: 200, backgroundColor: '#2a2a2a' } 
+        },
+        style: { width: 400, height: 200, backgroundColor: '#2a2a2a' }
     },
 
     // 图标
@@ -774,5 +774,16 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
             separator: ':',
         },
         style: { width: 400, height: 120, backgroundColor: 'transparent' }
+    },
+
+    // 酷炫标题
+    futuristicTitle: {
+        props: {
+            content: '可视化大数据展示平台',
+            subContent: 'VISUALIZATION BIG DATA PLATFORM',
+            fontSize: 24,
+            titleColor: '#00ccff',
+        },
+        style: { width: 800, height: 80, backgroundColor: 'transparent' }
     },
 }

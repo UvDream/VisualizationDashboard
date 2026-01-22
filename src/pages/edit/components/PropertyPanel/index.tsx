@@ -2057,6 +2057,43 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 科技标题配置
+        ...(selectedComponent.type === 'futuristicTitle' ? [{
+            key: 'futuristicTitle',
+            label: '标题配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="主标题">
+                        <Input
+                            value={selectedComponent.props.content}
+                            onChange={(e) => handleChange('props.content', e.target.value)}
+                        />
+                    </Form.Item>
+                    <Form.Item label="副标题">
+                        <Input
+                            value={selectedComponent.props.subContent}
+                            onChange={(e) => handleChange('props.subContent', e.target.value)}
+                        />
+                    </Form.Item>
+                    <Form.Item label="标题颜色">
+                        <ColorPicker
+                            value={selectedComponent.props.titleColor || '#00ccff'}
+                            onChange={(color) => handleChange('props.titleColor', color.toHexString())}
+                            showText
+                        />
+                    </Form.Item>
+                    <Form.Item label="字体大小">
+                        <InputNumber
+                            value={selectedComponent.props.fontSize || 24}
+                            onChange={(v) => handleChange('props.fontSize', v ?? 24)}
+                            style={{ width: '100%' }}
+                            min={12}
+                            max={100}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
         // 日历热力图配置
         ...(selectedComponent.type === 'calendarChart' ? [{
             key: 'calendar',

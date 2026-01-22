@@ -28,6 +28,7 @@ import BorderBox3 from './BorderBox3'
 import FullscreenButton from './FullscreenButton'
 import GradientText from './GradientText'
 import FlipCountdown from './FlipCountdown'
+import FuturisticTitle from './FuturisticTitle'
 import './index.less'
 
 // 懒加载地图组件
@@ -95,7 +96,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
         if (dynamicData) {
             // 使用动态数据
             const finalProps = { ...item.props }
-            
+
             if (['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart'].includes(item.type)) {
                 if (dynamicData.xAxisData) finalProps.xAxisData = dynamicData.xAxisData
                 if (dynamicData.seriesData) finalProps.seriesData = dynamicData.seriesData
@@ -131,17 +132,17 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     finalProps.tableColumns = dynamicData.tableColumns
                 }
             }
-            
+
             return finalProps
         }
-        
+
         // 使用静态数据
         return item.props
     }
 
     // 缓存的图表配置
     const chartOption = useMemo(() => {
-        const chartTypes = ['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 
+        const chartTypes = ['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart',
             'horizontalBarChart', 'pieChart', 'halfPieChart', 'funnelChart', 'gaugeChart', 'radarChart', 'scatterChart', 'treeChart', 'sankeyChart']
         if (chartTypes.includes(item.type)) {
             const finalProps = getFinalChartData()
@@ -177,7 +178,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
     const handleClick = (e: React.MouseEvent) => {
         if (!previewMode) {
             e.stopPropagation()
-            
+
             // Ctrl/Cmd + 点击实现多选
             if (e.ctrlKey || e.metaKey) {
                 const currentSelectedIds = state.selectedIds || []
@@ -190,7 +191,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 }
                 return
             }
-            
+
             // 普通点击：只选中当前组件，不自动选中整个组合
             selectComponent(item.id)
         }
@@ -262,11 +263,11 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             componentsToDrag.forEach((comp, index) => {
                 let newX = initialPositions[index].startX + actualDeltaX
                 let newY = initialPositions[index].startY + actualDeltaY
-                
+
                 // 边界限制：确保组件不会超出画布
                 newX = Math.max(0, Math.min(newX, canvasWidth - comp.style.width))
                 newY = Math.max(0, Math.min(newY, canvasHeight - comp.style.height))
-                
+
                 // 直接更新DOM以避免重新渲染
                 const compElement = document.querySelector(`[data-component-id="${comp.id}"]`) as HTMLElement
                 if (compElement) {
@@ -303,11 +304,11 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             componentsToDrag.forEach((comp, index) => {
                 let newX = initialPositions[index].startX + actualDeltaX
                 let newY = initialPositions[index].startY + actualDeltaY
-                
+
                 // 边界限制：确保组件不会超出画布
                 newX = Math.max(0, Math.min(newX, canvasWidth - comp.style.width))
                 newY = Math.max(0, Math.min(newY, canvasHeight - comp.style.height))
-                
+
                 // Only update if changed
                 if (newX !== comp.style.x || newY !== comp.style.y) {
                     moveComponent(comp.id, newX, newY)
@@ -566,7 +567,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 const textShadowValue = item.props.textShadow
                     ? `${item.props.shadowOffsetX || 0}px ${item.props.shadowOffsetY || 0}px ${item.props.shadowBlur || 4}px ${item.props.shadowColor || 'rgba(0,0,0,0.5)'}`
                     : 'none'
-                
+
                 return (
                     <div style={{
                         color: item.props.color || '#ffffff',
@@ -600,7 +601,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 )
             case 'button':
                 return (
-                    <Button 
+                    <Button
                         type={item.props.buttonType || 'primary'}
                         disabled={item.props.disabled || false}
                         loading={item.props.loading || false}
@@ -623,7 +624,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 )
             case 'input':
                 return (
-                    <Input 
+                    <Input
                         type={item.props.inputType || 'text'}
                         placeholder={item.props.placeholder || '请输入内容'}
                         value={item.props.content || ''}
@@ -663,12 +664,21 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                         options={item.props.selectOptions || [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]}
                     />
                 )
+            case 'futuristicTitle':
+                return (
+                    <FuturisticTitle
+                        content={item.props.content}
+                        subContent={item.props.subContent}
+                        titleColor={item.props.titleColor}
+                        fontSize={item.props.fontSize}
+                    />
+                )
                 // 蓝色科技主题地球组件
                 function Earth() {
                     const meshRef = useRef<any>(null)
                     const atmosphereRef = useRef<any>(null)
                     const ringRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.y += 0.005
@@ -697,7 +707,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                                     opacity={0.9}
                                 />
                             </mesh>
-                            
+
                             {/* 大气层光晕 */}
                             <mesh ref={atmosphereRef}>
                                 <sphereGeometry args={[1.35, 32, 32]} />
@@ -710,7 +720,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                                     side={2} // DoubleSide
                                 />
                             </mesh>
-                            
+
                             {/* 外层光环 */}
                             <mesh ref={ringRef}>
                                 <torusGeometry args={[1.8, 0.02, 8, 64]} />
@@ -722,7 +732,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                                     opacity={0.8}
                                 />
                             </mesh>
-                            
+
                             {/* 内层光环 */}
                             <mesh rotation={[Math.PI / 3, 0, Math.PI / 4]}>
                                 <torusGeometry args={[1.6, 0.015, 6, 48]} />
@@ -741,7 +751,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 3D魔方组件
                 function AnimatedCube() {
                     const meshRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.x += 0.01
@@ -752,9 +762,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     return (
                         <mesh ref={meshRef}>
                             <boxGeometry args={[2, 2, 2]} />
-                            <meshStandardMaterial 
-                                color="#ff6b6b" 
-                                metalness={0.7} 
+                            <meshStandardMaterial
+                                color="#ff6b6b"
+                                metalness={0.7}
                                 roughness={0.2}
                                 wireframe={false}
                             />
@@ -765,7 +775,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // DNA螺旋组件
                 function DNAHelix() {
                     const groupRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (groupRef.current) {
                             groupRef.current.rotation.y += 0.02
@@ -796,19 +806,19 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 3D波浪组件
                 function Wave3D() {
                     const meshRef = useRef<any>(null)
-                    
+
                     useFrame((state) => {
                         if (meshRef.current) {
                             const time = state.clock.elapsedTime
                             const geometry = meshRef.current.geometry
                             const positions = geometry.attributes.position.array
-                            
+
                             for (let i = 0; i < positions.length; i += 3) {
                                 const x = positions[i]
                                 const z = positions[i + 2]
                                 positions[i + 1] = Math.sin(x * 2 + time) * Math.cos(z * 2 + time) * 0.3
                             }
-                            
+
                             geometry.attributes.position.needsUpdate = true
                         }
                     })
@@ -824,7 +834,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 3D环形组件
                 function AnimatedTorus() {
                     const meshRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.x += 0.01
@@ -835,9 +845,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     return (
                         <mesh ref={meshRef}>
                             <torusGeometry args={[1, 0.4, 16, 100]} />
-                            <meshStandardMaterial 
-                                color="#ff9f43" 
-                                metalness={0.8} 
+                            <meshStandardMaterial
+                                color="#ff9f43"
+                                metalness={0.8}
                                 roughness={0.1}
                             />
                         </mesh>
@@ -847,7 +857,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 星系组件
                 function Galaxy() {
                     const pointsRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (pointsRef.current) {
                             pointsRef.current.rotation.y += 0.005
@@ -857,17 +867,17 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     const count = 5000
                     const positions = new Float32Array(count * 3)
                     const colors = new Float32Array(count * 3)
-                    
+
                     for (let i = 0; i < count; i++) {
                         const i3 = i * 3
                         const radius = Math.random() * 3
                         const spinAngle = radius * 2
                         const branchAngle = (i % 3) * (Math.PI * 2) / 3
-                        
+
                         positions[i3] = Math.cos(branchAngle + spinAngle) * radius
                         positions[i3 + 1] = (Math.random() - 0.5) * 0.3
                         positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius
-                        
+
                         colors[i3] = Math.random()
                         colors[i3 + 1] = Math.random()
                         colors[i3 + 2] = Math.random()
@@ -893,7 +903,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 时空隧道组件
                 function Tunnel() {
                     const groupRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (groupRef.current) {
                             groupRef.current.rotation.z += 0.02
@@ -905,8 +915,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                         rings.push(
                             <mesh key={i} position={[0, 0, -i * 0.5]}>
                                 <torusGeometry args={[1 + i * 0.1, 0.05, 8, 32]} />
-                                <meshStandardMaterial 
-                                    color={`hsl(${i * 18}, 70%, 50%)`} 
+                                <meshStandardMaterial
+                                    color={`hsl(${i * 18}, 70%, 50%)`}
                                     emissive={`hsl(${i * 18}, 70%, 20%)`}
                                 />
                             </mesh>
@@ -919,7 +929,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 矩阵雨组件
                 function MatrixRain() {
                     const pointsRef = useRef<any>(null)
-                    
+
                     useFrame((_state) => {
                         if (pointsRef.current) {
                             const positions = pointsRef.current.geometry.attributes.position.array
@@ -935,7 +945,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
 
                     const count = 1000
                     const positions = new Float32Array(count * 3)
-                    
+
                     for (let i = 0; i < count; i++) {
                         const i3 = i * 3
                         positions[i3] = (Math.random() - 0.5) * 6
@@ -959,7 +969,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 // 等离子球组件
                 function PlasmaBall() {
                     const meshRef = useRef<any>(null)
-                    
+
                     useFrame((state) => {
                         if (meshRef.current) {
                             meshRef.current.rotation.y += 0.01
@@ -970,7 +980,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     return (
                         <mesh ref={meshRef}>
                             <sphereGeometry args={[1.5, 64, 64]} />
-                            <meshStandardMaterial 
+                            <meshStandardMaterial
                                 color="#ff6b6b"
                                 emissive="#ff1744"
                                 emissiveIntensity={0.3}
@@ -985,12 +995,12 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             // 3D 组件
             case 'threeEarth':
                 return (
-                    <div style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        pointerEvents: 'auto', 
-                        position: 'absolute', 
-                        top: 0, 
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                        pointerEvents: 'auto',
+                        position: 'absolute',
+                        top: 0,
                         left: 0,
                         background: 'linear-gradient(135deg, #0a0e27 0%, #1a237e 50%, #0d47a1 100%)'
                     }}>
@@ -1004,14 +1014,14 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                             <pointLight position={[10, 10, 10]} intensity={1} color="#00bcd4" />
                             <pointLight position={[-10, -10, -5]} intensity={0.5} color="#2196f3" />
                             <directionalLight position={[0, 5, 5]} intensity={0.8} color="#03a9f4" />
-                            
+
                             <Suspense fallback={
                                 <Sphere args={[1.2, 32, 32]} visible>
-                                    <meshStandardMaterial 
-                                        color="#1E90FF" 
+                                    <meshStandardMaterial
+                                        color="#1E90FF"
                                         emissive="#0066cc"
                                         emissiveIntensity={0.3}
-                                        wireframe 
+                                        wireframe
                                     />
                                 </Sphere>
                             }>
@@ -1022,9 +1032,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                         </Canvas>
                         <div style={{
                             position: 'absolute', top: 10, left: 10, color: '#4fc3f7',
-                            pointerEvents: 'none', 
-                            background: 'rgba(13, 71, 161, 0.8)', 
-                            padding: '4px 8px', 
+                            pointerEvents: 'none',
+                            background: 'rgba(13, 71, 161, 0.8)',
+                            padding: '4px 8px',
                             fontSize: 11,
                             borderRadius: '4px',
                             border: '1px solid rgba(79, 195, 247, 0.3)',
@@ -1219,7 +1229,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 return <Progress percent={item.props.percent || 50} style={{ width: '100%' }} />
             case 'tag':
                 return (
-                    <Tag 
+                    <Tag
                         closable={item.props.closable || false}
                         style={{
                             backgroundColor: item.props.tagColor || '#1890ff',
@@ -1323,22 +1333,22 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             // 布局组件
             case 'layoutTwoColumn':
                 return (
-                    <div 
+                    <div
                         className="layout-component layout-two-column"
                         style={{
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={0} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={0}
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={1} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={1}
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[1]}
                         />
@@ -1346,28 +1356,28 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 )
             case 'layoutThreeColumn':
                 return (
-                    <div 
+                    <div
                         className="layout-component layout-three-column"
                         style={{
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={0} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={0}
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '上方' : '左栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={1} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={1}
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '中间' : '中栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[1]}
                         />
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={2} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={2}
                             cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '下方' : '右栏'}
                             cellConfig={item.props.layoutConfig?.cells?.[2]}
                         />
@@ -1375,24 +1385,24 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 )
             case 'layoutHeader':
                 return (
-                    <div 
+                    <div
                         className="layout-component layout-header"
                         style={{
                             flexDirection: item.props.layoutConfig?.direction === 'horizontal' ? 'row' : 'column',
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={0} 
-                            cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={0}
+                            cellLabel={item.props.layoutConfig?.direction === 'horizontal' ? '侧栏' : '头部'}
                             className="layout-header-top"
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={1} 
-                            cellLabel="内容区" 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={1}
+                            cellLabel="内容区"
                             className="layout-header-content"
                             cellConfig={item.props.layoutConfig?.cells?.[1]}
                         />
@@ -1400,24 +1410,24 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 )
             case 'layoutSidebar':
                 return (
-                    <div 
+                    <div
                         className="layout-component layout-sidebar"
                         style={{
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
                         }}
                     >
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={0} 
-                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'} 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={0}
+                            cellLabel={item.props.layoutConfig?.direction === 'vertical' ? '头部' : '侧栏'}
                             className="layout-sidebar-left"
                             cellConfig={item.props.layoutConfig?.cells?.[0]}
                         />
-                        <LayoutCell previewMode={previewMode} 
-                            layoutId={item.id} 
-                            cellIndex={1} 
-                            cellLabel="内容区" 
+                        <LayoutCell previewMode={previewMode}
+                            layoutId={item.id}
+                            cellIndex={1}
+                            cellLabel="内容区"
                             className="layout-sidebar-content"
                             cellConfig={item.props.layoutConfig?.cells?.[1]}
                         />

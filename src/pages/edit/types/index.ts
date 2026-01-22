@@ -20,6 +20,8 @@ export type ComponentType =
     | 'gradientText'
     // 倒计时
     | 'flipCountdown'
+    // 科技标题
+    | 'futuristicTitle'
 
 // 组件分类
 export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
@@ -150,6 +152,7 @@ export interface DataSourceConfig {
 export interface ComponentProps {
     // 通用属性
     content?: string
+    subContent?: string
 
     // 文本组件属性
     fontSize?: number

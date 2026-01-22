@@ -97,6 +97,7 @@ const widgetComponents: ComponentConfig[] = [
     { type: 'decoration1', name: '装饰1', icon: <GatewayOutlined />, category: 'widget' },
     { type: 'decoration2', name: '装饰2', icon: <StarOutlined />, category: 'widget' },
     { type: 'container', name: '容器', icon: <BorderOuterOutlined />, category: 'widget' },
+    { type: 'futuristicTitle', name: '酷炫标题', icon: <FontSizeOutlined />, category: 'widget' },
     // 布局组件
     { type: 'layoutTwoColumn', name: '两栏布局', icon: <LayoutOutlined />, category: 'widget' },
     { type: 'layoutThreeColumn', name: '三栏布局', icon: <AppstoreOutlined />, category: 'widget' },
