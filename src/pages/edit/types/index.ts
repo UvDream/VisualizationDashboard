@@ -641,6 +641,9 @@ export interface EditorState {
     snapLines: SnapLine[] // 当前显示的吸附辅助线
     canvasConfig: CanvasConfig // 画布配置
     zenMode?: boolean // 禅模式
+    showComponentPanel?: boolean // 显示组件面板
+    showLayerPanel?: boolean // 显示图层面板
+    showPropertyPanel?: boolean // 显示属性面板
 }
 
 // 编辑器 Action 类型
@@ -662,6 +665,7 @@ export type EditorAction =
     | { type: 'GROUP_COMPONENTS'; payload: string[] }
     | { type: 'UNGROUP_COMPONENTS'; payload: string }
     | { type: 'TOGGLE_ZEN_MODE'; payload: boolean }
+    | { type: 'TOGGLE_PANEL'; payload: 'component' | 'layer' | 'property' }
 
 // 拖拽项类型
 export interface DragItem {

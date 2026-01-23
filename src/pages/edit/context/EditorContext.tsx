@@ -40,6 +40,9 @@ const getInitialState = (): EditorState => {
             }
         },
         zenMode: false,
+        showComponentPanel: true,
+        showLayerPanel: true,
+        showPropertyPanel: true,
     }
 }
 
@@ -75,10 +78,10 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         case 'DELETE_COMPONENT':
             // 如果删除的组件是组合的一部分，删除整个组合
             const componentToDelete = state.components.find(comp => comp.id === action.payload)
-            const componentsToDelete = componentToDelete?.groupId 
+            const componentsToDelete = componentToDelete?.groupId
                 ? state.components.filter(comp => comp.groupId === componentToDelete.groupId).map(comp => comp.id)
                 : [action.payload]
-            
+
             return {
                 ...state,
                 components: state.components.filter((comp) => !componentsToDelete.includes(comp.id)),
@@ -163,7 +166,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
             const groupId = `group_${Date.now()}`
             const componentsToGroup = action.payload
             if (componentsToGroup.length < 2) return state
-            
+
             return {
                 ...state,
                 components: state.components.map((comp) => {
@@ -183,12 +186,12 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         case 'UNGROUP_COMPONENTS':
             const componentToUngroup = state.components.find(comp => comp.id === action.payload)
             if (!componentToUngroup?.groupId) return state
-            
+
             const groupIdToRemove = componentToUngroup.groupId
             const ungroupedIds = state.components
                 .filter(comp => comp.groupId === groupIdToRemove)
                 .map(comp => comp.id)
-            
+
             return {
                 ...state,
                 components: state.components.map((comp) => {
@@ -216,6 +219,18 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
                 ...state,
                 zenMode: action.payload,
             }
+
+        case 'TOGGLE_PANEL':
+            if (action.payload === 'component') {
+                return { ...state, showComponentPanel: !state.showComponentPanel }
+            }
+            if (action.payload === 'layer') {
+                return { ...state, showLayerPanel: !state.showLayerPanel }
+            }
+            if (action.payload === 'property') {
+                return { ...state, showPropertyPanel: !state.showPropertyPanel }
+            }
+            return state
 
         default:
             return state
@@ -320,7 +335,7 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
                 ...state,
                 present: newPresent,
             }
-            
+
             // SYNC_STATE 操作不保存到 localStorage 也不触发事件
             if (action.type !== 'SYNC_STATE') {
                 // 保存到 localStorage
@@ -330,7 +345,7 @@ function historyReducer(state: HistoryState, action: EditorAction | { type: 'UND
                     window.dispatchEvent(new CustomEvent('editorStateChange'))
                 }
             }
-            
+
             return newOtherState
     }
 }
@@ -361,6 +376,7 @@ interface EditorContextType {
     groupComponents: (ids: string[]) => void
     ungroupComponents: (id: string) => void
     toggleZenMode: (enabled: boolean) => void
+    togglePanel: (type: 'component' | 'layer' | 'property') => void
     undo: () => void
     redo: () => void
     canUndo: boolean
@@ -444,12 +460,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             const temp = components[index]
             components[index] = components[index + 1]
             components[index + 1] = temp
-            
+
             // 更新z-index
             components.forEach((comp, idx) => {
                 comp.style.zIndex = idx + 1
             })
-            
+
             reorderLayers(components)
         }
     }, [state.components, reorderLayers])
@@ -462,12 +478,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             const temp = components[index]
             components[index] = components[index - 1]
             components[index - 1] = temp
-            
+
             // 更新z-index
             components.forEach((comp, idx) => {
                 comp.style.zIndex = idx + 1
             })
-            
+
             reorderLayers(components)
         }
     }, [state.components, reorderLayers])
@@ -479,12 +495,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             // 移除并添加到末尾
             const [removed] = components.splice(index, 1)
             components.push(removed)
-            
+
             // 更新z-index
             components.forEach((comp, idx) => {
                 comp.style.zIndex = idx + 1
             })
-            
+
             reorderLayers(components)
         }
     }, [state.components, reorderLayers])
@@ -496,12 +512,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             // 移除并添加到开头
             const [removed] = components.splice(index, 1)
             components.unshift(removed)
-            
+
             // 更新z-index
             components.forEach((comp, idx) => {
                 comp.style.zIndex = idx + 1
             })
-            
+
             reorderLayers(components)
         }
     }, [state.components, reorderLayers])
@@ -540,6 +556,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'TOGGLE_ZEN_MODE', payload: enabled })
     }, [dispatch])
 
+    const togglePanel = React.useCallback((type: 'component' | 'layer' | 'property') => {
+        dispatch({ type: 'TOGGLE_PANEL', payload: type })
+    }, [dispatch])
+
     const contextValue = React.useMemo(() => ({
         state,
         dispatch,
@@ -565,6 +585,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         groupComponents,
         ungroupComponents,
         toggleZenMode,
+        togglePanel,
         undo,
         redo,
         canUndo: history.past.length > 0,
@@ -594,6 +615,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         groupComponents,
         ungroupComponents,
         toggleZenMode,
+        togglePanel,
         undo,
         redo,
         history.past.length,

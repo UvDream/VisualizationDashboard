@@ -15,6 +15,9 @@ import {
     UploadOutlined,
     FullscreenOutlined,
     FullscreenExitOutlined,
+    AppstoreOutlined,
+    BarsOutlined,
+    ControlOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
@@ -23,7 +26,7 @@ import './index.less'
 export default function Toolbar() {
     const navigate = useNavigate()
 
-    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent, toggleZenMode } = useEditor()
+    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent, toggleZenMode, togglePanel } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form] = Form.useForm()
 
@@ -137,6 +140,32 @@ export default function Toolbar() {
                     <div className="toolbar-divider" />
 
                     <Space>
+                        <Tooltip title={state.showComponentPanel ? "隐藏资源管理" : "显示资源管理"}>
+                            <Button
+                                icon={<AppstoreOutlined />}
+                                onClick={() => togglePanel('component')}
+                                type={state.showComponentPanel ? "primary" : "default"}
+                            />
+                        </Tooltip>
+                        <Tooltip title={state.showLayerPanel ? "隐藏图层面板" : "显示图层面板"}>
+                            <Button
+                                icon={<BarsOutlined />}
+                                onClick={() => togglePanel('layer')}
+                                type={state.showLayerPanel ? "primary" : "default"}
+                            />
+                        </Tooltip>
+                        <Tooltip title={state.showPropertyPanel ? "隐藏属性面板" : "显示属性面板"}>
+                            <Button
+                                icon={<ControlOutlined />}
+                                onClick={() => togglePanel('property')}
+                                type={state.showPropertyPanel ? "primary" : "default"}
+                            />
+                        </Tooltip>
+                    </Space>
+
+                    <div className="toolbar-divider" />
+
+                    <Space>
                         <Tooltip title="缩小">
                             <Button icon={<ZoomOutOutlined />} onClick={handleZoomOut} />
                         </Tooltip>
@@ -160,8 +189,8 @@ export default function Toolbar() {
                             {Math.round(state.scale * 100)}%
                         </span>
                         <Tooltip title={state.zenMode ? "退出禅模式" : "进入禅模式"}>
-                            <Button 
-                                icon={state.zenMode ? <FullscreenExitOutlined /> : <FullscreenOutlined />} 
+                            <Button
+                                icon={state.zenMode ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                                 onClick={handleToggleZenMode}
                                 type={state.zenMode ? "primary" : "default"}
                             />
@@ -222,7 +251,7 @@ export default function Toolbar() {
                     <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.backgroundType !== currentValues.backgroundType}>
                         {({ getFieldValue }) => {
                             const backgroundType = getFieldValue('backgroundType')
-                            
+
                             if (backgroundType === 'color') {
                                 return (
                                     <Form.Item name="backgroundColor" label="背景颜色" rules={[{ required: true }]}>
@@ -230,14 +259,14 @@ export default function Toolbar() {
                                     </Form.Item>
                                 )
                             }
-                            
+
                             if (backgroundType === 'image') {
                                 return (
                                     <>
                                         <Form.Item name="backgroundImage" label="背景图片URL" rules={[{ required: true, message: '请输入背景图片URL' }]}>
                                             <Input placeholder="请输入图片URL，如：https://example.com/image.jpg" />
                                         </Form.Item>
-                                        
+
                                         <Form.Item label="或上传本地图片">
                                             <Upload
                                                 accept="image/*"
@@ -259,7 +288,7 @@ export default function Toolbar() {
                                                 ]}
                                             />
                                         </Form.Item>
-                                        
+
                                         <Form.Item name="backgroundImageOpacity" label="背景图片透明度">
                                             <Slider
                                                 min={0}

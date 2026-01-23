@@ -13,10 +13,10 @@ export default function Edit() {
         <div className="editor-container">
             {!state.zenMode && <Toolbar />}
             <div className="editor-main" style={state.zenMode ? { padding: 0 } : {}}>
-                {!state.zenMode && <ComponentPanel />}
-                {!state.zenMode && <LayerPanel />}
+                {!state.zenMode && state.showComponentPanel !== false && <ComponentPanel />}
+                {!state.zenMode && state.showLayerPanel !== false && <LayerPanel />}
                 <Canvas />
-                {!state.zenMode && <PropertyPanel />}
+                {!state.zenMode && state.showPropertyPanel !== false && <PropertyPanel />}
             </div>
         </div>
     )
