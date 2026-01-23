@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  
+
   // 路径别名配置
   resolve: {
     alias: {
@@ -27,13 +27,13 @@ export default defineConfig({
   build: {
     // 输出目录
     outDir: 'dist',
-    
+
     // 静态资源目录
     assetsDir: 'assets',
-    
+
     // 生成 sourcemap（生产环境可关闭）
     sourcemap: false,
-    
+
     // 代码分割配置
     rollupOptions: {
       output: {
@@ -68,13 +68,13 @@ export default defineConfig({
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
-    
+
     // 压缩配置（rolldown-vite 默认使用 oxc）
     minify: true,
-    
+
     // 启用 CSS 代码分割
     cssCodeSplit: true,
-    
+
     // chunk 大小警告限制
     chunkSizeWarningLimit: 1000,
   },
@@ -103,6 +103,12 @@ export default defineConfig({
         javascriptEnabled: true,
         modifyVars: {
           // Ant Design 主题变量覆盖
+          'primary-color': '#3b82f6',
+          'body-background': '#0a0a0a',
+          'component-background': '#161616',
+          'border-color-base': '#262626',
+          'text-color': '#ffffff',
+          'text-color-secondary': '#a3a3a3',
         },
       },
     },

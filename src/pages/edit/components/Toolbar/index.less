@@ -1,7 +1,9 @@
+@import '../../../../styles/variables.less';
+
 .toolbar {
     height: 48px;
-    background: #1f1f1f;
-    border-bottom: 1px solid #303030;
+    background: @bg-dark-800;
+    border-bottom: 1px solid @border-color;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -12,8 +14,8 @@
         .toolbar-title {
             font-size: 16px;
             font-weight: 600;
-            color: #fff;
-            background: linear-gradient(90deg, #1890ff, #722ed1);
+            color: @text-primary;
+            background: linear-gradient(90deg, @primary-color, lighten(@primary-color, 20%));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -27,26 +29,29 @@
 
         .toolbar-divider {
             width: 1px;
-            height: 24px;
-            background: #303030;
+            height: 20px;
+            background: @border-color;
             margin: 0 16px;
         }
 
         .ant-btn {
-            color: #999;
-            border-color: #303030;
-            background: #2a2a2a;
+            color: @text-secondary;
+            border-color: @border-color;
+            background: @bg-dark-700;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: @border-radius-base;
 
             &:hover:not(:disabled) {
-                color: #1890ff;
-                border-color: #1890ff;
+                color: @primary-color;
+                border-color: @primary-color;
+                background: lighten(@bg-dark-700, 5%);
             }
 
             &:disabled {
-                opacity: 0.4;
+                opacity: 0.3;
+                background: @bg-dark-800;
             }
         }
 
@@ -55,25 +60,32 @@
             margin: 0 8px;
 
             .ant-slider-rail {
-                background-color: #303030;
+                background-color: @bg-dark-700;
             }
 
             .ant-slider-track {
-                background-color: #1890ff;
+                background-color: @primary-color;
+            }
+
+            .ant-slider-handle::after {
+                box-shadow: 0 0 0 2px @primary-color;
             }
         }
     }
 
     .toolbar-right {
         .ant-btn {
+            border-radius: @border-radius-base;
+
             &:not(.ant-btn-primary) {
-                color: #999;
-                border-color: #303030;
-                background: #2a2a2a;
+                color: @text-secondary;
+                border-color: @border-color;
+                background: @bg-dark-700;
 
                 &:hover {
-                    color: #1890ff;
-                    border-color: #1890ff;
+                    color: @primary-color;
+                    border-color: @primary-color;
+                    background: lighten(@bg-dark-700, 5%);
                 }
             }
         }

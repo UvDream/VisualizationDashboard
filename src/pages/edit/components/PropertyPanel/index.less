@@ -1,18 +1,20 @@
+@import '../../../../styles/variables.less';
+
 .property-panel {
-    width: 280px;
-    min-width: 280px;
+    width: 300px;
+    min-width: 300px;
     height: 100%;
-    background: #1f1f1f;
-    border-left: 1px solid #303030;
+    background: @bg-dark-800;
+    border-left: 1px solid @border-color;
     display: flex;
     flex-direction: column;
 
     .property-panel-header {
         padding: 12px 16px;
         font-size: 14px;
-        font-weight: 500;
-        color: #fff;
-        border-bottom: 1px solid #303030;
+        font-weight: 600;
+        color: @text-primary;
+        border-bottom: 1px solid @border-color;
     }
 
     .property-panel-empty {
@@ -20,74 +22,122 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #666;
+        color: @text-secondary;
         font-size: 14px;
     }
 
     .property-panel-content {
         flex: 1;
         overflow-y: auto;
-        padding: 8px;
+        padding: 0;
 
         // Tabs custom style
         .ant-tabs {
             .ant-tabs-nav {
                 margin: 0;
-                margin-bottom: 8px;
+                padding: 0 12px;
+                background: darken(@bg-dark-800, 2%);
 
                 &::before {
-                    border-bottom: 1px solid #303030;
+                    border-bottom: 1px solid @border-color;
                 }
             }
 
             .ant-tabs-tab {
-                color: #999;
+                color: @text-secondary;
+                padding: 12px 0;
+                margin: 0 16px 0 0;
 
                 &:hover {
-                    color: #fff;
+                    color: @text-primary;
                 }
 
                 &.ant-tabs-tab-active .ant-tabs-tab-btn {
-                    color: #1890ff;
+                    color: @primary-color;
+                    font-weight: 500;
                 }
+            }
+
+            .ant-tabs-ink-bar {
+                background: @primary-color;
+                height: 3px;
             }
         }
 
         .ant-collapse {
             background: transparent;
+            border-radius: 0;
 
             .ant-collapse-item {
-                border-bottom: 1px solid #303030;
+                border-bottom: 1px solid @border-color;
+
+                &:last-child {
+                    border-bottom: none;
+                }
 
                 .ant-collapse-header {
-                    color: #fff;
-                    padding: 8px 12px;
+                    color: @text-primary;
+                    padding: 12px 16px;
+                    background: transparent;
+                    transition: all 0.2s;
+
+                    &:hover {
+                        background: @bg-dark-700;
+                    }
+
+                    .ant-collapse-header-text {
+                        font-size: 13px;
+                        font-weight: 500;
+                    }
                 }
 
                 .ant-collapse-content {
-                    background: transparent;
-                    border-top: none;
+                    background: darken(@bg-dark-800, 2%);
+                    border-top: 1px solid @border-color;
 
                     .ant-collapse-content-box {
-                        padding: 8px 12px;
+                        padding: 16px;
                     }
                 }
             }
         }
 
         .ant-form-item {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
 
             .ant-form-item-label>label {
-                color: #999;
+                color: @text-secondary;
                 font-size: 12px;
+                height: auto;
+
+                &::after {
+                    display: none;
+                }
+            }
+
+            .ant-input,
+            .ant-input-number,
+            .ant-select-selector {
+                background: @bg-dark-700;
+                border-color: @border-color;
+                color: @text-primary;
+                border-radius: @border-radius-base;
+
+                &:hover,
+                &:focus {
+                    border-color: @primary-color;
+                }
             }
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 12px;
         }
     }
 }

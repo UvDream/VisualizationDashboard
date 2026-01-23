@@ -35,6 +35,7 @@ import {
     AppstoreOutlined,
     ClockCircleOutlined,
     FullscreenOutlined,
+    SmileOutlined,
 } from '@ant-design/icons'
 import * as AntdIcons from '@ant-design/icons'
 import DraggableItem from './DraggableItem'
@@ -149,12 +150,12 @@ const allComponents = {
 }
 
 const categoryTabs = [
-    { key: 'chart', label: '图表' },
-    { key: 'component', label: '组件库' },
-    { key: '3d', label: '3D' },
-    { key: 'widget', label: '小组件' },
-    { key: 'image', label: '图片' },
-    { key: 'icon', label: '图标' },
+    { key: 'chart', label: '图表', icon: <BarChartOutlined /> },
+    { key: 'component', label: '组件', icon: <AppstoreOutlined /> },
+    { key: '3d', label: '3D', icon: <GlobalOutlined /> },
+    { key: 'widget', label: '组件库', icon: <GatewayOutlined /> },
+    { key: 'image', label: '图片', icon: <PictureOutlined /> },
+    { key: 'icon', label: '图标', icon: <SmileOutlined /> },
 ]
 
 export default function ComponentPanel() {
@@ -171,7 +172,7 @@ export default function ComponentPanel() {
 
     return (
         <div className="component-panel">
-            <div className="component-panel-header">组件库</div>
+            <div className="component-panel-header">资源管理</div>
             <div className="component-panel-search">
                 <Input
                     placeholder="搜索组件"
@@ -192,23 +193,22 @@ export default function ComponentPanel() {
                             onClick={() => setActiveCategory(tab.key as ComponentCategory)}
                             title={tab.label}
                         >
-                            {/* 这里如果 categoryTabs 有 icon 就显示 icon，暂时显示首字或者简化样式 */}
+                            <div className="sidebar-tab-icon">{tab.icon}</div>
                             <div className="sidebar-tab-text">{tab.label}</div>
-                            {/* 如需显示 Icon，则在 categoryTabs 中添加 icon 字段并在 TYPES 中对应 */}
                         </div>
                     ))}
                 </div>
 
                 {/* 右侧组件列表 */}
                 <div className="component-panel-content">
-                    <div className="component-panel-list">
+                    <div className={`component-panel-list category-${activeCategory}`}>
                         {filteredComponents.map((item, index) => (
                             <DraggableItem
-                                key={`${item.type}-${index}`}
+                                key={`${activeCategory}-${item.type}-${index}`}
                                 type={item.type}
                                 name={item.name}
                                 icon={item.icon}
-                                data={(item as any).data} // 传递额外数据
+                                data={(item as any).data}
                             />
                         ))}
                         {filteredComponents.length === 0 && (

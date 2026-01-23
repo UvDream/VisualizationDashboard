@@ -22,6 +22,7 @@ export default function DraggableItem({ type, name, icon, data }: DraggableItemP
         <div
             ref={drag as unknown as React.Ref<HTMLDivElement>}
             className={`draggable-item ${isDragging ? 'dragging' : ''}`}
+            title={name}
         >
             <span className="draggable-item-icon">{icon}</span>
             <span className="draggable-item-name">{name}</span>

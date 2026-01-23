@@ -1,18 +1,20 @@
+@import '../../../../styles/variables.less';
+
 .layer-panel {
-    width: 200px;
-    min-width: 200px;
+    width: 220px;
+    min-width: 220px;
     height: 100%;
-    background: #1f1f1f;
-    border-right: 1px solid #303030;
+    background: @bg-dark-800;
+    border-right: 1px solid @border-color;
     display: flex;
     flex-direction: column;
 
     .layer-panel-header {
         padding: 12px 16px;
         font-size: 14px;
-        font-weight: 500;
-        color: #fff;
-        border-bottom: 1px solid #303030;
+        font-weight: 600;
+        color: @text-primary;
+        border-bottom: 1px solid @border-color;
     }
 
     .layer-panel-list {
@@ -21,33 +23,46 @@
     }
 
     .layer-panel-empty {
-        padding: 20px;
+        padding: 40px 20px;
         text-align: center;
-        color: #666;
-        font-size: 14px;
+        color: @text-secondary;
+        font-size: 13px;
     }
 
     .layer-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 12px;
+        padding: 10px 12px;
         cursor: pointer;
-        border-bottom: 1px solid #303030;
-        transition: background 0.2s;
+        border-bottom: 1px solid @border-color;
+        transition: all 0.2s;
 
         &:hover {
-            background: #2a2a2a;
+            background: @bg-dark-700;
+
+            .layer-item-actions {
+                opacity: 1;
+            }
         }
 
         &.selected {
-            background: rgba(24, 144, 255, 0.2);
-            border-left: 3px solid #1890ff;
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 3px solid @primary-color;
             padding-left: 9px;
+
+            .layer-item-name {
+                color: @primary-color;
+                font-weight: 500;
+            }
+
+            .layer-item-actions {
+                opacity: 1;
+            }
         }
 
         &.hidden {
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .layer-item-content {
@@ -55,28 +70,28 @@
             display: flex;
             align-items: center;
             overflow: hidden;
+            gap: 4px;
         }
 
         .layer-expand-btn {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             padding: 0;
-            margin-right: 4px;
-            color: #999;
-            
+            color: @text-secondary;
+
             &:hover {
-                color: #1890ff;
+                color: @primary-color;
             }
         }
 
         .layer-expand-placeholder {
             width: 20px;
-            height: 16px;
+            height: 20px;
             flex-shrink: 0;
         }
 
         .layer-item-name {
-            color: #fff;
+            color: @text-primary;
             font-size: 12px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -84,32 +99,48 @@
         }
 
         .layer-children-count {
-            color: #999;
+            color: @text-secondary;
             font-size: 11px;
             margin-left: 4px;
+            opacity: 0.7;
         }
 
         .layer-cell-label {
-            color: #52c41a;
+            color: lighten(@primary-color, 10%);
             font-size: 11px;
-            margin-right: 6px;
+            font-weight: 500;
+            margin-right: 4px;
             flex-shrink: 0;
         }
 
         .layer-item-actions {
             display: flex;
-            gap: 2px;
+            gap: 4px;
             flex-shrink: 0;
+            opacity: 0.5; // 默认半透明，悬停或选中时全显
+            transition: opacity 0.2s;
 
             .ant-btn {
-                color: #999;
+                color: @text-primary; // 增加对比度
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
 
                 &:hover {
-                    color: #1890ff;
+                    color: @primary-color;
+                    background: rgba(59, 130, 246, 0.1);
                 }
 
                 &.ant-btn-dangerous:hover {
-                    color: #ff4d4f;
+                    color: #ef4444;
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+                .anticon {
+                    font-size: 14px;
                 }
             }
         }

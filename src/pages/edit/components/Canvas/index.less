@@ -1,45 +1,34 @@
+@import '../../../../styles/variables.less';
+
 .canvas-wrapper {
     flex: 1;
     height: 100%;
-    background: #141414;
-    padding: 20px;
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    /* 为 Ruler 定位 */
-}
-
-/* 覆盖 padding 确保 Ruler 从左上角开始 */
-.canvas-wrapper {
+    background: @bg-dark-900;
     padding: 0;
-    display: block;
-    /* 必须 block 才能滚动 */
     overflow: auto;
+    display: block;
+    position: relative;
 }
 
 .canvas-area {
     width: 1920px;
     height: 1080px;
-    /* background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); */
-    border: 2px solid #303030;
-    border-radius: 4px;
+    background: darken(@bg-dark-900, 2%);
+    border: 1px solid @border-color;
+    border-radius: @border-radius-base;
     position: absolute;
     top: 40px;
-    /* 留出 Ruler 空间 */
     left: 40px;
     transform-origin: 0 0;
-    /* 从左上角缩放 */
-    transition: border-color 0.2s;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     margin-right: 400px;
-    /* 预留滚动空间 */
     margin-bottom: 400px;
 
     &.drag-over {
-        border-color: #1890ff;
-        box-shadow: 0 0 20px rgba(24, 144, 255, 0.3);
+        border-color: @primary-color;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        background: rgba(59, 130, 246, 0.05);
     }
 }
 
@@ -49,136 +38,102 @@
     align-items: center;
     justify-content: center;
     cursor: move;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     box-sizing: border-box;
-    transition: border-color 0.1s;
-    /* 加快响应 */
+    transition: outline 0.1s, box-shadow 0.1s;
     overflow: hidden;
 
     &.selected {
-        border-color: #1890ff;
-        box-shadow: 0 0 0 1px #1890ff;
+        outline: 2px solid @primary-color;
+        outline-offset: -1px;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
         z-index: 1000 !important;
-        /* 确保选中时在最上层 */
     }
 
     &.locked {
         cursor: not-allowed;
 
         &.selected {
-            border-color: #faad14;
-        }
-    }
-
-    /* 组合样式 - 完全禁用border，只使用outline */
-    &.grouped,
-    &.group-main {
-        border-width: 0 !important;  // 完全移除border
-        border-style: none !important;
-        border-color: transparent !important;
-    }
-
-    &.grouped {
-        outline: 1px dashed rgba(82, 196, 26, 0.5);
-        outline-offset: -1px;
-        
-        &.selected {
-            border-width: 0 !important;  // 选中时也完全移除border
-            border-style: none !important;
-            border-color: transparent !important;
-            outline-color: #1890ff;
-            box-shadow: 0 0 0 1px #1890ff, 0 0 0 3px rgba(82, 196, 26, 0.3);
-        }
-    }
-
-    &.group-main {
-        outline: 2px solid rgba(82, 196, 26, 0.8);
-        outline-offset: -2px;
-        
-        &.selected {
-            border-width: 0 !important;  // 选中时也完全移除border
-            border-style: none !important;
-            border-color: transparent !important;
-            outline-color: #1890ff;
-            box-shadow: 0 0 0 1px #1890ff, 0 0 0 3px rgba(82, 196, 26, 0.5);
+            outline-color: #f59e0b; // Warning color for locked components
         }
     }
 
     .resize-handle {
         position: absolute;
-        background: #1890ff;
+        background: @primary-color;
         border: 1px solid #fff;
         border-radius: 2px;
         z-index: 1001;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
         /* 角落调整点 */
+        &.top-left,
+        &.top-right,
+        &.bottom-left,
+        &.bottom-right {
+            width: 8px;
+            height: 8px;
+        }
+
         &.top-left {
             top: -4px;
             left: -4px;
-            width: 8px;
-            height: 8px;
             cursor: nwse-resize;
         }
 
         &.top-right {
             top: -4px;
             right: -4px;
-            width: 8px;
-            height: 8px;
             cursor: nesw-resize;
         }
 
         &.bottom-left {
             bottom: -4px;
             left: -4px;
-            width: 8px;
-            height: 8px;
             cursor: nesw-resize;
         }
 
         &.bottom-right {
             bottom: -4px;
             right: -4px;
-            width: 8px;
-            height: 8px;
             cursor: nwse-resize;
         }
 
         /* 边缘调整点 */
-        &.top {
-            top: -4px;
+        &.top,
+        &.bottom {
+            width: 16px;
+            height: 6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 8px;
             cursor: ns-resize;
+            border-radius: 3px;
+        }
+
+        &.top {
+            top: -3px;
         }
 
         &.bottom {
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 8px;
-            cursor: ns-resize;
+            bottom: -3px;
+        }
+
+        &.left,
+        &.right {
+            width: 6px;
+            height: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: ew-resize;
+            border-radius: 3px;
         }
 
         &.left {
-            left: -4px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 20px;
-            cursor: ew-resize;
+            left: -3px;
         }
 
         &.right {
-            right: -4px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 20px;
-            cursor: ew-resize;
+            right: -3px;
         }
     }
 }
@@ -186,9 +141,11 @@
 /* 吸附辅助线 */
 .snap-line {
     position: absolute;
-    background-color: #ff00cc;
+    background-color: @primary-color;
+    opacity: 0.6;
     z-index: 9999;
     pointer-events: none;
+    box-shadow: 0 0 4px @primary-color;
 }
 
 .snap-line-v {
@@ -203,434 +160,103 @@
     height: 1px;
 }
 
-/* ... existing styles for placeholders ... */
-.canvas-item-image-placeholder,
-.canvas-item-chart-placeholder,
-.canvas-item-container-placeholder,
-.canvas-item-carousel-placeholder,
-.canvas-item-table-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 14px;
-    border: 1px dashed #444;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.02);
-    user-select: none;
-
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-}
-
-.canvas-item-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
-
-/* 装饰边框样式 ... (保持不变) */
-.border-box {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    box-sizing: border-box;
-
-    .border-box-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-    }
-}
-
-
-
-
-.decoration {
-    width: 100%;
-    height: 100%;
-}
-
-.decoration-1 {
-    background: linear-gradient(90deg, transparent, #1890ff, transparent);
-    opacity: 0.6;
-    animation: decorationFlow 2s linear infinite;
-}
-
-.decoration-2 {
-    background: repeating-linear-gradient(90deg, #1890ff 0px, #1890ff 10px, transparent 10px, transparent 20px);
-    opacity: 0.6;
-}
-
-@keyframes decorationFlow {
-    0% {
-        background-position: -200% 0;
-    }
-
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-/* 轮播图动画 */
-@keyframes carouselFade {
-    0%, 100% {
-        opacity: 0;
-    }
-    2%, 33% {
-        opacity: 1;
-    }
-    35%, 98% {
-        opacity: 0;
-    }
-}
-
 /* 右键菜单样式 */
 .canvas-context-menu {
     position: fixed;
-    background-color: rgba(30, 35, 45, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(22, 22, 22, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid @border-color;
     border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
     z-index: 10000;
     padding: 6px;
-    min-width: 140px;
-    font-size: 13px;
+    min-width: 160px;
 }
 
 .context-menu-item {
-    padding: 8px 12px;
+    padding: 10px 12px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.85);
-    background-color: transparent;
+    color: @text-primary;
     border-radius: 4px;
-    transition: all 0.15s ease;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-size: 13px;
 
     &:hover {
-        background-color: rgba(64, 150, 255, 0.2);
-        color: #fff;
+        background-color: @bg-dark-700;
+        color: @primary-color;
     }
 
     .anticon {
         font-size: 14px;
-        opacity: 0.7;
-    }
-
-    &:hover .anticon {
-        opacity: 1;
+        opacity: 0.8;
     }
 }
 
 .context-menu-item-delete {
-    color: #ff6b6b;
+    color: #ef4444;
 
     &:hover {
-        background-color: rgba(255, 77, 79, 0.15);
-        color: #ff4d4f;
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
     }
 }
 
 .context-menu-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: @border-color;
     margin: 6px 8px;
-}
-
-/* 框选区域样式 */
-.selection-box {
-    position: absolute;
-    border: 2px solid rgba(64, 150, 255, 0.8);
-    background-color: rgba(64, 150, 255, 0.1);
-    pointer-events: none;
-    z-index: 9999;
-    box-shadow: 0 0 10px rgba(64, 150, 255, 0.3);
-}
-
-/* 布局组件样式 */
-.layout-component {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    gap: 8px;
-    box-sizing: border-box;
-}
-
-.layout-cell {
-    background: linear-gradient(135deg, rgba(24, 144, 255, 0.15) 0%, rgba(24, 144, 255, 0.05) 100%);
-    border: 1px dashed rgba(24, 144, 255, 0.4);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 12px;
-    user-select: none;
-    transition: all 0.2s ease;
-    min-height: 60px;
-    overflow: hidden;
-    cursor: pointer;
-
-    &:hover {
-        background: linear-gradient(135deg, rgba(24, 144, 255, 0.25) 0%, rgba(24, 144, 255, 0.1) 100%);
-        border-color: rgba(24, 144, 255, 0.6);
-    }
-
-    // 拖放悬停状态
-    &.layout-cell-hover {
-        background: linear-gradient(135deg, rgba(82, 196, 26, 0.3) 0%, rgba(82, 196, 26, 0.15) 100%);
-        border-color: rgba(82, 196, 26, 0.8);
-        border-style: solid;
-        box-shadow: inset 0 0 20px rgba(82, 196, 26, 0.2);
-    }
-
-    // 有子组件时的样式 - 让内容填满
-    &.has-child {
-        border-style: solid;
-        border-color: rgba(24, 144, 255, 0.5);
-        padding: 0;
-        background: rgba(0, 0, 0, 0.2);
-    }
-
-    // 子组件被选中时
-    &.child-selected {
-        border-color: #1890ff;
-        border-width: 2px;
-        box-shadow: 0 0 10px rgba(24, 144, 255, 0.4);
-    }
-
-    // 标签文字
-    .layout-cell-label {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 12px;
-    }
-
-    // 占位符
-    .layout-cell-placeholder {
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 11px;
-        padding: 8px;
-    }
-}
-
-// 布局单元格内的子组件容器
-.layout-cell-children {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-content: flex-start;
-}
-
-// 布局单元格内的子组件
-.layout-cell-child {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    overflow: hidden;
-
-    &:hover {
-        border-color: rgba(24, 144, 255, 0.6);
-        background: rgba(24, 144, 255, 0.1);
-    }
-}
-
-// 布局单元格内的按钮样式
-.layout-cell-button {
-    padding: 4px 12px;
-    background: #1890ff;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-// 布局单元格内的进度条样式
-.layout-cell-progress {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-
-    .layout-cell-progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, #1890ff, #52c41a);
-        border-radius: 4px;
-        transition: width 0.3s ease;
-    }
-}
-
-// 布局单元格内的图片占位符
-.layout-cell-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 12px;
-}
-
-// 布局单元格内的组件占位符
-.layout-cell-component-placeholder {
-    padding: 8px 12px;
-    background: rgba(24, 144, 255, 0.1);
-    border-radius: 4px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-/* 两栏布局 */
-.layout-two-column {
-    flex-direction: row;
-}
-
-/* 三栏布局 */
-.layout-three-column {
-    flex-direction: row;
-}
-
-/* 头部布局 */
-.layout-header {
-    flex-direction: column;
-
-    .layout-header-top {
-        background: linear-gradient(135deg, rgba(82, 196, 26, 0.15) 0%, rgba(82, 196, 26, 0.05) 100%);
-        border-color: rgba(82, 196, 26, 0.4);
-
-        &:hover {
-            background: linear-gradient(135deg, rgba(82, 196, 26, 0.25) 0%, rgba(82, 196, 26, 0.1) 100%);
-            border-color: rgba(82, 196, 26, 0.6);
-        }
-    }
-}
-
-/* 侧栏布局 */
-.layout-sidebar {
-    flex-direction: row;
-
-    .layout-sidebar-left {
-        background: linear-gradient(135deg, rgba(250, 173, 20, 0.15) 0%, rgba(250, 173, 20, 0.05) 100%);
-        border-color: rgba(250, 173, 20, 0.4);
-
-        &:hover {
-            background: linear-gradient(135deg, rgba(250, 173, 20, 0.25) 0%, rgba(250, 173, 20, 0.1) 100%);
-            border-color: rgba(250, 173, 20, 0.6);
-        }
-    }
 }
 
 /* 禅模式浮动缩放控制器 */
 .zen-zoom-controls {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 32px;
+    right: 32px;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 20px;
-    background: rgba(30, 35, 45, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    background: rgba(22, 22, 22, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid @border-color;
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     z-index: 10000;
-    transition: all 0.3s ease;
-
-    &:hover {
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 2px rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-    }
-
-    .zen-divider {
-        width: 1px;
-        height: 24px;
-        background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-    }
-
-    .zen-zoom-slider {
-        display: flex;
-        align-items: center;
-    }
 
     .zen-zoom-percentage {
-        color: rgba(255, 255, 255, 0.85);
+        color: @text-primary;
         font-size: 13px;
         font-weight: 500;
-        min-width: 45px;
+        min-width: 40px;
         text-align: center;
     }
 
     .ant-btn {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.15);
-        color: rgba(255, 255, 255, 0.85);
-        transition: all 0.2s ease;
+        background: @bg-dark-700;
+        border-color: @border-color;
+        color: @text-primary;
+        border-radius: 6px;
 
         &:hover {
-            background: rgba(24, 144, 255, 0.2);
-            border-color: #1890ff;
-            color: #fff;
+            border-color: @primary-color;
+            color: @primary-color;
         }
 
         &.ant-btn-primary {
-            background: rgba(24, 144, 255, 0.3);
-            border-color: #1890ff;
+            background: @primary-color;
+            border-color: @primary-color;
             color: #fff;
-
-            &:hover {
-                background: rgba(24, 144, 255, 0.5);
-                border-color: #40a9ff;
-            }
         }
-    }
-
-    .ant-slider {
-        margin: 0;
-    }
-
-    .ant-slider-rail {
-        background: rgba(255, 255, 255, 0.1);
     }
 
     .ant-slider-track {
-        background: linear-gradient(90deg, #1890ff, #52c41a);
+        background-color: @primary-color;
     }
 
-    .ant-slider-handle {
-        border-color: #1890ff;
-        background: #fff;
-
-        &:hover,
-        &:focus {
-            border-color: #40a9ff;
-            box-shadow: 0 0 0 4px rgba(24, 144, 255, 0.2);
-        }
+    .ant-slider-handle::after {
+        box-shadow: 0 0 0 2px @primary-color;
     }
 }
