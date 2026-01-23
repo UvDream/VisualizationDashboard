@@ -1,4 +1,5 @@
 import { useDrag } from 'react-dnd'
+import { Tooltip } from 'antd'
 import type { ComponentType } from '../../types'
 import './index.less'
 
@@ -19,13 +20,14 @@ export default function DraggableItem({ type, name, icon, data }: DraggableItemP
     }))
 
     return (
-        <div
-            ref={drag as unknown as React.Ref<HTMLDivElement>}
-            className={`draggable-item ${isDragging ? 'dragging' : ''}`}
-            title={name}
-        >
-            <span className="draggable-item-icon">{icon}</span>
-            <span className="draggable-item-name">{name}</span>
-        </div>
+        <Tooltip title={name} mouseEnterDelay={0.3} placement="top">
+            <div
+                ref={drag as unknown as React.Ref<HTMLDivElement>}
+                className={`draggable-item ${isDragging ? 'dragging' : ''}`}
+            >
+                <span className="draggable-item-icon">{icon}</span>
+                <span className="draggable-item-name">{name}</span>
+            </div>
+        </Tooltip>
     )
 }
