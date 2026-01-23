@@ -427,8 +427,8 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     transform: previewMode
                         ? `scale(${previewScale})`
                         : `scale(${state.scale}) translate(0px, 0px)`,
-                    top: !previewMode ? 40 : 0,
-                    left: !previewMode ? 40 : 0,
+                    top: !previewMode ? 24 : 0,
+                    left: !previewMode ? 24 : 0,
                     transformOrigin: previewMode ? 'center center' : '0 0',
                 }}
                 onMouseDown={handleCanvasMouseDown}

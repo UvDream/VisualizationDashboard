@@ -9,26 +9,46 @@ interface RulerProps {
 export default function Ruler({ type }: RulerProps) {
     const { state } = useEditor()
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const { scale } = state
+    const { scale, components, selectedIds } = state
     const [offset, setOffset] = useState(0)
+    const [cursorPos, setCursorPos] = useState<number | null>(null)
 
-    // 监听滚动
+    // 监听滚动与鼠标位置
     useEffect(() => {
-        const canvasArea = document.querySelector('.canvas-wrapper')
+        const canvasWrapper = document.querySelector('.canvas-wrapper')
+        if (!canvasWrapper) return
+
         const handleScroll = () => {
             if (type === 'horizontal') {
-                setOffset(canvasArea?.scrollLeft || 0)
+                setOffset(canvasWrapper.scrollLeft || 0)
             } else {
-                setOffset(canvasArea?.scrollTop || 0)
+                setOffset(canvasWrapper.scrollTop || 0)
             }
         }
 
-        if (canvasArea) {
-            canvasArea.addEventListener('scroll', handleScroll)
-            // 初始化 offset
-            handleScroll()
+        const handleMouseMove = (e: Event) => {
+            const mouseEvent = e as MouseEvent
+            const rect = canvasWrapper.getBoundingClientRect()
+            if (type === 'horizontal') {
+                setCursorPos(mouseEvent.clientX - rect.left)
+            } else {
+                setCursorPos(mouseEvent.clientY - rect.top)
+            }
         }
-        return () => canvasArea?.removeEventListener('scroll', handleScroll)
+
+        const handleMouseLeave = () => setCursorPos(null)
+
+        canvasWrapper.addEventListener('scroll', handleScroll)
+        canvasWrapper.addEventListener('mousemove', handleMouseMove)
+        canvasWrapper.addEventListener('mouseleave', handleMouseLeave)
+
+        handleScroll()
+
+        return () => {
+            canvasWrapper.removeEventListener('scroll', handleScroll)
+            canvasWrapper.removeEventListener('mousemove', handleMouseMove)
+            canvasWrapper.removeEventListener('mouseleave', handleMouseLeave)
+        }
     }, [type])
 
     useEffect(() => {
@@ -45,71 +65,94 @@ export default function Ruler({ type }: RulerProps) {
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
         ctx.clearRect(0, 0, rect.width, rect.height)
+
+        // 颜色配置
+        const primaryColor = '#3b82f6'
+        const textColor = '#a3a3a3'
+        const highlightColor = 'rgba(59, 130, 246, 0.15)'
+
+        // 1. 绘制背景区域高亮 (Selected Items)
+        const selectedComponents = components.filter(c => selectedIds.includes(c.id))
+        if (selectedComponents.length > 0) {
+            ctx.fillStyle = highlightColor
+            selectedComponents.forEach(comp => {
+                const start = type === 'horizontal' ? comp.style.x : comp.style.y
+                const size = type === 'horizontal' ? comp.style.width : comp.style.height
+
+                const screenStart = (start * scale) - offset + (type === 'horizontal' ? 0 : 0)
+                const screenSize = size * scale
+
+                if (type === 'horizontal') {
+                    ctx.fillRect(screenStart, 0, screenSize, rect.height)
+                } else {
+                    ctx.fillRect(0, screenStart, rect.width, screenSize)
+                }
+            })
+        }
+
+        // 2. 绘制刻度
         ctx.beginPath()
-        ctx.fillStyle = '#e0e0e0' // 更亮的文字颜色
-        ctx.strokeStyle = '#666' // 线条颜色
+        ctx.strokeStyle = '#444' // 刻度线颜色
         ctx.lineWidth = 1
+        ctx.fillStyle = textColor
+        ctx.font = '10px "Inter", "San Francisco", Arial'
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'
-        ctx.font = '10px Arial'
 
-        // 刻度间距 (随缩放变化)
-        // const gridSize = 50 * scale
-        // const start = Math.floor(offset / gridSize) * gridSize
-        // const end = start + (type === 'horizontal' ? rect.width : rect.height) + gridSize
-        // const end = start + (type === 'horizontal' ? rect.width : rect.height) + gridSize
+        // 逻辑刻度逻辑
+        const stepBase = 10 // 最小逻辑步长
+        const startLogical = Math.floor((offset / scale) / stepBase) * stepBase
 
-        // 绘制起始点
-        // 我们需要将屏幕坐标转换为画布逻辑坐标来显示
-        // 逻辑坐标 = (屏幕坐标 + 偏移) / 缩放
-
-        // 我们遍历屏幕像素位置，然后反算逻辑值
-        // 但为了刻度整齐，应该遍历逻辑值，然后算出屏幕位置
-
-        // 逻辑刻度步长
-        const step = 50
-        const startLogical = Math.floor((offset / scale) / step) * step
-
-        // 画布背景偏移（为了居中显示的偏移）
-        // 注意：Canvas 组件里 transform-origin: center center; transform: scale(0.6);
-        // 这里的 ruler 是对应 .canvas-area 容器内部的坐标系
-
-        // 简化逻辑：我们假设 Ruler 是跟随 Canvas Area 内容滚动的 
-        // 且 Ruler 的 0 点对应 Canvas Area 的左上角
-
-        for (let logicalVal = startLogical; ; logicalVal += step) {
-            const screenPos = logicalVal * scale - offset
-
+        for (let logicalVal = startLogical; ; logicalVal += stepBase) {
+            const screenPos = (logicalVal * scale) - offset
             if (screenPos > (type === 'horizontal' ? rect.width : rect.height)) break
             if (screenPos < 0) continue
 
-            if (type === 'horizontal') {
-                const isMajor = logicalVal % 100 === 0
-                const tickHeight = isMajor ? 10 : 5
-                ctx.moveTo(screenPos, 0)
-                ctx.lineTo(screenPos, tickHeight)
+            const is100 = logicalVal % 100 === 0
+            const is50 = logicalVal % 50 === 0
+            const is10 = logicalVal % 10 === 0
 
-                if (isMajor) {
-                    ctx.fillText(logicalVal.toString(), screenPos + 2, 0)
+            let tickLen = 0
+            if (is100) tickLen = 14
+            else if (is50) tickLen = 10
+            else if (is10) tickLen = 6
+
+            if (type === 'horizontal') {
+                ctx.moveTo(screenPos + 0.5, rect.height - tickLen)
+                ctx.lineTo(screenPos + 0.5, rect.height)
+                if (is100) {
+                    ctx.fillText(logicalVal.toString(), screenPos + 4, 2)
                 }
             } else {
-                const isMajor = logicalVal % 100 === 0
-                const tickWidth = isMajor ? 10 : 5
-                ctx.moveTo(0, screenPos)
-                ctx.lineTo(tickWidth, screenPos)
-
-                if (isMajor) {
+                ctx.moveTo(rect.width - tickLen, screenPos + 0.5)
+                ctx.lineTo(rect.width, screenPos + 0.5)
+                if (is100) {
                     ctx.save()
-                    ctx.translate(0, screenPos + 2)
+                    ctx.translate(2, screenPos + 4)
                     ctx.rotate(-Math.PI / 2)
-                    ctx.fillText(logicalVal.toString(), 0, 0)
+                    ctx.fillText(logicalVal.toString(), -20, 0) // 调整位置
                     ctx.restore()
                 }
             }
         }
-
         ctx.stroke()
-    }, [scale, offset, type])
+
+        // 3. 绘制当前光标指示 (Cursor Indicator)
+        if (cursorPos !== null) {
+            ctx.beginPath()
+            ctx.strokeStyle = primaryColor
+            ctx.lineWidth = 1
+            if (type === 'horizontal') {
+                ctx.moveTo(cursorPos, 0)
+                ctx.lineTo(cursorPos, rect.height)
+            } else {
+                ctx.moveTo(0, cursorPos)
+                ctx.lineTo(rect.width, cursorPos)
+            }
+            ctx.stroke()
+        }
+
+    }, [scale, offset, type, components, selectedIds, cursorPos])
 
     return (
         <canvas
