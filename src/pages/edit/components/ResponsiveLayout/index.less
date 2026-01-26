@@ -1,0 +1,300 @@
+@import '../../../../styles/variables.less';
+
+.responsive-layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+
+    // 桌面端布局
+    &.desktop {
+        .layout-panel {
+            flex-shrink: 0;
+            height: 100%;
+            border: 1px solid @border-dark-1;
+            background: @bg-dark-2;
+            transition: all @transition-normal;
+        }
+
+        // 左侧面板组
+        .layout-left-panels {
+            display: flex;
+            flex-direction: row;
+            flex-shrink: 0;
+
+            .left-panel {
+                border-right: 1px solid @border-dark-1;
+
+                &.component-panel {
+                    width: 280px;
+                }
+
+                &.layer-panel {
+                    width: 300px;
+                    border-left: 1px solid @border-dark-1;
+                }
+            }
+        }
+
+        .layout-content {
+            flex: 1;
+            min-width: 0;
+            background: @bg-dark-1;
+        }
+
+        // 右侧属性面板
+        .right-panel {
+            width: 300px;
+            border-left: 1px solid @border-dark-1;
+
+            &.property-panel {
+                // 属性面板占满整个右侧高度
+                height: 100%;
+            }
+        }
+    }
+
+    // 平板端布局
+    &.tablet {
+        .layout-panel {
+            flex-shrink: 0;
+            height: 100%;
+            border: 1px solid @border-dark-1;
+            background: @bg-dark-2;
+            transition: all @transition-normal;
+
+            &.left-panel {
+                width: 240px;
+                border-right: 1px solid @border-dark-1;
+
+                &.collapsible {
+                    // 可以添加折叠动画
+                    transform: translateX(0);
+                }
+            }
+
+            &.right-panel.combined {
+                width: 280px;
+                border-left: 1px solid @border-dark-1;
+                display: flex;
+                flex-direction: column;
+
+                .panel-section {
+                    flex: 1;
+                    min-height: 0;
+                    border-bottom: 1px solid @border-dark-1;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                }
+            }
+        }
+
+        .layout-content {
+            flex: 1;
+            min-width: 0;
+            background: @bg-dark-1;
+        }
+    }
+
+    // 移动端布局
+    &.mobile {
+        position: relative;
+
+        .layout-content.fullscreen {
+            width: 100%;
+            height: 100%;
+            background: @bg-dark-1;
+        }
+
+        .mobile-fab-group {
+            position: fixed;
+            right: @spacing-lg;
+            bottom: @spacing-xl;
+            display: flex;
+            flex-direction: column;
+            gap: @spacing-md;
+            z-index: @z-fixed;
+
+            .fab-button {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: @primary-color;
+                border: none;
+                box-shadow: @shadow-lg;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all @transition-fast;
+
+                &:hover {
+                    background: @primary-light;
+                    transform: scale(1.1);
+                    box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+                }
+
+                .anticon {
+                    font-size: 20px;
+                    color: @text-primary;
+                }
+
+                &:nth-child(1) {
+                    background: @accent-color;
+                    
+                    &:hover {
+                        background: lighten(@accent-color, 10%);
+                        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+                    }
+                }
+
+                &:nth-child(2) {
+                    background: @success-color;
+                    
+                    &:hover {
+                        background: lighten(@success-color, 10%);
+                        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 移动端抽屉样式
+.mobile-drawer {
+    .ant-drawer-header {
+        background: @bg-dark-2;
+        border-bottom: 1px solid @border-dark-1;
+
+        .drawer-title {
+            display: flex;
+            align-items: center;
+            gap: @spacing-sm;
+            color: @text-primary;
+            font-weight: 600;
+
+            .anticon {
+                color: @primary-color;
+            }
+        }
+    }
+
+    .ant-drawer-body {
+        background: @bg-dark-2;
+        padding: 0;
+    }
+
+    .ant-drawer-close {
+        color: @text-secondary;
+
+        &:hover {
+            color: @text-primary;
+        }
+    }
+}
+
+// 响应式断点
+@media (max-width: 768px) {
+    .responsive-layout.desktop,
+    .responsive-layout.tablet {
+        .layout-left-panels,
+        .layout-panel {
+            display: none;
+        }
+
+        .layout-content {
+            width: 100%;
+        }
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .responsive-layout.desktop {
+        .layout-left-panels {
+            .left-panel.component-panel {
+                width: 240px;
+            }
+
+            .left-panel.layer-panel {
+                width: 260px;
+            }
+        }
+
+        .right-panel.property-panel {
+            width: 260px;
+        }
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .responsive-layout.desktop {
+        .layout-left-panels {
+            .left-panel.component-panel {
+                width: 260px;
+            }
+
+            .left-panel.layer-panel {
+                width: 280px;
+            }
+        }
+
+        .right-panel.property-panel {
+            width: 280px;
+        }
+    }
+}
+
+// 动画效果
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.layout-panel {
+    animation: slideInLeft @transition-normal ease-out;
+
+    &.right-panel {
+        animation: slideInRight @transition-normal ease-out;
+    }
+}
+
+// 浮动按钮动画
+@keyframes fabBounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.mobile-fab-group .fab-button {
+    animation: fabBounce 2s infinite;
+    animation-delay: calc(var(--index, 0) * 0.2s);
+
+    &:nth-child(1) { --index: 0; }
+    &:nth-child(2) { --index: 1; }
+    &:nth-child(3) { --index: 2; }
+}

@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { Button, Modal, Input, ColorPicker, Tabs, message } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useState, useEffect } from 'react'
+import { Button, Modal, Input, ColorPicker, Tabs, message, Tooltip, Space, Divider } from 'antd'
+import { PlusOutlined, DeleteOutlined, EyeOutlined, BgColorsOutlined, CheckOutlined, ReloadOutlined } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import { PRESET_THEMES } from '../../config/chartThemes'
 import './ChartThemeEditor.less'
@@ -18,16 +18,44 @@ interface ChartThemeEditorProps {
     }) => void
 }
 
+// 预设颜色调色板
+const COLOR_PALETTES = {
+    basic: [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD',
+        '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA'
+    ],
+    professional: [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b',
+        '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#aec7e8', '#ffbb78'
+    ],
+    vibrant: [
+        '#FF3366', '#33CCFF', '#66FF33', '#FFCC33', '#CC33FF', '#FF6633',
+        '#33FF66', '#6633FF', '#FFFF33', '#FF33CC', '#33FFCC', '#CC66FF'
+    ],
+    pastel: [
+        '#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA', '#FFD3BA', '#E0BBE4',
+        '#C7CEEA', '#FFDFD3', '#B5EAD7', '#F0E68C', '#DDA0DD', '#F5DEB3'
+    ]
+}
+
 export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorProps) {
     const [modalVisible, setModalVisible] = useState(false)
     const [tempColors, setTempColors] = useState<string[]>(
         value?.customColors || ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272']
     )
-    const [themeName, setThemeName] = useState('未命名')
+    const [themeName, setThemeName] = useState('自定义主题')
+    const [selectedPalette, setSelectedPalette] = useState<keyof typeof COLOR_PALETTES>('basic')
 
     const themeType = value?.type || 'preset'
     const presetName = value?.presetName || 'default'
     const customColors = value?.customColors || []
+
+    // 同步外部值到内部状态
+    useEffect(() => {
+        if (value?.customColors) {
+            setTempColors(value.customColors)
+        }
+    }, [value?.customColors])
 
     const handleThemeSelect = (type: 'preset' | 'custom', name?: string) => {
         if (type === 'custom') {
@@ -52,9 +80,12 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
             customColors: tempColors
         })
         setModalVisible(false)
+        message.success('自定义主题已应用')
     }
 
     const handleModalCancel = () => {
+        // 恢复到原始状态
+        setTempColors(value?.customColors || ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272'])
         setModalVisible(false)
     }
 
@@ -64,8 +95,13 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
         setTempColors(newColors)
     }
 
-    const handleAddColor = () => {
-        setTempColors([...tempColors, '#5470c6'])
+    const handleAddColor = (color?: string) => {
+        if (tempColors.length >= 12) {
+            message.warning('最多支持12种颜色')
+            return
+        }
+        const newColor = color || '#5470c6'
+        setTempColors([...tempColors, newColor])
     }
 
     const handleRemoveColor = (index: number) => {
@@ -76,34 +112,94 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
         setTempColors(tempColors.filter((_, i) => i !== index))
     }
 
+    const handleApplyPalette = (paletteKey: keyof typeof COLOR_PALETTES) => {
+        const palette = COLOR_PALETTES[paletteKey]
+        setTempColors(palette.slice(0, 8)) // 取前8个颜色
+        setSelectedPalette(paletteKey)
+        message.success(`已应用${paletteKey}调色板`)
+    }
+
+    const handleRandomColors = () => {
+        const randomColors = Array.from({ length: 6 }, () => {
+            const hue = Math.floor(Math.random() * 360)
+            const saturation = 60 + Math.floor(Math.random() * 30) // 60-90%
+            const lightness = 50 + Math.floor(Math.random() * 20) // 50-70%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+        })
+        setTempColors(randomColors)
+        message.success('已生成随机配色')
+    }
+
     // 生成预览图表配置
-    const getPreviewOption = () => {
-        return {
+    const getPreviewOption = (chartType: 'bar' | 'line' | 'pie' = 'bar') => {
+        const baseOption = {
             color: tempColors,
             backgroundColor: 'transparent',
             legend: {
-                data: tempColors.map((_, i) => `data${i + 1}`),
-                textStyle: { color: '#fff' },
-                top: 10
+                data: tempColors.slice(0, 6).map((_, i) => `系列${i + 1}`),
+                textStyle: { color: '#fff', fontSize: 12 },
+                top: 10,
+                itemWidth: 12,
+                itemHeight: 8
             },
+            grid: { left: 40, right: 20, top: 50, bottom: 30 },
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                borderColor: '#333',
+                textStyle: { color: '#fff' }
+            }
+        }
+
+        if (chartType === 'pie') {
+            return {
+                ...baseOption,
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    center: ['50%', '60%'],
+                    data: tempColors.slice(0, 6).map((_, i) => ({
+                        name: `系列${i + 1}`,
+                        value: Math.floor(Math.random() * 100) + 20
+                    })),
+                    label: {
+                        color: '#fff',
+                        fontSize: 10
+                    },
+                    labelLine: {
+                        lineStyle: { color: '#666' }
+                    }
+                }]
+            }
+        }
+
+        return {
+            ...baseOption,
             xAxis: {
                 type: 'category',
-                data: ['data1', 'data2', 'data3', 'data4', 'data5', 'data6'],
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 axisLine: { lineStyle: { color: '#666' } },
-                axisLabel: { color: '#999' }
+                axisLabel: { color: '#999', fontSize: 10 },
+                axisTick: { show: false }
             },
             yAxis: {
                 type: 'value',
-                axisLine: { lineStyle: { color: '#666' } },
-                axisLabel: { color: '#999' },
-                splitLine: { lineStyle: { color: '#333' } }
+                axisLine: { show: false },
+                axisLabel: { color: '#999', fontSize: 10 },
+                splitLine: { lineStyle: { color: '#333', type: 'dashed' } },
+                axisTick: { show: false }
             },
-            series: tempColors.map((_, i) => ({
-                name: `data${i + 1}`,
-                type: 'bar',
-                data: Array.from({ length: 6 }, () => Math.floor(Math.random() * 500) + 100)
-            })),
-            grid: { left: 50, right: 20, top: 50, bottom: 30 }
+            series: tempColors.slice(0, 6).map((_, i) => ({
+                name: `系列${i + 1}`,
+                type: chartType,
+                smooth: chartType === 'line',
+                data: Array.from({ length: 6 }, () => Math.floor(Math.random() * 100) + 20),
+                ...(chartType === 'line' ? {
+                    lineStyle: { width: 2 },
+                    symbol: 'circle',
+                    symbolSize: 4
+                } : {})
+            }))
         }
     }
 
@@ -113,16 +209,17 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
         <div className="chart-theme-selector">
             {/* 自定义颜色卡片 */}
             <div
-                className={`theme-card ${isCustomSelected ? 'active' : ''}`}
+                className={`theme-card custom-theme ${isCustomSelected ? 'active' : ''}`}
                 onClick={() => handleThemeSelect('custom')}
             >
                 <div className="theme-card-header">
-                    <span className="theme-name">自定义颜色</span>
-                    <PlusOutlined className="add-icon" />
+                    <BgColorsOutlined className="theme-icon" />
+                    <span className="theme-name">自定义主题</span>
+                    {isCustomSelected && <CheckOutlined className="check-icon" />}
                 </div>
                 {isCustomSelected && customColors.length > 0 && (
                     <div className="theme-colors">
-                        {customColors.slice(0, 6).map((color, index) => (
+                        {customColors.slice(0, 8).map((color, index) => (
                             <div
                                 key={index}
                                 className="color-dot"
@@ -131,6 +228,10 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                         ))}
                     </div>
                 )}
+                <div className="theme-card-overlay">
+                    <EyeOutlined />
+                    <span>编辑</span>
+                </div>
             </div>
 
             {/* 预设主题列表 */}
@@ -144,9 +245,10 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                     >
                         <div className="theme-card-header">
                             <span className="theme-name">{theme.name}</span>
+                            {isActive && <CheckOutlined className="check-icon" />}
                         </div>
                         <div className="theme-colors">
-                            {theme.colors.slice(0, 6).map((color, index) => (
+                            {theme.colors.slice(0, 8).map((color, index) => (
                                 <div
                                     key={index}
                                     className="color-dot"
@@ -160,28 +262,49 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
 
             {/* 自定义颜色弹窗 */}
             <Modal
-                title="自定义颜色"
+                title={
+                    <div className="modal-title">
+                        <BgColorsOutlined />
+                        <span>自定义图表主题</span>
+                    </div>
+                }
                 open={modalVisible}
                 onOk={handleModalOk}
                 onCancel={handleModalCancel}
-                width={800}
-                okText="应用"
+                width={900}
+                okText="应用主题"
                 cancelText="取消"
                 className="chart-theme-modal"
             >
                 <div className="theme-modal-content">
                     <div className="theme-editor-section">
-                        <div className="theme-name-input">
-                            <span>名称：</span>
-                            <Input
-                                value={themeName}
-                                onChange={(e) => setThemeName(e.target.value)}
-                                placeholder="未命名"
-                                style={{ width: 200 }}
-                            />
-                            <span className="color-count">{tempColors.length} / 8</span>
+                        <div className="editor-header">
+                            <div className="theme-name-input">
+                                <span>主题名称：</span>
+                                <Input
+                                    value={themeName}
+                                    onChange={(e) => setThemeName(e.target.value)}
+                                    placeholder="自定义主题"
+                                    style={{ width: 150 }}
+                                />
+                            </div>
+                            <div className="color-count">
+                                <span>颜色数量：{tempColors.length} / 12</span>
+                            </div>
+                            <Space>
+                                <Tooltip title="生成随机配色">
+                                    <Button 
+                                        icon={<ReloadOutlined />} 
+                                        onClick={handleRandomColors}
+                                        size="small"
+                                    >
+                                        随机
+                                    </Button>
+                                </Tooltip>
+                            </Space>
                         </div>
 
+                        <Divider orientation="left" orientationMargin="0">当前颜色</Divider>
                         <div className="color-list">
                             {tempColors.map((color, index) => (
                                 <div key={index} className="color-item-box">
@@ -189,6 +312,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                                         value={color}
                                         onChange={(c) => handleColorChange(index, c.toHexString())}
                                         showText
+                                        size="small"
                                     />
                                     {tempColors.length > 1 && (
                                         <Button
@@ -197,59 +321,60 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                                             size="small"
                                             icon={<DeleteOutlined />}
                                             onClick={() => handleRemoveColor(index)}
+                                            className="remove-btn"
                                         />
                                     )}
                                 </div>
                             ))}
-                            <Button
-                                type="dashed"
-                                icon={<PlusOutlined />}
-                                onClick={handleAddColor}
-                                className="add-color-btn"
-                            >
-                                添加
-                            </Button>
+                            {tempColors.length < 12 && (
+                                <Button
+                                    type="dashed"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => handleAddColor()}
+                                    className="add-color-btn"
+                                    size="small"
+                                >
+                                    添加颜色
+                                </Button>
+                            )}
                         </div>
 
-                        <div className="color-palette-section">
-                            <div className="palette-column">
-                                <div className="palette-title">默认扩展色：</div>
-                                <div className="palette-grid">
-                                    {[
-                                        '#6ae5bb', '#7ce5d3', '#8ee5eb', '#a0e5ff', '#b2d5ff', '#c4c5ff', '#d6b5ff', '#e8a5ff', '#ffa5eb',
-                                        '#6ae5bb', '#7ce5d3', '#8ee5eb', '#a0e5ff', '#b2d5ff', '#c4c5ff', '#d6b5ff', '#e8a5ff', '#ffa5eb',
-                                        '#6ae5bb', '#7ce5d3', '#8ee5eb', '#a0e5ff', '#b2d5ff', '#c4c5ff', '#d6b5ff', '#e8a5ff', '#ffa5eb'
-                                    ].map((color, i) => (
-                                        <div
-                                            key={i}
-                                            className="palette-color"
-                                            style={{ backgroundColor: color }}
-                                            onClick={() => handleAddColor()}
-                                        />
-                                    ))}
+                        <Divider orientation="left" orientationMargin="0">预设调色板</Divider>
+                        <div className="palette-section">
+                            {Object.entries(COLOR_PALETTES).map(([key, colors]) => (
+                                <div key={key} className="palette-group">
+                                    <div className="palette-header">
+                                        <span className="palette-name">
+                                            {key === 'basic' ? '基础色' : 
+                                             key === 'professional' ? '专业色' :
+                                             key === 'vibrant' ? '鲜艳色' : '柔和色'}
+                                        </span>
+                                        <Button 
+                                            size="small" 
+                                            type="link"
+                                            onClick={() => handleApplyPalette(key as keyof typeof COLOR_PALETTES)}
+                                        >
+                                            应用
+                                        </Button>
+                                    </div>
+                                    <div className="palette-colors">
+                                        {colors.map((color, i) => (
+                                            <Tooltip key={i} title={`点击添加 ${color}`}>
+                                                <div
+                                                    className="palette-color"
+                                                    style={{ backgroundColor: color }}
+                                                    onClick={() => handleAddColor(color)}
+                                                />
+                                            </Tooltip>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="palette-column">
-                                <div className="palette-title">透明扩展色：</div>
-                                <div className="palette-grid">
-                                    {[
-                                        '#6ae5bb', '#7ce5d3', '#8ee5eb', '#a0e5ff', '#b2d5ff', '#c4c5ff', '#d6b5ff', '#e8a5ff', '#ffa5eb',
-                                        '#6ae5bb88', '#7ce5d388', '#8ee5eb88', '#a0e5ff88', '#b2d5ff88', '#c4c5ff88', '#d6b5ff88', '#e8a5ff88', '#ffa5eb88',
-                                        '#6ae5bb44', '#7ce5d344', '#8ee5eb44', '#a0e5ff44', '#b2d5ff44', '#c4c5ff44', '#d6b5ff44', '#e8a5ff44', '#ffa5eb44'
-                                    ].map((color, i) => (
-                                        <div
-                                            key={i}
-                                            className="palette-color"
-                                            style={{ backgroundColor: color }}
-                                            onClick={() => handleAddColor()}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
                     <div className="theme-preview-section">
+                        <Divider orientation="left" orientationMargin="0">预览效果</Divider>
                         <Tabs
                             items={[
                                 {
@@ -257,8 +382,8 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                                     label: '柱状图',
                                     children: (
                                         <ReactECharts
-                                            option={getPreviewOption()}
-                                            style={{ height: 300 }}
+                                            option={getPreviewOption('bar')}
+                                            style={{ height: 200 }}
                                             theme="dark"
                                         />
                                     )
@@ -268,22 +393,26 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                                     label: '折线图',
                                     children: (
                                         <ReactECharts
-                                            option={{
-                                                ...getPreviewOption(),
-                                                series: tempColors.map((_, i) => ({
-                                                    name: `data${i + 1}`,
-                                                    type: 'line',
-                                                    smooth: true,
-                                                    data: Array.from({ length: 6 }, () => Math.floor(Math.random() * 500) + 100)
-                                                }))
-                                            }}
-                                            style={{ height: 300 }}
+                                            option={getPreviewOption('line')}
+                                            style={{ height: 200 }}
+                                            theme="dark"
+                                        />
+                                    )
+                                },
+                                {
+                                    key: 'pie',
+                                    label: '饼图',
+                                    children: (
+                                        <ReactECharts
+                                            option={getPreviewOption('pie')}
+                                            style={{ height: 200 }}
                                             theme="dark"
                                         />
                                     )
                                 }
                             ]}
                             size="small"
+                            tabBarStyle={{ marginBottom: 16 }}
                         />
                     </div>
                 </div>

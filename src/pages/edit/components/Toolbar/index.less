@@ -2,23 +2,25 @@
 
 .toolbar {
     height: 48px;
-    background: @bg-dark-800;
-    border-bottom: 1px solid @border-color;
+    background: @bg-dark-2;
+    border-bottom: 1px solid @border-dark-1;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    z-index: 1000;
+    padding: 0 @spacing-lg;
+    z-index: @z-fixed;
+    box-shadow: @shadow-sm;
 
     .toolbar-left {
         .toolbar-title {
             font-size: 16px;
             font-weight: 600;
             color: @text-primary;
-            background: linear-gradient(90deg, @primary-color, lighten(@primary-color, 20%));
+            background: linear-gradient(90deg, @primary-color, @primary-light);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: @shadow-glow;
         }
     }
 
@@ -26,67 +28,223 @@
         flex: 1;
         display: flex;
         justify-content: center;
+        align-items: center;
+        gap: @spacing-lg;
 
         .toolbar-divider {
             width: 1px;
-            height: 20px;
-            background: @border-color;
-            margin: 0 16px;
+            height: 32px;
+            background: @border-dark-1;
+            margin: 0 @spacing-lg;
+        }
+
+        .toolbar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: @spacing-xs;
+
+            .toolbar-group-label {
+                font-size: 11px;
+                color: @text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 500;
+            }
+
+            .zoom-control {
+                display: flex;
+                align-items: center;
+                gap: @spacing-sm;
+
+                .ant-slider {
+                    .ant-slider-rail {
+                        background-color: @bg-dark-4;
+                        height: 6px;
+                        border-radius: 3px;
+                    }
+
+                    .ant-slider-track {
+                        background: linear-gradient(90deg, @primary-color 0%, @primary-light 100%);
+                        height: 6px;
+                        border-radius: 3px;
+                        box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+                    }
+
+                    .ant-slider-handle {
+                        width: 18px;
+                        height: 18px;
+                        border: 3px solid @primary-color;
+                        background: @text-primary;
+                        box-shadow: @shadow-glow;
+                        margin-top: -6px;
+
+                        &::after {
+                            box-shadow: none;
+                            background: transparent;
+                        }
+
+                        &:hover, &:focus {
+                            border-color: @primary-light;
+                            background: @text-primary;
+                            box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.2);
+                            transform: scale(1.1);
+                        }
+
+                        &:active {
+                            border-color: @primary-light;
+                            box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3);
+                            transform: scale(1.2);
+                        }
+                    }
+
+                    &:hover {
+                        .ant-slider-track {
+                            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+                        }
+                    }
+                }
+
+                .zoom-percentage {
+                    font-size: 12px;
+                    color: @text-secondary;
+                    font-weight: 500;
+                    min-width: 36px;
+                    text-align: center;
+                }
+            }
         }
 
         .ant-btn {
             color: @text-secondary;
-            border-color: @border-color;
-            background: @bg-dark-700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: @border-radius-base;
+            border-color: @border-dark-1;
+            background: @bg-dark-3;
+            border-radius: @radius-md;
+            transition: all @transition-fast;
+            cursor: pointer;
 
             &:hover:not(:disabled) {
-                color: @primary-color;
+                color: @primary-light;
                 border-color: @primary-color;
-                background: lighten(@bg-dark-700, 5%);
+                background: @bg-dark-4;
+                box-shadow: @shadow-glow;
+                transform: translateY(-1px);
             }
 
             &:disabled {
                 opacity: 0.3;
-                background: @bg-dark-800;
-            }
-        }
-
-        .ant-slider {
-            width: 100%;
-            margin: 0 8px;
-
-            .ant-slider-rail {
-                background-color: @bg-dark-700;
+                background: @bg-dark-2;
+                cursor: not-allowed;
+                transform: none;
             }
 
-            .ant-slider-track {
-                background-color: @primary-color;
+            &.ant-btn-primary {
+                background: @primary-color;
+                border-color: @primary-color;
+                color: @text-primary;
+
+                &:hover:not(:disabled) {
+                    background: @primary-light;
+                    border-color: @primary-light;
+                    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+                }
             }
 
-            .ant-slider-handle::after {
-                box-shadow: 0 0 0 2px @primary-color;
+            &[type="primary"] {
+                background: @primary-color;
+                border-color: @primary-color;
+
+                &:hover:not(:disabled) {
+                    background: @primary-light;
+                    border-color: @primary-light;
+                }
+            }
+
+            &.ant-btn-dangerous {
+                &:hover:not(:disabled) {
+                    color: @error-color;
+                    border-color: @error-color;
+                    background: fade(@error-color, 10%);
+                }
             }
         }
     }
 
     .toolbar-right {
         .ant-btn {
-            border-radius: @border-radius-base;
+            border-radius: @radius-md;
+            transition: all @transition-fast;
 
             &:not(.ant-btn-primary) {
                 color: @text-secondary;
-                border-color: @border-color;
-                background: @bg-dark-700;
+                border-color: @border-dark-1;
+                background: @bg-dark-3;
 
                 &:hover {
-                    color: @primary-color;
+                    color: @primary-light;
                     border-color: @primary-color;
-                    background: lighten(@bg-dark-700, 5%);
+                    background: @bg-dark-4;
+                    box-shadow: @shadow-glow;
+                    transform: translateY(-1px);
                 }
+            }
+
+            &.ant-btn-primary {
+                background: @accent-color;
+                border-color: @accent-color;
+                color: @bg-dark-1;
+                font-weight: 600;
+
+                &:hover:not(:disabled) {
+                    background: lighten(@accent-color, 10%);
+                    border-color: lighten(@accent-color, 10%);
+                    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// 快捷键帮助弹窗样式
+.shortcuts-help {
+    .shortcut-section {
+        margin-bottom: @spacing-xl;
+
+        h4 {
+            color: @text-primary;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: @spacing-md;
+            padding-bottom: @spacing-xs;
+            border-bottom: 1px solid @border-dark-1;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: @spacing-sm 0;
+            border-bottom: 1px solid fade(@border-dark-1, 30%);
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .shortcut-key {
+                background: @bg-dark-3;
+                color: @text-accent;
+                padding: @spacing-xs @spacing-sm;
+                border-radius: @radius-sm;
+                font-family: 'Fira Code', monospace;
+                font-size: 12px;
+                font-weight: 500;
+                border: 1px solid @border-dark-2;
+            }
+
+            span:last-child {
+                color: @text-secondary;
+                font-size: 13px;
             }
         }
     }

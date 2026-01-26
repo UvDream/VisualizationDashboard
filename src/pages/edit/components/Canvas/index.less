@@ -252,6 +252,57 @@
         }
     }
 
+    .zen-zoom-slider {
+        .ant-slider {
+            .ant-slider-rail {
+                background-color: rgba(71, 85, 105, 0.6);
+                height: 6px;
+                border-radius: 3px;
+                backdrop-filter: blur(8px);
+            }
+
+            .ant-slider-track {
+                background: linear-gradient(90deg, @primary-color 0%, @primary-light 100%);
+                height: 6px;
+                border-radius: 3px;
+                box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+            }
+
+            .ant-slider-handle {
+                width: 18px;
+                height: 18px;
+                border: 3px solid @primary-color;
+                background: @text-primary;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                margin-top: -6px;
+
+                &::after {
+                    box-shadow: none;
+                    background: transparent;
+                }
+
+                &:hover, &:focus {
+                    border-color: @primary-light;
+                    background: @text-primary;
+                    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+                    transform: scale(1.1);
+                }
+
+                &:active {
+                    border-color: @primary-light;
+                    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+                    transform: scale(1.2);
+                }
+            }
+
+            &:hover {
+                .ant-slider-track {
+                    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+                }
+            }
+        }
+    }
+
     .ant-slider-track {
         background-color: @primary-color;
     }

@@ -1,14 +1,46 @@
+@import '../../styles/variables.less';
+
 .editor-container {
     width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #141414;
+    background: @bg-dark-1;
     overflow: hidden;
+    font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .editor-main {
     flex: 1;
     display: flex;
     overflow: hidden;
+    position: relative;
+}
+
+// 响应式优化
+@media (max-width: 768px) {
+    .editor-container {
+        // 移动端优化
+        .toolbar {
+            height: 44px; // 稍微减小工具栏高度
+            padding: 0 @spacing-sm;
+        }
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .editor-container {
+        // 平板端优化
+        .toolbar {
+            height: 46px;
+        }
+    }
+}
+
+// 确保在所有屏幕尺寸下都能正常显示
+@media (min-width: 1441px) {
+    .editor-container {
+        // 大屏幕优化
+        max-width: 100vw;
+    }
 }

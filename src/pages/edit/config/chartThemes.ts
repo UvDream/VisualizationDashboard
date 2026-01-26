@@ -6,17 +6,39 @@ export interface ChartTheme {
     description?: string
 }
 
-// 预设主题
+// 预设主题 - 基于 UI-UX Pro Max 专业数据可视化配色
 export const PRESET_THEMES: Record<string, ChartTheme> = {
+    // 新增专业主题
+    professional: {
+        name: '专业蓝',
+        colors: ['#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#06B6D4'],
+        description: '专业数据可视化配色，高对比度，适合商业报表'
+    },
+    modernDark: {
+        name: '现代深色',
+        colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'],
+        description: '现代深色主题，适合暗色界面的数据展示'
+    },
+    analytics: {
+        name: '分析仪表',
+        colors: ['#0EA5E9', '#22C55E', '#F59E0B', '#EF4444', '#A855F7', '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'],
+        description: '专为分析仪表板设计的高可读性配色'
+    },
+    gradient: {
+        name: '渐变蓝绿',
+        colors: ['#0F766E', '#14B8A6', '#5EEAD4', '#0369A1', '#0EA5E9', '#38BDF8', '#F59E0B', '#FBBF24', '#EF4444', '#F87171'],
+        description: '蓝绿渐变系列，适合趋势图和热力图'
+    },
+    // 优化后的经典主题
     bright: {
         name: '明亮',
-        colors: ['#5B8FF9', '#5AD8A6', '#F6BD16', '#E86452', '#6DC8EC', '#945FB9', '#FF9845', '#1E9493', '#FF99C3'],
-        description: '明亮清新的配色方案'
+        colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'],
+        description: '明亮清新的配色方案，提升对比度'
     },
     dark: {
-        name: '暗波',
-        colors: ['#4992ff', '#7cffb2', '#fddd60', '#ff6e76', '#58d9f9', '#05c091', '#ff8a45', '#8d48e3', '#dd79ff'],
-        description: '适合深色背景的配色'
+        name: '深色优化',
+        colors: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#22D3EE', '#A3E635', '#FB923C', '#F472B6', '#818CF8'],
+        description: '优化的深色主题，更适合暗色背景'
     },
     macarons: {
         name: '马卡龙',
@@ -80,14 +102,14 @@ export function getThemeColors(themeType: 'preset' | 'custom', presetName?: stri
         return PRESET_THEMES[presetName].colors
     }
 
-    // 默认返回 deepColor 主题
-    return PRESET_THEMES.deepColor.colors
+    // 默认返回专业蓝主题
+    return PRESET_THEMES.professional.colors
 }
 
 // 获取当前主题颜色（用于图表配置）
 export function getCurrentThemeColors(canvasConfig?: { chartTheme?: { type: 'preset' | 'custom'; presetName?: string; customColors?: string[] } }): string[] {
     if (!canvasConfig?.chartTheme) {
-        return PRESET_THEMES.deepColor.colors
+        return PRESET_THEMES.professional.colors
     }
 
     return getThemeColors(

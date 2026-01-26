@@ -1,20 +1,86 @@
-// 核心配色
-@primary-color: #3b82f6;
-@bg-dark-900: #0a0a0a;
-@bg-dark-800: #161616;
-@bg-dark-700: #262626;
-@border-color: #262626;
-@text-primary: #ffffff;
-@text-secondary: #a3a3a3;
+// 基于 ui-ux-pro-max 设计系统的优化配色方案
+// 主题色 - 专业数据可视化配色
+@primary-color: #1E40AF;        // 深蓝主色
+@primary-light: #3B82F6;        // 浅蓝辅助色
+@accent-color: #F59E0B;         // 琥珀色强调色（CTA、警告）
+@success-color: #10B981;        // 成功色
+@warning-color: #F59E0B;        // 警告色
+@error-color: #EF4444;          // 错误色
 
-// 间距与圆角
-@border-radius-base: 6px;
+// 深色主题背景色系统 - 专业级配色
+@bg-dark-1: #0F172A;            // 主背景 - 深蓝黑（更专业）
+@bg-dark-2: #1E293B;            // 面板背景 - 中等深度
+@bg-dark-3: #334155;            // 组件背景 - 浅色面板
+@bg-dark-4: #475569;            // 悬浮背景 - 最浅
+
+// 兼容旧变量名
+@bg-dark-900: @bg-dark-1;
+@bg-dark-800: @bg-dark-2;
+@bg-dark-700: @bg-dark-3;
+
+// 边框色系统 - 提升可见性
+@border-dark-1: #334155;        // 主要边框（更明显）
+@border-dark-2: #475569;        // 次要边框
+@border-active: #3B82F6;        // 激活状态边框
+@border-hover: #60A5FA;         // 悬浮状态边框
+@border-color: @border-dark-1;  // 兼容旧变量名
+
+// 文字色系统 - 高对比度优化
+@text-primary: #F8FAFC;         // 主要文字（最高对比度）
+@text-secondary: #E2E8F0;       // 次要文字（高对比度）
+@text-muted: #94A3B8;           // 弱化文字（中等对比度）
+@text-accent: #60A5FA;          // 强调文字（蓝色系）
+@text-warning: #FBBF24;         // 警告文字
+@text-success: #34D399;         // 成功文字
+@text-error: #F87171;           // 错误文字
+
+// 交互状态色
+@hover-bg: rgba(59, 130, 246, 0.1);     // 悬浮背景
+@active-bg: rgba(59, 130, 246, 0.2);    // 激活背景
+@selected-bg: rgba(59, 130, 246, 0.15); // 选中背景
+
+// 阴影系统 - 增强层次感
+@shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+@shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+@shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+@shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+@shadow-glow: 0 0 20px rgba(59, 130, 246, 0.4);
+@shadow-glow-accent: 0 0 15px rgba(245, 158, 11, 0.3);
+
+// 过渡动画 - 更流畅的体验
+@transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+@transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+@transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+// 圆角系统
+@radius-sm: 4px;
+@radius-md: 6px;
+@radius-lg: 8px;
+@radius-xl: 12px;
+
+// 间距系统
+@spacing-xs: 4px;
 @spacing-sm: 8px;
-@spacing-md: 16px;
+@spacing-md: 12px;
+@spacing-lg: 16px;
+@spacing-xl: 24px;
+@spacing-2xl: 32px;
 
-// Ant Design 变量映射
-@body-background: @bg-dark-900;
-@component-background: @bg-dark-800;
+// 兼容旧变量名
+@border-radius-base: @radius-md;
+
+// Z-index 层级系统
+@z-dropdown: 10;
+@z-sticky: 20;
+@z-fixed: 30;
+@z-modal-backdrop: 40;
+@z-modal: 50;
+@z-popover: 60;
+@z-tooltip: 70;
+
+// Ant Design 变量映射 - 深色主题优化
+@body-background: @bg-dark-1;
+@component-background: @bg-dark-2;
 @border-color-base: @border-color;
 @text-color: @text-primary;
 @text-color-secondary: @text-secondary;

@@ -24,7 +24,7 @@ export type ComponentType =
     | 'futuristicTitle'
 
 // 组件分类
-export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d'
+export type ComponentCategory = 'chart' | 'component' | 'widget' | 'image' | 'icon' | '3d' | 'recent' | 'favorite'
 
 // 组件样式
 export interface ComponentStyle {
