@@ -75,21 +75,21 @@ export function getThemeColors(themeType: 'preset' | 'custom', presetName?: stri
     if (themeType === 'custom' && customColors && customColors.length > 0) {
         return customColors
     }
-    
+
     if (themeType === 'preset' && presetName && PRESET_THEMES[presetName]) {
         return PRESET_THEMES[presetName].colors
     }
-    
-    // 默认返回 default 主题
-    return PRESET_THEMES.default.colors
+
+    // 默认返回 deepColor 主题
+    return PRESET_THEMES.deepColor.colors
 }
 
 // 获取当前主题颜色（用于图表配置）
 export function getCurrentThemeColors(canvasConfig?: { chartTheme?: { type: 'preset' | 'custom'; presetName?: string; customColors?: string[] } }): string[] {
     if (!canvasConfig?.chartTheme) {
-        return PRESET_THEMES.default.colors
+        return PRESET_THEMES.deepColor.colors
     }
-    
+
     return getThemeColors(
         canvasConfig.chartTheme.type,
         canvasConfig.chartTheme.presetName,
