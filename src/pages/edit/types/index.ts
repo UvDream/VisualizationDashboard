@@ -666,6 +666,7 @@ export type EditorAction =
     | { type: 'UNGROUP_COMPONENTS'; payload: string }
     | { type: 'TOGGLE_ZEN_MODE'; payload: boolean }
     | { type: 'TOGGLE_PANEL'; payload: 'component' | 'layer' | 'property' }
+    | { type: 'IMPORT_PROJECT'; payload: { canvasConfig: CanvasConfig; components: ComponentItem[] } }
 
 // 拖拽项类型
 export interface DragItem {

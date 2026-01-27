@@ -232,6 +232,17 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
             }
             return state
 
+        case 'IMPORT_PROJECT':
+            return {
+                ...state,
+                canvasConfig: action.payload.canvasConfig,
+                components: action.payload.components,
+                selectedId: null,
+                selectedIds: [],
+                scale: 1, // 重置缩放
+                snapLines: [], // 清除对齐线
+            }
+
         default:
             return state
     }
@@ -377,6 +388,7 @@ interface EditorContextType {
     ungroupComponents: (id: string) => void
     toggleZenMode: (enabled: boolean) => void
     togglePanel: (type: 'component' | 'layer' | 'property') => void
+    importProject: (data: { canvasConfig: CanvasConfig; components: ComponentItem[] }) => void
     undo: () => void
     redo: () => void
     canUndo: boolean
@@ -560,6 +572,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'TOGGLE_PANEL', payload: type })
     }, [dispatch])
 
+    const importProject = React.useCallback((data: { canvasConfig: CanvasConfig; components: ComponentItem[] }) => {
+        dispatch({ type: 'IMPORT_PROJECT', payload: data })
+    }, [dispatch])
+
     const contextValue = React.useMemo(() => ({
         state,
         dispatch,
@@ -586,6 +602,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         ungroupComponents,
         toggleZenMode,
         togglePanel,
+        importProject,
         undo,
         redo,
         canUndo: history.past.length > 0,

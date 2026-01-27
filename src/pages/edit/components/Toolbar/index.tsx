@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Button, Tooltip, Space, Slider, Modal, Form, Input, InputNumber, ColorPicker, Upload, Select, message, Dropdown, Divider } from 'antd'
+import { useState, useRef } from 'react'
+import { Button, Tooltip, Space, Slider, Modal, Form, Input, InputNumber, ColorPicker, Upload, Select, message, Dropdown } from 'antd'
 import type { MenuProps } from 'antd'
 import {
     SaveOutlined,
@@ -10,9 +10,7 @@ import {
     CopyOutlined,
     ZoomInOutlined,
     ZoomOutOutlined,
-    ReloadOutlined,
     SettingOutlined,
-    GithubOutlined,
     UploadOutlined,
     FullscreenOutlined,
     FullscreenExitOutlined,
@@ -27,15 +25,19 @@ import {
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
+import { exportProject, importProject as importProjectUtil, exportAsTemplate, exportSelectedComponents } from '../../utils/importExport'
 import './index.less'
 
 export default function Toolbar() {
     const navigate = useNavigate()
 
-    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent, toggleZenMode, togglePanel } = useEditor()
+    const { state, deleteComponent, deleteComponents, setScale, undo, redo, canUndo, canRedo, setCanvasConfig, copyComponent, toggleZenMode, togglePanel, importProject } = useEditor()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [showShortcuts, setShowShortcuts] = useState(false)
+    const [templateModalOpen, setTemplateModalOpen] = useState(false)
     const [form] = Form.useForm()
+    const [templateForm] = Form.useForm()
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleDelete = () => {
         const selectedIds = state.selectedIds || []
@@ -115,6 +117,64 @@ export default function Toolbar() {
         })
     }
 
+    // 导出项目
+    const handleExportProject = () => {
+        exportProject(state, state.canvasConfig.name)
+    }
+
+    // 导入项目
+    const handleImportProject = () => {
+        fileInputRef.current?.click()
+    }
+
+    // 处理文件选择
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            if (file.type !== 'application/json') {
+                message.error('请选择 JSON 格式的项目文件')
+                return
+            }
+            
+            importProjectUtil(file, (data) => {
+                importProject(data)
+            })
+        }
+        // 清空文件输入，允许重复选择同一文件
+        event.target.value = ''
+    }
+
+    // 保存为模板
+    const handleSaveAsTemplate = () => {
+        if (state.components.length === 0) {
+            message.warning('当前画布没有组件，无法保存为模板')
+            return
+        }
+        setTemplateModalOpen(true)
+    }
+
+    // 确认保存模板
+    const handleConfirmSaveTemplate = () => {
+        templateForm.validateFields().then((values) => {
+            const { templateName } = values
+            exportAsTemplate(state.components, templateName)
+            setTemplateModalOpen(false)
+            templateForm.resetFields()
+        })
+    }
+
+    // 导出选中组件
+    const handleExportSelected = () => {
+        const selectedIds = state.selectedIds || []
+        if (selectedIds.length === 0) {
+            message.warning('请先选择要导出的组件')
+            return
+        }
+        
+        const selectedComponents = state.components.filter(comp => selectedIds.includes(comp.id))
+        exportSelectedComponents(selectedComponents, '选中组件')
+    }
+
     const handleImageUpload = (file: File) => {
         const reader = new FileReader()
         reader.onload = (e) => {
@@ -132,13 +192,20 @@ export default function Toolbar() {
             key: 'export',
             icon: <ExportOutlined />,
             label: '导出项目',
-            onClick: () => message.info('导出功能开发中')
+            onClick: handleExportProject
         },
         {
             key: 'import',
             icon: <ImportOutlined />,
             label: '导入项目',
-            onClick: () => message.info('导入功能开发中')
+            onClick: handleImportProject
+        },
+        {
+            key: 'exportSelected',
+            icon: <ExportOutlined />,
+            label: '导出选中组件',
+            onClick: handleExportSelected,
+            disabled: !state.selectedIds || state.selectedIds.length === 0
         },
         {
             type: 'divider',
@@ -147,7 +214,10 @@ export default function Toolbar() {
             key: 'template',
             icon: <FileTextOutlined />,
             label: '保存为模板',
-            onClick: () => message.info('模板功能开发中')
+            onClick: handleSaveAsTemplate
+        },
+        {
+            type: 'divider',
         },
         {
             key: 'shortcuts',
@@ -461,6 +531,45 @@ export default function Toolbar() {
                             return null
                         }}
                     </Form.Item>
+                </Form>
+            </Modal>
+
+            {/* 隐藏的文件输入用于导入项目 */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+            />
+
+            {/* 保存为模板模态框 */}
+            <Modal
+                title="保存为模板"
+                open={templateModalOpen}
+                onOk={handleConfirmSaveTemplate}
+                onCancel={() => {
+                    setTemplateModalOpen(false)
+                    templateForm.resetFields()
+                }}
+                okText="保存"
+                cancelText="取消"
+            >
+                <Form form={templateForm} layout="vertical">
+                    <Form.Item
+                        name="templateName"
+                        label="模板名称"
+                        rules={[
+                            { required: true, message: '请输入模板名称' },
+                            { min: 2, message: '模板名称至少2个字符' },
+                            { max: 50, message: '模板名称不能超过50个字符' }
+                        ]}
+                    >
+                        <Input placeholder="请输入模板名称，如：数据大屏模板" />
+                    </Form.Item>
+                    <div style={{ color: '#666', fontSize: '12px', marginTop: '-16px', marginBottom: '16px' }}>
+                        将保存当前画布中的 {state.components.length} 个组件为模板文件
+                    </div>
                 </Form>
             </Modal>
         </>
