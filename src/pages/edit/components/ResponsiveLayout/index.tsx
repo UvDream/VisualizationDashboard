@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button, Drawer } from 'antd'
 import { 
-    MenuOutlined, 
     AppstoreOutlined, 
     BarsOutlined, 
     ControlOutlined,
@@ -25,7 +24,7 @@ const BREAKPOINTS = {
 }
 
 export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
-    const { state, togglePanel } = useEditor()
+    const { state } = useEditor()
     const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
     const [mobileDrawerVisible, setMobileDrawerVisible] = useState(false)
     const [activeDrawerPanel, setActiveDrawerPanel] = useState<'component' | 'layer' | 'property' | null>(null)

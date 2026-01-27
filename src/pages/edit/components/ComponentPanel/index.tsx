@@ -210,7 +210,7 @@ export default function ComponentPanel() {
             }
             return null
         }
-        setRecentComponents(newRecent.map(findComponent).filter(Boolean))
+        setRecentComponents(newRecent.map(findComponent).filter((comp): comp is ComponentConfig => comp !== null))
     }
 
     // 切换收藏状态

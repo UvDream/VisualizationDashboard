@@ -44,7 +44,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
         value?.customColors || ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272']
     )
     const [themeName, setThemeName] = useState('自定义主题')
-    const [selectedPalette, setSelectedPalette] = useState<keyof typeof COLOR_PALETTES>('basic')
+    const [, setSelectedPalette] = useState<keyof typeof COLOR_PALETTES>('basic')
 
     const themeType = value?.type || 'preset'
     const presetName = value?.presetName || 'default'
@@ -304,7 +304,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                             </Space>
                         </div>
 
-                        <Divider orientation="left" orientationMargin="0">当前颜色</Divider>
+                        <Divider orientationMargin="0">当前颜色</Divider>
                         <div className="color-list">
                             {tempColors.map((color, index) => (
                                 <div key={index} className="color-item-box">
@@ -339,7 +339,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                             )}
                         </div>
 
-                        <Divider orientation="left" orientationMargin="0">预设调色板</Divider>
+                        <Divider orientationMargin="0">预设调色板</Divider>
                         <div className="palette-section">
                             {Object.entries(COLOR_PALETTES).map(([key, colors]) => (
                                 <div key={key} className="palette-group">
@@ -374,7 +374,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
                     </div>
 
                     <div className="theme-preview-section">
-                        <Divider orientation="left" orientationMargin="0">预览效果</Divider>
+                        <Divider orientationMargin="0">预览效果</Divider>
                         <Tabs
                             items={[
                                 {
