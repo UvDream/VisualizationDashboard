@@ -5,6 +5,9 @@
 ## ✨ 预览地址
 [🔗 在线体验](https://visualization-dashboard-sooty.vercel.app/)
 
+## 摘要
+![截图](./docs/image.png)
+
 ## 🛠️ 技术栈
 
 - **前端框架**: React 19 + TypeScript
