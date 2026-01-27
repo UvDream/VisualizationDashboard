@@ -99,6 +99,7 @@ const widgetComponents: ComponentConfig[] = [
     { type: 'borderBox1', name: '边框1', icon: <BorderOuterOutlined />, category: 'widget', keywords: ['边框', '装饰', 'border'] },
     { type: 'borderBox2', name: '边框2', icon: <BorderOuterOutlined />, category: 'widget', keywords: ['边框', '装饰', 'border'] },
     { type: 'borderBox3', name: '边框3', icon: <BorderOuterOutlined />, category: 'widget', keywords: ['边框', '装饰', 'border'] },
+    { type: 'customImageBorder', name: '自定义图片边框', icon: <PictureOutlined />, category: 'widget', keywords: ['边框', '图片', '自定义', 'custom'] },
     { type: 'fullscreenButton', name: '全屏按钮', icon: <FullscreenOutlined />, category: 'widget', keywords: ['全屏', '按钮', 'fullscreen'] },
     { type: 'decoration1', name: '装饰1', icon: <GatewayOutlined />, category: 'widget', keywords: ['装饰', '美化', 'decoration'] },
     { type: 'decoration2', name: '装饰2', icon: <StarOutlined />, category: 'widget', keywords: ['装饰', '美化', 'decoration'] },

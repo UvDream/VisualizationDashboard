@@ -651,6 +651,18 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 300, height: 200 }
     },
+    customImageBorder: {
+        props: {
+            customBorderImage: '',
+            borderImageSlice: 30,
+            borderImageWidth: 30,
+            borderImageRepeat: 'stretch',
+            borderImageOutset: 0,
+            borderImageOpacity: 1,
+            borderImageMode: 'border'
+        },
+        style: { width: 300, height: 200, backgroundColor: 'rgba(0,0,0,0.1)' }
+    },
     fullscreenButton: {
         props: {
             buttonSize: 40,

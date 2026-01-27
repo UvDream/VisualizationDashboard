@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Cascader, DatePicker, Segmented } from 'antd'
+import { Form, Input, InputNumber, Select, Collapse, Tabs, ColorPicker, Switch, Cascader, DatePicker, Segmented, Button, message } from 'antd'
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { useEditor } from '../../context/EditorContext'
 import { getMapRegionOptions, getCityMapCascaderOptions, getCityMapCascaderPath } from '../../utils/mapData'
@@ -4320,6 +4321,168 @@ export default function PropertyPanel() {
                             onChange={(e) => handleChange('props.content', e.target.value)}
                             placeholder="请输入内容"
                             rows={3}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }] : []),
+        ...(selectedComponent.type === 'customImageBorder' ? [{
+            key: 'customImageBorderConfig',
+            label: '自定义图片边框配置',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="边框图片">
+                        <div style={{ marginBottom: 8 }}>
+                            <Input
+                                value={selectedComponent.props.customBorderImage || ''}
+                                onChange={(e) => handleChange('props.customBorderImage', e.target.value)}
+                                placeholder="请输入图片URL或base64"
+                            />
+                        </div>
+                        <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                id={`image-upload-${selectedComponent.id}`}
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0]
+                                    if (file) {
+                                        const reader = new FileReader()
+                                        reader.onload = (event) => {
+                                            const base64 = event.target?.result as string
+                                            handleChange('props.customBorderImage', base64)
+                                            message.success('图片上传成功')
+                                        }
+                                        reader.readAsDataURL(file)
+                                    }
+                                    // 清空文件输入，允许重复选择同一文件
+                                    e.target.value = ''
+                                }}
+                            />
+                            <Button
+                                size="small"
+                                icon={<UploadOutlined />}
+                                onClick={() => {
+                                    const input = document.getElementById(`image-upload-${selectedComponent.id}`) as HTMLInputElement
+                                    input?.click()
+                                }}
+                            >
+                                上传图片
+                            </Button>
+                            <Button
+                                size="small"
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={() => handleChange('props.customBorderImage', '')}
+                                disabled={!selectedComponent.props.customBorderImage}
+                            >
+                                清除
+                            </Button>
+                        </div>
+                        <div style={{ marginBottom: 8 }}>
+                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>快速选择预设边框：</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                            {[
+                                { name: '科技边框1', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzBfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMTAwIiB5Mj0iMTAwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiMwMGJjZDQiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMTg5MGZmIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+' },
+                                { name: '科技边框2', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ1cmwoI3BhaW50MF9yYWRpYWxfMF8xKSIvPgo8ZGVmcz4KPHJhZGlhbEdyYWRpZW50IGlkPSJwYWludDBfcmFkaWFsXzBfMSIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNmZjZiNmIiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmY4ZTUzIi8+CjwvcmFkaWFsR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+' },
+                                { name: '金属边框', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzBfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMTAwIiB5Mj0iMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjYzlhYTZiIi8+CjxzdG9wIG9mZnNldD0iMC41IiBzdG9wLWNvbG9yPSIjZmZkNzAwIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2M5YWE2YiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPg==' },
+                                { name: '清除', url: '' }
+                            ].map((preset, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleChange('props.customBorderImage', preset.url)}
+                                    style={{
+                                        padding: '4px 8px',
+                                        fontSize: '11px',
+                                        background: preset.url === selectedComponent.props.customBorderImage ? 'rgba(24, 144, 255, 0.3)' : 'rgba(255,255,255,0.1)',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        borderRadius: '4px',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (preset.url !== selectedComponent.props.customBorderImage) {
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)'
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (preset.url !== selectedComponent.props.customBorderImage) {
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+                                        }
+                                    }}
+                                >
+                                    {preset.name}
+                                </button>
+                            ))}
+                        </div>
+                    </Form.Item>
+                    <Form.Item label="边框模式">
+                        <Select
+                            value={selectedComponent.props.borderImageMode || 'border'}
+                            onChange={(value) => handleChange('props.borderImageMode', value)}
+                            options={[
+                                { value: 'border', label: '边框模式' },
+                                { value: 'background', label: '背景模式' },
+                                { value: 'frame', label: '相框模式' },
+                            ]}
+                        />
+                    </Form.Item>
+                    {selectedComponent.props.borderImageMode === 'border' && (
+                        <>
+                            <Form.Item label="边框切片">
+                                <InputNumber
+                                    value={selectedComponent.props.borderImageSlice || 30}
+                                    onChange={(v) => handleChange('props.borderImageSlice', v ?? 30)}
+                                    min={1}
+                                    max={100}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                            <Form.Item label="边框宽度">
+                                <InputNumber
+                                    value={selectedComponent.props.borderImageWidth || 30}
+                                    onChange={(v) => handleChange('props.borderImageWidth', v ?? 30)}
+                                    min={1}
+                                    max={100}
+                                    addonAfter="px"
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                            <Form.Item label="重复方式">
+                                <Select
+                                    value={selectedComponent.props.borderImageRepeat || 'stretch'}
+                                    onChange={(value) => handleChange('props.borderImageRepeat', value)}
+                                    options={[
+                                        { value: 'stretch', label: '拉伸' },
+                                        { value: 'repeat', label: '重复' },
+                                        { value: 'round', label: '环绕' },
+                                        { value: 'space', label: '间隔' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item label="外延距离">
+                                <InputNumber
+                                    value={selectedComponent.props.borderImageOutset || 0}
+                                    onChange={(v) => handleChange('props.borderImageOutset', v ?? 0)}
+                                    min={0}
+                                    max={50}
+                                    addonAfter="px"
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                    <Form.Item label="透明度">
+                        <InputNumber
+                            value={selectedComponent.props.borderImageOpacity || 1}
+                            onChange={(v) => handleChange('props.borderImageOpacity', v ?? 1)}
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            style={{ width: '100%' }}
                         />
                     </Form.Item>
                 </Form>

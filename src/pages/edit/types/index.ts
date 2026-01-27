@@ -5,7 +5,7 @@ export type ComponentType =
     // 组件库 - Antd
     | 'text' | 'button' | 'input' | 'select' | 'switch' | 'progress' | 'tag' | 'badge' | 'avatar' | 'card' | 'table' | 'scrollRankList' | 'carouselList'
     // 小组件 - 装饰
-    | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2' | 'fullscreenButton'
+    | 'borderBox1' | 'borderBox2' | 'borderBox3' | 'decoration1' | 'decoration2' | 'fullscreenButton' | 'customImageBorder'
     // 图片
     | 'image' | 'carousel'
     // 图标
@@ -226,6 +226,15 @@ export interface ComponentProps {
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center'
     customIcon?: string
     showText?: boolean
+
+    // 自定义图片边框属性
+    customBorderImage?: string // 边框图片URL或base64
+    borderImageSlice?: number // 边框图片切片大小
+    borderImageWidth?: number // 边框图片宽度
+    borderImageRepeat?: 'stretch' | 'repeat' | 'round' | 'space' // 边框图片重复方式
+    borderImageOutset?: number // 边框图片外延
+    borderImageOpacity?: number // 边框图片透明度
+    borderImageMode?: 'border' | 'background' | 'frame' // 边框模式：边框、背景、相框
 
     // 科技标题属性
     titleColor?: string

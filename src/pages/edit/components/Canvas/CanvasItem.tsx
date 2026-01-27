@@ -25,6 +25,7 @@ import Carousel from './Carousel'
 import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
+import CustomImageBorder from './CustomImageBorder'
 import FullscreenButton from './FullscreenButton'
 import GradientText from './GradientText'
 import FlipCountdown from './FlipCountdown'
@@ -1299,6 +1300,35 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     >
                         {item.props.content || ''}
                     </BorderBox3>
+                )
+            case 'customImageBorder':
+                return (
+                    <CustomImageBorder
+                        width={item.style.width}
+                        height={item.style.height}
+                        customBorderImage={item.props.customBorderImage}
+                        borderImageSlice={item.props.borderImageSlice}
+                        borderImageWidth={item.props.borderImageWidth}
+                        borderImageRepeat={item.props.borderImageRepeat}
+                        borderImageOutset={item.props.borderImageOutset}
+                        borderImageOpacity={item.props.borderImageOpacity}
+                        borderImageMode={item.props.borderImageMode}
+                        previewMode={previewMode}
+                        onImageChange={(imageUrl) => {
+                            if (!previewMode) {
+                                updateComponent(item.id, {
+                                    props: { ...item.props, customBorderImage: imageUrl }
+                                })
+                            }
+                        }}
+                        onConfigChange={(config) => {
+                            if (!previewMode) {
+                                updateComponent(item.id, {
+                                    props: { ...item.props, ...config }
+                                })
+                            }
+                        }}
+                    />
                 )
             case 'fullscreenButton':
                 return (
