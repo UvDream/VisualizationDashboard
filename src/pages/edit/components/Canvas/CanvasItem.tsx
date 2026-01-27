@@ -1252,7 +1252,11 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 return <Avatar size={64} icon={<UserOutlined />} />
             case 'card':
                 return (
-                    <Card size="small" title="卡片标题" style={{ width: '100%', height: '100%' }}>
+                    <Card 
+                        size="small" 
+                        title={item.props.chartTitle || "卡片标题"} 
+                        style={{ width: '100%', height: '100%' }}
+                    >
                         {item.props.content || '卡片内容'}
                     </Card>
                 )

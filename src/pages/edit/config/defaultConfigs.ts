@@ -492,7 +492,13 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
     },
     badge: { props: { content: '99+' }, style: { width: 60, height: 60 } },
     avatar: { props: {}, style: { width: 64, height: 64 } },
-    card: { props: { content: '这是一个卡片容器，可以展示详细信息。' }, style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.1)' } },
+    card: { 
+        props: { 
+            content: '这是一个卡片容器，可以展示详细信息。',
+            chartTitle: '卡片标题'
+        }, 
+        style: { width: 300, height: 200, backgroundColor: 'rgba(255,255,255,0.1)' } 
+    },
     table: {
         props: {
             dataSource: { type: 'mock' },
