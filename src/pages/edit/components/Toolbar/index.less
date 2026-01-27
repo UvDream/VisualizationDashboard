@@ -72,19 +72,21 @@
                     }
 
                     .ant-slider-handle {
-                        width: 18px;
-                        height: 18px;
+                        width: 15px;
+                        height: 15px;
                         border: 3px solid @primary-color;
                         background: @text-primary;
                         box-shadow: @shadow-glow;
-                        margin-top: -6px;
+                        margin-top: -2px;
+                        border-radius: 50%;
 
                         &::after {
                             box-shadow: none;
                             background: transparent;
                         }
 
-                        &:hover, &:focus {
+                        &:hover,
+                        &:focus {
                             border-color: @primary-light;
                             background: @text-primary;
                             box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.2);
