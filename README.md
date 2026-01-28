@@ -1,5 +1,7 @@
 # 🎨 可视化大屏编辑器
 
+VeloData: 取自 Velocity（速度），强调快速生成数据可视化。
+
 一个功能强大的可视化大屏编辑器，支持拖拽式组件布局、实时预览、丰富的图表组件和炫酷的 3D 效果。适用于数据大屏、监控面板、展示页面等场景。
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/your-repo/visualization-dashboard)
