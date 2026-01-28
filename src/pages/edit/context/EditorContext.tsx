@@ -10,10 +10,29 @@ const getInitialState = (): EditorState => {
     if (savedState) {
         try {
             const parsed = JSON.parse(savedState)
-            // 确保 selectedIds 存在
+            // 确保必要的字段存在，并提供默认值
             return {
                 ...parsed,
-                selectedIds: parsed.selectedIds || []
+                selectedIds: parsed.selectedIds || [],
+                canvasConfig: {
+                    width: 1920,
+                    height: 1080,
+                    backgroundColor: '#000000',
+                    name: '大屏可视化',
+                    backgroundType: 'color',
+                    backgroundImageMode: 'cover',
+                    backgroundImageOpacity: 1,
+                    // 合并保存的配置，覆盖默认值
+                    ...parsed.canvasConfig,
+                    // 确保 chartTheme 存在
+                    chartTheme: {
+                        type: 'preset',
+                        presetName: 'professional',
+                        customColors: [],
+                        // 合并保存的图表主题配置
+                        ...parsed.canvasConfig?.chartTheme,
+                    }
+                }
             }
         } catch (error) {
             console.error('Failed to load state from localStorage:', error)
@@ -36,7 +55,7 @@ const getInitialState = (): EditorState => {
             backgroundImageOpacity: 1,
             chartTheme: {
                 type: 'preset',
-                presetName: 'default',
+                presetName: 'professional',
                 customColors: []
             }
         },

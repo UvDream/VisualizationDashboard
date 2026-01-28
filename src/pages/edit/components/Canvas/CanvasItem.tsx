@@ -141,6 +141,21 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
         return item.props
     }
 
+    // 强制刷新图表的状态
+    const [chartRefreshKey, setChartRefreshKey] = useState(0)
+
+    // 监听图表主题变化事件
+    useEffect(() => {
+        const handleThemeChange = () => {
+            setChartRefreshKey(prev => prev + 1)
+        }
+
+        window.addEventListener('chartThemeChanged', handleThemeChange)
+        return () => {
+            window.removeEventListener('chartThemeChanged', handleThemeChange)
+        }
+    }, [])
+
     // 缓存的图表配置
     const chartOption = useMemo(() => {
         const chartTypes = ['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart',
@@ -155,7 +170,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             return getCalendarOption(item.props)
         }
         return null
-    }, [item.type, item.props, dynamicData, state.canvasConfig?.chartTheme])
+    }, [item.type, item.props, dynamicData, state.canvasConfig?.chartTheme, chartRefreshKey])
 
     // 只有在非预览模式下才使用useDrag
     const [isDragging] = !previewMode ? (() => {

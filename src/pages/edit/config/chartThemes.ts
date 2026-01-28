@@ -8,6 +8,12 @@ export interface ChartTheme {
 
 // 预设主题 - 基于 UI-UX Pro Max 专业数据可视化配色
 export const PRESET_THEMES: Record<string, ChartTheme> = {
+    // 默认主题（向后兼容）
+    default: {
+        name: '默认',
+        colors: ['#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#06B6D4'],
+        description: '默认主题，与专业蓝相同'
+    },
     // 新增专业主题
     professional: {
         name: '专业蓝',

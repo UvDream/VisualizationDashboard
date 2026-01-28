@@ -47,7 +47,7 @@ export default function ChartThemeEditor({ value, onChange }: ChartThemeEditorPr
     const [, setSelectedPalette] = useState<keyof typeof COLOR_PALETTES>('basic')
 
     const themeType = value?.type || 'preset'
-    const presetName = value?.presetName || 'default'
+    const presetName = value?.presetName || 'professional'
     const customColors = value?.customColors || []
 
     // 同步外部值到内部状态

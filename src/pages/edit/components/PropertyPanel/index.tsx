@@ -198,7 +198,7 @@ export default function PropertyPanel() {
         const themeContent = (
             <div style={{ padding: '12px' }}>
                 <ChartThemeEditor
-                    value={state.canvasConfig?.chartTheme || { type: 'preset', presetName: 'default' }}
+                    value={state.canvasConfig?.chartTheme || { type: 'preset', presetName: 'professional' }}
                     onChange={(value) => handleCanvasConfigChange('chartTheme', value)}
                 />
             </div>

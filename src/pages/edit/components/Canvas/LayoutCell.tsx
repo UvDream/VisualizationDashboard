@@ -1,4 +1,4 @@
-import React, { useRef, Suspense, lazy } from 'react'
+import React, { useRef, Suspense, lazy, useState, useEffect, useMemo } from 'react'
 import { useDrop } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import ReactECharts from 'echarts-for-react'
@@ -6,6 +6,8 @@ import { Button, Progress } from 'antd'
 import { useEditor } from '../../context/EditorContext'
 import type { ComponentItem, ComponentType } from '../../types'
 import { defaultConfigs } from '../../config/defaultConfigs'
+import { getCachedChartOption } from '../../utils/chartOptions'
+import { getCurrentThemeColors } from '../../config/chartThemes'
 import BorderBox1 from './BorderBox1'
 import BorderBox2 from './BorderBox2'
 import BorderBox3 from './BorderBox3'
@@ -40,6 +42,21 @@ interface LayoutCellProps {
 export default function LayoutCell({ layoutId, cellIndex, cellLabel, className = '', cellConfig, previewMode = false }: LayoutCellProps) {
     const { state, addComponent, selectComponent } = useEditor()
     const cellRef = useRef<HTMLDivElement>(null)
+
+    // 强制刷新图表的状态
+    const [chartRefreshKey, setChartRefreshKey] = useState(0)
+
+    // 监听图表主题变化事件
+    useEffect(() => {
+        const handleThemeChange = () => {
+            setChartRefreshKey(prev => prev + 1)
+        }
+
+        window.addEventListener('chartThemeChanged', handleThemeChange)
+        return () => {
+            window.removeEventListener('chartThemeChanged', handleThemeChange)
+        }
+    }, [])
 
     // 获取该单元格中的所有子组件
     const cellChildren = state.components.filter(
@@ -147,68 +164,34 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
         }
     }
 
+    // 获取带主题的图表配置
+    const getChartOptionWithTheme = useMemo(() => {
+        return (item: ComponentItem) => {
+            const themeColors = getCurrentThemeColors(state.canvasConfig)
+            return getCachedChartOption(item.type, item.props, themeColors)
+        }
+    }, [state.canvasConfig?.chartTheme, chartRefreshKey])
+
     // 渲染单个组件
     const renderComponent = (item: ComponentItem) => {
 
         // 根据组件类型渲染
         switch (item.type) {
-            // 图表类
+            // 图表类 - 使用统一的主题配置
             case 'singleLineChart':
             case 'doubleLineChart':
-                return (
-                    <ReactECharts
-                        option={getLineChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'singleBarChart':
             case 'doubleBarChart':
             case 'horizontalBarChart':
-                return (
-                    <ReactECharts
-                        option={getBarChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'pieChart':
             case 'halfPieChart':
-                return (
-                    <ReactECharts
-                        option={getPieChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'gaugeChart':
-                return (
-                    <ReactECharts
-                        option={getGaugeChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'radarChart':
-                return (
-                    <ReactECharts
-                        option={getRadarChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'funnelChart':
-                return (
-                    <ReactECharts
-                        option={getFunnelChartOption(item)}
-                        style={{ width: '100%', height: '100%' }}
-                        opts={{ renderer: 'svg' }}
-                    />
-                )
             case 'scatterChart':
                 return (
                     <ReactECharts
-                        option={getScatterChartOption(item)}
+                        option={getChartOptionWithTheme(item)}
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
                     />
@@ -587,195 +570,4 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
             {renderCellContent()}
         </div>
     )
-}
-
-// 图表配置生成函数
-function getLineChartOption(item: ComponentItem) {
-    const isDouble = item.type === 'doubleLineChart'
-    const defaultSeries = isDouble ? [
-        { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210], type: 'line', smooth: true },
-        { name: '订单量', data: [220, 182, 191, 234, 290, 330, 310], type: 'line', smooth: true }
-    ] : [
-        { name: '访问量', data: [120, 132, 101, 134, 90, 230, 210], type: 'line', smooth: true }
-    ]
-
-    return {
-        backgroundColor: 'transparent',
-        grid: { top: 20, right: 20, bottom: 30, left: 40 },
-        tooltip: { trigger: 'axis' },
-        legend: isDouble ? {
-            data: item.props.seriesData?.map((s: any) => s.name) || ['访问量', '订单量'],
-            textStyle: { color: '#aaa', fontSize: 10 },
-            top: 0
-        } : undefined,
-        xAxis: {
-            type: 'category',
-            data: item.props.xAxisData || ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-            axisLabel: { color: '#aaa', fontSize: 10 },
-            axisLine: { lineStyle: { color: '#444' } },
-        },
-        yAxis: {
-            type: 'value',
-            axisLabel: { color: '#aaa', fontSize: 10 },
-            splitLine: { lineStyle: { color: '#333' } },
-        },
-        series: item.props.seriesData?.map((s: any) => ({
-            ...s,
-            type: 'line',
-            smooth: true,
-        })) || defaultSeries,
-    }
-}
-
-function getBarChartOption(item: ComponentItem) {
-    const isHorizontal = item.type === 'horizontalBarChart'
-    const isDouble = item.type === 'doubleBarChart' || item.type === 'horizontalBarChart'
-
-    const defaultSeries = isDouble ? [
-        { name: '销售额', data: [500, 300, 400, 600, 250], type: 'bar' },
-        { name: '利润', data: [200, 150, 180, 280, 100], type: 'bar' }
-    ] : [
-        { name: '销售额', data: [500, 300, 400, 600, 250], type: 'bar' }
-    ]
-
-    return {
-        backgroundColor: 'transparent',
-        grid: { top: 20, right: 20, bottom: 30, left: 40 },
-        tooltip: { trigger: 'axis' },
-        legend: isDouble ? {
-            data: item.props.seriesData?.map((s: any) => s.name) || ['销售额', '利润'],
-            textStyle: { color: '#aaa', fontSize: 10 },
-            top: 0
-        } : undefined,
-        xAxis: isHorizontal ? {
-            type: 'value',
-            axisLabel: { color: '#aaa', fontSize: 10 },
-            splitLine: { lineStyle: { color: '#333' } }
-        } : {
-            type: 'category',
-            data: item.props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E'],
-            axisLabel: { color: '#aaa', fontSize: 10 },
-        },
-        yAxis: isHorizontal ? {
-            type: 'category',
-            data: item.props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E'],
-            axisLabel: { color: '#aaa', fontSize: 10 },
-        } : {
-            type: 'value',
-            axisLabel: { color: '#aaa', fontSize: 10 },
-            splitLine: { lineStyle: { color: '#333' } }
-        },
-        series: item.props.seriesData?.map((s: any) => ({
-            ...s,
-            type: 'bar',
-        })) || defaultSeries,
-    }
-}
-
-function getPieChartOption(item: ComponentItem) {
-    const isHalf = item.type === 'halfPieChart'
-    return {
-        backgroundColor: 'transparent',
-        tooltip: { trigger: 'item' },
-        series: [{
-            type: 'pie',
-            radius: isHalf ? ['40%', '70%'] : ['0%', '70%'],
-            center: isHalf ? ['50%', '70%'] : ['50%', '50%'],
-            startAngle: isHalf ? 180 : 0,
-            endAngle: isHalf ? 360 : 360,
-            label: { color: '#fff', fontSize: 10 },
-            data: item.props.pieData || [
-                { value: 1048, name: 'A' },
-                { value: 735, name: 'B' },
-                { value: 580, name: 'C' },
-                { value: 484, name: 'D' },
-            ],
-        }],
-    }
-}
-
-function getGaugeChartOption(item: ComponentItem) {
-    return {
-        backgroundColor: 'transparent',
-        series: [{
-            type: 'gauge',
-            progress: { show: true },
-            detail: { formatter: '{value}%', fontSize: 14, color: '#fff' },
-            axisLabel: { color: '#aaa', fontSize: 10 },
-            data: [{ value: item.props.singleData ?? 70 }],
-        }],
-    }
-}
-
-function getRadarChartOption(item: ComponentItem) {
-    return {
-        backgroundColor: 'transparent',
-        radar: {
-            indicator: item.props.radarConfig?.indicator || [
-                { name: '销售', max: 100 },
-                { name: '管理', max: 100 },
-                { name: '技术', max: 100 },
-                { name: '客服', max: 100 },
-                { name: '研发', max: 100 },
-            ],
-            axisName: { color: '#fff', fontSize: 10 },
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
-            splitArea: { areaStyle: { color: ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.05)'] } },
-        },
-        series: [{
-            type: 'radar',
-            data: item.props.seriesData?.map((s: any) => ({
-                name: s.name,
-                value: Array.isArray(s.data[0]) ? s.data[0] : s.data,
-            })) || [{ value: [80, 50, 90, 40, 60] }],
-        }],
-    }
-}
-
-function getFunnelChartOption(item: ComponentItem) {
-    return {
-        backgroundColor: 'transparent',
-        tooltip: { trigger: 'item', formatter: '{b}: {c}' },
-        series: [{
-            type: 'funnel',
-            left: '10%',
-            top: 20,
-            bottom: 20,
-            width: '80%',
-            min: 0,
-            max: 100,
-            minSize: '0%',
-            maxSize: '100%',
-            sort: 'descending',
-            gap: 2,
-            label: { show: true, position: 'inside', color: '#fff', fontSize: 10 },
-            itemStyle: { borderColor: '#fff', borderWidth: 1 },
-            data: item.props.funnelData || [
-                { value: 100, name: '展示' },
-                { value: 80, name: '点击' },
-                { value: 60, name: '访问' },
-                { value: 40, name: '咨询' },
-                { value: 20, name: '订单' },
-            ],
-        }],
-    }
-}
-
-function getScatterChartOption(item: ComponentItem) {
-    return {
-        backgroundColor: 'transparent',
-        grid: { top: 20, right: 20, bottom: 30, left: 40 },
-        tooltip: { trigger: 'item' },
-        xAxis: { type: 'value', axisLabel: { color: '#aaa', fontSize: 10 }, splitLine: { lineStyle: { color: '#333' } } },
-        yAxis: { type: 'value', axisLabel: { color: '#aaa', fontSize: 10 }, splitLine: { lineStyle: { color: '#333' } } },
-        series: item.props.seriesData?.map((s: any) => ({
-            ...s,
-            type: 'scatter',
-            symbolSize: 10,
-        })) || [{
-            type: 'scatter',
-            symbolSize: 10,
-            data: [[10, 20], [30, 40], [50, 60], [70, 80], [90, 100]]
-        }],
-    }
 }
