@@ -3682,6 +3682,24 @@ export default function PropertyPanel() {
                                             }}
                                         />
                                     </Form.Item>
+                                    <Form.Item label="布局模式">
+                                        <Segmented
+                                            value={selectedComponent.props.layoutConfig?.cells?.[i]?.layoutMode || 'free'}
+                                            onChange={(v) => {
+                                                const cells = [...(selectedComponent.props.layoutConfig?.cells || [])]
+                                                // @ts-ignore
+                                                cells[i] = { ...cells[i], layoutMode: v }
+                                                handleChange('props.layoutConfig', {
+                                                    ...selectedComponent.props.layoutConfig,
+                                                    cells
+                                                })
+                                            }}
+                                            options={[
+                                                { label: '自由', value: 'free' },
+                                                { label: '填充', value: 'fill' }
+                                            ]}
+                                        />
+                                    </Form.Item>
                                 </div>
                             </div>
                         ))

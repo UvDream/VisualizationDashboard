@@ -32,6 +32,7 @@ interface LayoutCellProps {
         width?: string
         height?: string
         backgroundColor?: string
+        layoutMode?: 'fill' | 'free'
     }
     previewMode?: boolean
 }
@@ -91,6 +92,9 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                     // 如果单元格已有布局组件，不允许添加
                     if (hasLayoutChild) return
 
+                    // 如果是填充模式，且已有组件，不允许添加（只能有一个）
+                    if (cellConfig?.layoutMode === 'fill' && cellChildren.length > 0) return
+
                     // 获取鼠标在单元格内的相对位置
                     const offset = monitor.getClientOffset()
                     const cellRect = cellRef.current?.getBoundingClientRect()
@@ -107,8 +111,8 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                             name: `${item.componentType}_${Date.now()}`,
                             props: { ...config.props, ...item.data },
                             style: {
-                                x,
-                                y,
+                                x: cellConfig?.layoutMode === 'fill' ? 0 : x,
+                                y: cellConfig?.layoutMode === 'fill' ? 0 : y,
                                 width: config.style.width || 200,
                                 height: config.style.height || 150,
                                 ...config.style,
@@ -264,7 +268,7 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 const textShadowValue = item.props.textShadow
                     ? `${item.props.shadowOffsetX || 0}px ${item.props.shadowOffsetY || 0}px ${item.props.shadowBlur || 4}px ${item.props.shadowColor || 'rgba(0,0,0,0.5)'}`
                     : 'none'
-                
+
                 return (
                     <span style={{
                         color: item.props.color || '#ffffff',
@@ -293,7 +297,7 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 )
             case 'button':
                 return (
-                    <Button 
+                    <Button
                         type={item.props.buttonType || 'primary'}
                         disabled={item.props.disabled || false}
                         loading={item.props.loading || false}
@@ -418,7 +422,7 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 )
             case 'container':
                 return (
-                    <div 
+                    <div
                         style={{
                             width: '100%',
                             height: '100%',
@@ -435,10 +439,10 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
             // 布局组件嵌套支持
             case 'layoutTwoColumn':
                 return (
-                    <div 
-                        className="layout-component layout-two-column" 
-                        style={{ 
-                            width: '100%', 
+                    <div
+                        className="layout-component layout-two-column"
+                        style={{
+                            width: '100%',
                             height: '100%',
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
@@ -450,10 +454,10 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 )
             case 'layoutThreeColumn':
                 return (
-                    <div 
-                        className="layout-component layout-three-column" 
-                        style={{ 
-                            width: '100%', 
+                    <div
+                        className="layout-component layout-three-column"
+                        style={{
+                            width: '100%',
                             height: '100%',
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
@@ -466,10 +470,10 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 )
             case 'layoutHeader':
                 return (
-                    <div 
-                        className="layout-component layout-header" 
-                        style={{ 
-                            width: '100%', 
+                    <div
+                        className="layout-component layout-header"
+                        style={{
+                            width: '100%',
                             height: '100%',
                             flexDirection: item.props.layoutConfig?.direction === 'horizontal' ? 'row' : 'column',
                             gap: item.props.layoutConfig?.gap ?? 8
@@ -481,10 +485,10 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                 )
             case 'layoutSidebar':
                 return (
-                    <div 
-                        className="layout-component layout-sidebar" 
-                        style={{ 
-                            width: '100%', 
+                    <div
+                        className="layout-component layout-sidebar"
+                        style={{
+                            width: '100%',
                             height: '100%',
                             flexDirection: item.props.layoutConfig?.direction === 'vertical' ? 'column' : 'row',
                             gap: item.props.layoutConfig?.gap ?? 8
@@ -520,6 +524,24 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                     }}
                 >
                     {renderComponent(layoutChild)}
+                </div>
+            )
+        }
+
+        // 填充模式：强制第一个子组件填满
+        if (cellConfig?.layoutMode === 'fill' && cellChildren.length > 0) {
+            const child = cellChildren[0]
+            return (
+                <div
+                    className={`layout-cell-child ${state.selectedId === child.id ? 'selected' : ''}`}
+                    onClick={(e) => handleChildClick(e, child.id)}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'relative',
+                    }}
+                >
+                    {renderComponent(child)}
                 </div>
             )
         }
@@ -581,7 +603,7 @@ function getLineChartOption(item: ComponentItem) {
         backgroundColor: 'transparent',
         grid: { top: 20, right: 20, bottom: 30, left: 40 },
         tooltip: { trigger: 'axis' },
-        legend: isDouble ? { 
+        legend: isDouble ? {
             data: item.props.seriesData?.map((s: any) => s.name) || ['访问量', '订单量'],
             textStyle: { color: '#aaa', fontSize: 10 },
             top: 0
@@ -608,7 +630,7 @@ function getLineChartOption(item: ComponentItem) {
 function getBarChartOption(item: ComponentItem) {
     const isHorizontal = item.type === 'horizontalBarChart'
     const isDouble = item.type === 'doubleBarChart' || item.type === 'horizontalBarChart'
-    
+
     const defaultSeries = isDouble ? [
         { name: '销售额', data: [500, 300, 400, 600, 250], type: 'bar' },
         { name: '利润', data: [200, 150, 180, 280, 100], type: 'bar' }
@@ -620,12 +642,12 @@ function getBarChartOption(item: ComponentItem) {
         backgroundColor: 'transparent',
         grid: { top: 20, right: 20, bottom: 30, left: 40 },
         tooltip: { trigger: 'axis' },
-        legend: isDouble ? { 
+        legend: isDouble ? {
             data: item.props.seriesData?.map((s: any) => s.name) || ['销售额', '利润'],
             textStyle: { color: '#aaa', fontSize: 10 },
             top: 0
         } : undefined,
-        xAxis: isHorizontal ? { 
+        xAxis: isHorizontal ? {
             type: 'value',
             axisLabel: { color: '#aaa', fontSize: 10 },
             splitLine: { lineStyle: { color: '#333' } }
@@ -638,10 +660,10 @@ function getBarChartOption(item: ComponentItem) {
             type: 'category',
             data: item.props.xAxisData || ['产品A', '产品B', '产品C', '产品D', '产品E'],
             axisLabel: { color: '#aaa', fontSize: 10 },
-        } : { 
-            type: 'value', 
-            axisLabel: { color: '#aaa', fontSize: 10 }, 
-            splitLine: { lineStyle: { color: '#333' } } 
+        } : {
+            type: 'value',
+            axisLabel: { color: '#aaa', fontSize: 10 },
+            splitLine: { lineStyle: { color: '#333' } }
         },
         series: item.props.seriesData?.map((s: any) => ({
             ...s,
@@ -750,10 +772,10 @@ function getScatterChartOption(item: ComponentItem) {
             ...s,
             type: 'scatter',
             symbolSize: 10,
-        })) || [{ 
-            type: 'scatter', 
+        })) || [{
+            type: 'scatter',
             symbolSize: 10,
-            data: [[10, 20], [30, 40], [50, 60], [70, 80], [90, 100]] 
+            data: [[10, 20], [30, 40], [50, 60], [70, 80], [90, 100]]
         }],
     }
 }

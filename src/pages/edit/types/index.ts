@@ -568,6 +568,7 @@ export interface ComponentProps {
             width?: string // 固定宽度 (如 '200px', '30%')
             height?: string // 固定高度
             backgroundColor?: string // 背景色
+            layoutMode?: 'fill' | 'free' // 布局模式：自动填充(fill) 或 自由布局(free)
         }>
     }
 
