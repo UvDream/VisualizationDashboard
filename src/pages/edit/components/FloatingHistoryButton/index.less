@@ -1,0 +1,219 @@
+.canvas-history-button {
+  position: absolute;
+  bottom: 12px;
+  left: 32px;
+  /* 向右移动，避开刻度尺区域 */
+  z-index: 102;
+
+  .history-trigger-button {
+    width: 32px;
+    /* 增大按钮尺寸 */
+    height: 32px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--ant-color-border);
+    background: var(--ant-color-bg-container);
+    color: var(--ant-color-text);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-color: var(--ant-color-primary);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    .anticon {
+      font-size: 14px;
+      /* 增大图标尺寸 */
+    }
+
+    // 有历史记录时的样式
+    &.ant-btn-primary {
+      background: var(--ant-color-primary);
+      border-color: var(--ant-color-primary);
+      color: var(--ant-color-white);
+
+      &:hover {
+        background: var(--ant-color-primary-hover);
+        border-color: var(--ant-color-primary-hover);
+      }
+    }
+
+    // 无历史记录时的样式
+    &.ant-btn-default {
+      &:hover {
+        color: var(--ant-color-primary);
+      }
+    }
+  }
+}
+
+// 气泡卡片样式
+.history-popover {
+  .ant-popover-inner {
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--ant-color-border);
+  }
+
+  .ant-popover-title {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--ant-color-border);
+    background: var(--ant-color-bg-container);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .ant-popover-inner-content {
+    padding: 0;
+  }
+}
+
+.history-popover-content {
+  width: 240px;
+  max-height: 400px;
+
+  .history-list {
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 4px 0;
+
+    .history-list-item {
+      padding: 6px 12px !important;
+      margin: 0;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover:not(.current) {
+        background: var(--ant-color-fill-quaternary);
+      }
+
+      &.current {
+        background: var(--ant-color-primary-bg);
+        border: 1px solid var(--ant-color-primary-border);
+      }
+
+      &.past {
+        opacity: 1;
+      }
+
+      &.future {
+        opacity: 0.6;
+      }
+
+      .history-item-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+
+        .history-item-icon {
+          font-size: 13px;
+          width: 18px;
+          text-align: center;
+          flex-shrink: 0;
+        }
+
+        .history-item-text {
+          flex: 1;
+          min-width: 0;
+
+          .ant-typography {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+          }
+
+          .history-item-name {
+            font-size: 10px;
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px 12px;
+      color: var(--ant-color-text-tertiary);
+
+      .anticon {
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
+// 暗色主题适配（通过CSS变量自动适配）
+@media (prefers-color-scheme: dark) {
+  .canvas-history-button {
+    .history-trigger-button {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
+
+  .history-popover {
+    .ant-popover-inner {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .canvas-history-button {
+    bottom: 8px;
+    left: 28px;
+
+    .history-trigger-button {
+      width: 28px;
+      height: 28px;
+
+      .anticon {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .history-popover-content {
+    width: 160px;
+
+    .history-stats {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        .stat-item:last-child {
+          grid-column: span 2;
+        }
+      }
+    }
+  }
+}
+
+// 专注模式下的样式调整
+.zen-mode {
+  .canvas-history-button {
+    bottom: 12px;
+    left: 12px;
+    /* 专注模式下没有刻度尺，所以可以靠左一些 */
+
+    .history-trigger-button {
+      width: 36px;
+      /* 专注模式下可以更大一些 */
+      height: 36px;
+
+      .anticon {
+        font-size: 16px;
+      }
+    }
+  }
+}

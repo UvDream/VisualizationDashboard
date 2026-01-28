@@ -1,0 +1,43 @@
+.history-demo {
+  width: 100%;
+  max-width: 400px;
+
+  .ant-card-body {
+    padding: 16px;
+  }
+
+  .ant-steps-vertical {
+    .ant-steps-item-content {
+      min-height: auto;
+    }
+
+    .ant-steps-item-description {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+
+  .ant-alert {
+    .ant-alert-description {
+      margin-top: 4px;
+    }
+  }
+
+  .ant-typography h5 {
+    margin-bottom: 8px;
+    margin-top: 16px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+// 暗色主题适配
+.dark {
+  .history-demo {
+    .ant-steps-item-description {
+      color: #999;
+    }
+  }
+}

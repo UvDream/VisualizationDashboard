@@ -391,11 +391,11 @@ export default function Toolbar() {
                         <h4>编辑操作</h4>
                         <div className="shortcut-item">
                             <span className="shortcut-key">Ctrl + Z</span>
-                            <span>撤销</span>
+                            <span>撤销操作</span>
                         </div>
                         <div className="shortcut-item">
-                            <span className="shortcut-key">Ctrl + Y</span>
-                            <span>重做</span>
+                            <span className="shortcut-key">Ctrl + Y / Ctrl + Shift + Z</span>
+                            <span>重做操作</span>
                         </div>
                         <div className="shortcut-item">
                             <span className="shortcut-key">Ctrl + C</span>
@@ -403,7 +403,11 @@ export default function Toolbar() {
                         </div>
                         <div className="shortcut-item">
                             <span className="shortcut-key">Delete / Backspace</span>
-                            <span>删除组件</span>
+                            <span>删除选中组件</span>
+                        </div>
+                        <div className="shortcut-item">
+                            <span className="shortcut-key">Esc</span>
+                            <span>取消选择</span>
                         </div>
                     </div>
                     

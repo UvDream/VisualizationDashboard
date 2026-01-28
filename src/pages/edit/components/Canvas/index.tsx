@@ -5,6 +5,7 @@ import { Button, Slider, Tooltip } from 'antd'
 import { ZoomInOutlined, ZoomOutOutlined, ReloadOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
 import Ruler from '../Ruler'
+import CanvasHistoryButton from '../FloatingHistoryButton'
 import type { ComponentType, ComponentItem } from '../../types'
 import { defaultConfigs } from '../../config/defaultConfigs'
 import CanvasItem from './CanvasItem'
@@ -606,6 +607,9 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                     </span>
                 </div>
             )}
+
+            {/* 画布容器内历史记录按钮 */}
+            {!previewMode && <CanvasHistoryButton />}
         </div>
     )
 }

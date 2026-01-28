@@ -1,0 +1,80 @@
+.history-debugger-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 100px; /* 调整位置避免与浮动按钮冲突 */
+  z-index: 1000;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.history-debugger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  max-height: 600px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+
+  .ant-card-body {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .debug-section {
+    margin-bottom: 12px;
+
+    .debug-info,
+    .debug-actions {
+      margin-top: 8px;
+    }
+  }
+
+  .debug-state {
+    .ant-typography {
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+  }
+
+  .debug-components {
+    max-height: 200px;
+    overflow-y: auto;
+
+    .component-item {
+      padding: 4px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+// 暗色主题适配
+.dark {
+  .history-debugger {
+    .debug-components {
+      .component-item {
+        border-bottom-color: #404040;
+      }
+    }
+  }
+}
+
+// 响应式适配
+@media (max-width: 768px) {
+  .history-debugger {
+    width: 300px;
+    right: 10px;
+    bottom: 10px;
+  }
+}

@@ -1,0 +1,44 @@
+.history-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  .history-icon {
+    color: #1890ff;
+    font-size: 14px;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #40a9ff;
+    }
+  }
+
+  .save-icon {
+    font-size: 14px;
+    transition: color 0.2s ease;
+
+    &.saved {
+      color: #52c41a;
+    }
+
+    &.unsaved {
+      color: #faad14;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+// 暗色主题适配
+.dark {
+  .history-indicator {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
