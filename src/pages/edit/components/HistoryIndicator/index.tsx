@@ -1,4 +1,3 @@
-import React from 'react'
 import { Badge, Tooltip, Space } from 'antd'
 import { HistoryOutlined, SaveOutlined } from '@ant-design/icons'
 import { useHistory } from '../../hooks/useHistory'

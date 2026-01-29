@@ -24,7 +24,7 @@ export default function Edit() {
             </div>
             
             {/* 历史记录调试器（仅开发环境） */}
-            {process.env.NODE_ENV === 'development' && <HistoryDebugger />}
+            {import.meta.env.DEV && <HistoryDebugger />}
         </div>
     )
 }

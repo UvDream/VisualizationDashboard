@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Card, Button, Space, Typography, Steps, Alert, Divider } from 'antd'
 import { PlayCircleOutlined, UndoOutlined, RedoOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
@@ -7,7 +7,6 @@ import type { ComponentItem } from '../../types'
 import './index.less'
 
 const { Title, Paragraph, Text } = Typography
-const { Step } = Steps
 
 /**
  * 历史记录功能演示组件

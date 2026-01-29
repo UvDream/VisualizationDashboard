@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Card, Button, Space, Typography, Collapse, Tag, Tooltip } from 'antd'
-import { BugOutlined, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
+import { BugOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { useEditor } from '../../context/EditorContext'
-import { getActionDisplayName } from '../../utils/historyUtils'
 import './index.less'
 
 const { Text, Paragraph } = Typography
@@ -21,7 +20,7 @@ export default function HistoryDebugger({ visible = false }: HistoryDebuggerProp
     const { state, canUndo, canRedo, undo, redo } = useEditor()
 
     // 仅在开发环境中显示
-    if (process.env.NODE_ENV === 'production' && !visible) {
+    if (import.meta.env.PROD && !visible) {
         return null
     }
 
@@ -148,7 +147,7 @@ export default function HistoryDebugger({ visible = false }: HistoryDebuggerProp
                                     state.components.map((comp, index) => (
                                         <div key={comp.id} className="component-item">
                                             <Space>
-                                                <Tag size="small">{index + 1}</Tag>
+                                                <Tag>{index + 1}</Tag>
                                                 <Text code>{comp.id}</Text>
                                                 <Text>{comp.name}</Text>
                                                 <Tag color="blue">{comp.type}</Tag>

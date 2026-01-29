@@ -22,7 +22,7 @@ const mockUpdateAction1: EditorAction = {
     payload: {
         id: 'comp1',
         updates: {
-            style: { width: 100, height: 100 }
+            style: { x: 0, y: 0, width: 100, height: 100 }
         }
     }
 }
@@ -32,7 +32,7 @@ const mockUpdateAction2: EditorAction = {
     payload: {
         id: 'comp1',
         updates: {
-            style: { width: 120, height: 120 }
+            style: { x: 0, y: 0, width: 120, height: 120 }
         }
     }
 }
