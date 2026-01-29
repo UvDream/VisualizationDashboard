@@ -279,22 +279,27 @@ export default function LayoutCell({ layoutId, cellIndex, cellLabel, className =
                     </span>
                 )
             case 'button':
+                const buttonType = item.props.buttonType || 'primary'
+                // 只有在 default 类型时才应用自定义背景色，其他类型使用 Ant Design 的预设样式
+                const shouldApplyCustomBg = buttonType === 'default' && item.props.backgroundColor
                 return (
                     <Button
-                        type={item.props.buttonType || 'primary'}
+                        type={buttonType}
                         disabled={item.props.disabled || false}
                         loading={item.props.loading || false}
                         block={item.props.block || false}
                         danger={item.props.danger || false}
                         style={{
-                            color: item.props.color || '#ffffff',
                             fontSize: `${item.props.fontSize || 14}px`,
                             fontWeight: item.props.fontWeight || 'normal',
-                            backgroundColor: item.props.backgroundColor || 'transparent',
+                            ...(shouldApplyCustomBg && { backgroundColor: item.props.backgroundColor }),
+                            ...(item.props.color && { color: item.props.color }),
                             borderRadius: `${item.props.borderRadius || 4}px`,
-                            borderWidth: `${item.props.borderWidth || 0}px`,
-                            borderColor: item.props.borderColor || '#000000',
-                            padding: `${item.props.padding || 8}px`,
+                            ...(item.props.borderWidth && {
+                                borderWidth: `${item.props.borderWidth}px`,
+                                borderColor: item.props.borderColor || '#000000',
+                            }),
+                            ...(item.props.padding && { padding: `${item.props.padding}px` }),
                             width: item.props.block ? '100%' : 'auto',
                         }}
                     >
