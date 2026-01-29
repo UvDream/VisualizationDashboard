@@ -280,3 +280,32 @@ export function exportSelectedComponents(components: ComponentItem[], fileName: 
         message.error('导出组件失败，请重试')
     }
 }
+
+// 复制项目数据到剪贴板
+export async function copyProjectData(state: EditorState, projectName?: string): Promise<void> {
+    try {
+        const exportData: ExportData = {
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+            canvasConfig: state.canvasConfig,
+            components: state.components,
+            metadata: {
+                name: projectName || state.canvasConfig.name || '可视化大屏',
+                description: `包含 ${state.components.length} 个组件的可视化大屏项目`,
+                author: 'Visualization Dashboard',
+                componentCount: state.components.length,
+                canvasSize: `${state.canvasConfig.width} × ${state.canvasConfig.height}`
+            }
+        }
+
+        const dataStr = JSON.stringify(exportData, null, 2)
+        
+        // 使用 Clipboard API 复制到剪贴板
+        await navigator.clipboard.writeText(dataStr)
+        
+        message.success(`项目数据已复制到剪贴板！`)
+    } catch (error) {
+        console.error('复制数据失败:', error)
+        message.error('复制数据失败，请检查浏览器权限')
+    }
+}

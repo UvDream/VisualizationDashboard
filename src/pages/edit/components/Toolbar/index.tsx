@@ -22,10 +22,11 @@ import {
     ExportOutlined,
     ImportOutlined,
     FileTextOutlined,
+    CopyOutlined as CopyDataOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useEditor } from '../../context/EditorContext'
-import { exportProject, importProject as importProjectUtil, exportAsTemplate, exportSelectedComponents } from '../../utils/importExport'
+import { exportProject, importProject as importProjectUtil, exportAsTemplate, exportSelectedComponents, copyProjectData } from '../../utils/importExport'
 import './index.less'
 
 export default function Toolbar() {
@@ -175,6 +176,11 @@ export default function Toolbar() {
         exportSelectedComponents(selectedComponents, '选中组件')
     }
 
+    // 复制项目数据
+    const handleCopyProjectData = async () => {
+        await copyProjectData(state, state.canvasConfig.name)
+    }
+
     const handleImageUpload = (file: File) => {
         const reader = new FileReader()
         reader.onload = (e) => {
@@ -199,6 +205,12 @@ export default function Toolbar() {
             icon: <ImportOutlined />,
             label: '导入项目',
             onClick: handleImportProject
+        },
+        {
+            key: 'copyData',
+            icon: <CopyDataOutlined />,
+            label: '复制数据',
+            onClick: handleCopyProjectData
         },
         {
             key: 'exportSelected',
