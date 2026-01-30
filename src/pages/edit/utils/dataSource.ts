@@ -24,11 +24,11 @@ export async function fetchChartData(dataSource: DataSourceConfig): Promise<any>
 
     if (dataSource.type === 'api' && dataSource.apiConfig) {
         const { url, method, headers, params, body, dataPath } = dataSource.apiConfig
-        
+
         if (!url) {
             throw new Error('接口地址不能为空')
         }
-        
+
         try {
             // 构建请求配置
             const requestConfig: RequestInit = {
@@ -56,13 +56,13 @@ export async function fetchChartData(dataSource: DataSourceConfig): Promise<any>
 
             // 发送请求
             const response = await fetch(requestUrl, requestConfig)
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
             const result: ApiResponse = await response.json()
-            
+
             // 检查业务状态码
             if (result.code !== 200) {
                 throw new Error(result.message || '接口返回错误')
@@ -70,7 +70,7 @@ export async function fetchChartData(dataSource: DataSourceConfig): Promise<any>
 
             // 根据数据路径提取数据
             const data = dataPath ? getValueByPath(result, dataPath) : result.data
-            
+
             return data
         } catch (error) {
             console.error('获取接口数据失败:', error)
@@ -148,7 +148,7 @@ export const API_RESPONSE_EXAMPLES = {
         },
         message: 'success'
     },
-    
+
     // 饼图数据示例
     pieData: {
         code: 200,
@@ -171,6 +171,29 @@ export const API_RESPONSE_EXAMPLES = {
             { name: '广东', value: 85 },
             { name: '浙江', value: 75 },
             { name: '江苏', value: 70 }
+        ],
+        message: 'success'
+    },
+
+    // 单值/百分比数据示例 (进度条/仪表盘)
+    singleValue: {
+        code: 200,
+        data: {
+            value: 75,
+            percent: 75
+        },
+        message: 'success'
+    },
+
+    // 日历热力图数据示例
+    calendarData: {
+        code: 200,
+        data: [
+            ['2025-01-01', 50],
+            ['2025-01-02', 80],
+            ['2025-01-03', 30],
+            ['2025-01-04', 60],
+            ['2025-01-05', 90]
         ],
         message: 'success'
     },

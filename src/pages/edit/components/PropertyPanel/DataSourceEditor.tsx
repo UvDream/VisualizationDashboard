@@ -19,7 +19,7 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
 
     const handleChange = (field: string, val: any) => {
         const newDataSource = { ...dataSource }
-        
+
         if (field.startsWith('apiConfig.')) {
             const apiField = field.replace('apiConfig.', '')
             newDataSource.apiConfig = {
@@ -154,6 +154,18 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
                     message: 'success'
                 }
             }
+        } else if (['progress', 'gaugeChart'].includes(componentType)) {
+            return {
+                key: 'singleValue',
+                label: '数值/百分比数据格式',
+                example: API_RESPONSE_EXAMPLES.singleValue
+            }
+        } else if (componentType === 'calendarChart') {
+            return {
+                key: 'calendarData',
+                label: '日历热力图数据格式',
+                example: API_RESPONSE_EXAMPLES.calendarData
+            }
         }
 
         return null
@@ -271,8 +283,8 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
 
                         <Form.Item>
                             <Space>
-                                <Button 
-                                    type="primary" 
+                                <Button
+                                    type="primary"
                                     icon={<PlayCircleOutlined />}
                                     onClick={handleTestApi}
                                     loading={loading}
@@ -281,7 +293,7 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
                                     测试接口
                                 </Button>
                                 {currentExample && (
-                                    <Button 
+                                    <Button
                                         icon={<QuestionCircleOutlined />}
                                         onClick={() => setShowExamples(!showExamples)}
                                         size="small"
@@ -294,16 +306,16 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
 
                         {showExamples && currentExample && (
                             <Form.Item>
-                                <Collapse 
+                                <Collapse
                                     items={[{
                                         key: currentExample.key,
                                         label: currentExample.label,
                                         children: (
-                                            <pre style={{ 
-                                                fontSize: 12, 
-                                                background: '#1f1f1f', 
+                                            <pre style={{
+                                                fontSize: 12,
+                                                background: '#1f1f1f',
                                                 color: '#d4d4d4',
-                                                padding: 12, 
+                                                padding: 12,
                                                 borderRadius: 4,
                                                 border: '1px solid #333',
                                                 margin: 0,

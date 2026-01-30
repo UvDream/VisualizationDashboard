@@ -132,6 +132,29 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 if (dynamicData.tableColumns) {
                     finalProps.tableColumns = dynamicData.tableColumns
                 }
+            } else if (item.type === 'progress') {
+                // 支持直接返回数值或带 percent/value 属性的对象
+                if (typeof dynamicData === 'number') {
+                    finalProps.percent = dynamicData
+                } else if (dynamicData) {
+                    if (typeof dynamicData.percent === 'number') {
+                        finalProps.percent = dynamicData.percent
+                    } else if (typeof dynamicData.value === 'number') {
+                        finalProps.percent = dynamicData.value
+                    }
+                }
+            } else if (item.type === 'gaugeChart') {
+                if (typeof dynamicData === 'number') {
+                    finalProps.singleData = dynamicData
+                } else if (dynamicData) {
+                    if (typeof dynamicData.value === 'number') {
+                        finalProps.singleData = dynamicData.value
+                    }
+                }
+            } else if (item.type === 'calendarChart') {
+                if (dynamicData.calendarData || Array.isArray(dynamicData)) {
+                    finalProps.calendarData = dynamicData.calendarData || dynamicData
+                }
             }
 
             return finalProps
@@ -1247,7 +1270,8 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             case 'switch':
                 return <Switch checked={item.props.checked} />
             case 'progress':
-                return <Progress percent={item.props.percent || 50} style={{ width: '100%' }} />
+                const finalProgressProps = getFinalChartData()
+                return <Progress percent={finalProgressProps.percent || 50} style={{ width: '100%' }} />
             case 'tag':
                 return (
                     <Tag
@@ -1273,9 +1297,9 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                 return <Avatar size={64} icon={<UserOutlined />} />
             case 'card':
                 return (
-                    <Card 
-                        size="small" 
-                        title={item.props.chartTitle || "卡片标题"} 
+                    <Card
+                        size="small"
+                        title={item.props.chartTitle || "卡片标题"}
                         style={{ width: '100%', height: '100%' }}
                     >
                         {item.props.content || '卡片内容'}

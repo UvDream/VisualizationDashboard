@@ -48,6 +48,26 @@ export default function PropertyPanel() {
                 if (data.sankeyData || (data.nodes && data.links)) {
                     updates.sankeyData = data.sankeyData || data
                 }
+            } else if (selectedComponent.type === 'progress') {
+                if (typeof data === 'number') {
+                    updates.percent = data
+                } else if (data) {
+                    if (typeof data.percent === 'number') {
+                        updates.percent = data.percent
+                    } else if (typeof data.value === 'number') {
+                        updates.percent = data.value
+                    }
+                }
+            } else if (selectedComponent.type === 'gaugeChart') {
+                if (typeof data === 'number') {
+                    updates.singleData = data
+                } else if (data && typeof data.value === 'number') {
+                    updates.singleData = data.value
+                }
+            } else if (selectedComponent.type === 'calendarChart') {
+                if (data.calendarData || Array.isArray(data)) {
+                    updates.calendarData = data.calendarData || data
+                }
             }
 
             if (Object.keys(updates).length > 0) {
@@ -4511,7 +4531,7 @@ export default function PropertyPanel() {
     const dataContent = (
         <Form layout="vertical" size="small" style={{ padding: '0 12px' }}>
             {/* 数据源配置 - 支持数据源的组件类型 */}
-            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table', 'treeChart', 'sankeyChart'].includes(selectedComponent.type) && (
+            {['singleLineChart', 'doubleLineChart', 'singleBarChart', 'doubleBarChart', 'horizontalBarChart', 'scatterChart', 'pieChart', 'halfPieChart', 'funnelChart', 'mapChart', 'wordCloudChart', 'scrollRankList', 'carouselList', 'table', 'treeChart', 'sankeyChart', 'progress', 'gaugeChart', 'calendarChart'].includes(selectedComponent.type) && (
                 <div style={{ marginBottom: 16, padding: 12, background: 'rgba(24, 144, 255, 0.1)', borderRadius: 6, border: '1px solid rgba(24, 144, 255, 0.3)' }}>
                     <div style={{ marginBottom: 8, color: '#1890ff', fontSize: 14, fontWeight: 500 }}>数据源配置</div>
                     <DataSourceEditor
@@ -4563,6 +4583,26 @@ export default function PropertyPanel() {
                             } else if (selectedComponent.type === 'sankeyChart') {
                                 if (data.sankeyData || (data.nodes && data.links)) {
                                     updates.sankeyData = data.sankeyData || data
+                                }
+                            } else if (selectedComponent.type === 'progress') {
+                                if (typeof data === 'number') {
+                                    updates.percent = data
+                                } else if (data) {
+                                    if (typeof data.percent === 'number') {
+                                        updates.percent = data.percent
+                                    } else if (typeof data.value === 'number') {
+                                        updates.percent = data.value
+                                    }
+                                }
+                            } else if (selectedComponent.type === 'gaugeChart') {
+                                if (typeof data === 'number') {
+                                    updates.singleData = data
+                                } else if (data && typeof data.value === 'number') {
+                                    updates.singleData = data.value
+                                }
+                            } else if (selectedComponent.type === 'calendarChart') {
+                                if (data.calendarData || Array.isArray(data)) {
+                                    updates.calendarData = data.calendarData || data
                                 }
                             }
 
@@ -4944,7 +4984,7 @@ export default function PropertyPanel() {
                     />
                 </Form.Item>
             )}
-            {['gaugeChart', 'progress'].includes(selectedComponent.type) && (
+            {['gaugeChart', 'progress'].includes(selectedComponent.type) && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="数值">
                     <InputNumber
                         value={selectedComponent.props.singleData ?? selectedComponent.props.percent ?? 0}
