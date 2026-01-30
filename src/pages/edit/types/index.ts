@@ -153,6 +153,7 @@ export interface ComponentProps {
     // 通用属性
     content?: string
     subContent?: string
+    countValue?: number
 
     // 文本组件属性
     fontSize?: number

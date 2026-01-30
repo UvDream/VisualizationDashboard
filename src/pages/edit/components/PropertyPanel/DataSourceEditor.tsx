@@ -160,6 +160,16 @@ export default function DataSourceEditor({ value, onChange, onDataFetch, compone
                 label: '数值/百分比数据格式',
                 example: API_RESPONSE_EXAMPLES.singleValue
             }
+        } else if (componentType === 'badge') {
+            return {
+                key: 'badgeData',
+                label: '徽标数据格式',
+                example: {
+                    code: 200,
+                    data: 99,
+                    message: 'success'
+                }
+            }
         } else if (componentType === 'calendarChart') {
             return {
                 key: 'calendarData',

@@ -490,7 +490,7 @@ export const defaultConfigs: Record<ComponentType, { props: ComponentItem['props
         },
         style: { width: 80, height: 30 }
     },
-    badge: { props: { content: '99+' }, style: { width: 60, height: 60 } },
+    badge: { props: { dataSource: { type: 'mock' }, countValue: 99 }, style: { width: 60, height: 60 } },
     avatar: { props: {}, style: { width: 64, height: 64 } },
     card: { 
         props: { 

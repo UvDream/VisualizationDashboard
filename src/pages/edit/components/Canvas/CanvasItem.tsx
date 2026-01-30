@@ -1292,7 +1292,10 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                     </Tag>
                 )
             case 'badge':
-                return <Badge count={5}><Avatar shape="square" /></Badge>
+                const badgeCount = typeof item.props.countValue === 'number'
+                    ? (item.props.countValue > 99 ? '99+' : item.props.countValue)
+                    : (item.props.content || '99+')
+                return <Badge count={badgeCount}><Avatar shape="square" /></Badge>
             case 'avatar':
                 return <Avatar size={64} icon={<UserOutlined />} />
             case 'card':
