@@ -6,6 +6,9 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [react()],
 
+  // GitHub Pages 部署时的 base 路径
+  base: '/VisualizationDashboard/',
+
   // 路径别名配置
   resolve: {
     alias: {
