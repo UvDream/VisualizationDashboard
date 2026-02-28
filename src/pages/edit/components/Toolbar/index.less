@@ -148,6 +148,7 @@
                 &:hover:not(:disabled) {
                     background: @primary-light;
                     border-color: @primary-light;
+                    color: @text-primary;
                     box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
                 }
             }
@@ -155,10 +156,12 @@
             &[type="primary"] {
                 background: @primary-color;
                 border-color: @primary-color;
+                color: @text-primary;
 
                 &:hover:not(:disabled) {
                     background: @primary-light;
                     border-color: @primary-light;
+                    color: @text-primary;
                 }
             }
 
@@ -200,6 +203,7 @@
                 &:hover:not(:disabled) {
                     background: lighten(@accent-color, 10%);
                     border-color: lighten(@accent-color, 10%);
+                    color: @bg-dark-1;
                     box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
                     transform: translateY(-1px);
                 }
