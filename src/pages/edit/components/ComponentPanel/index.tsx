@@ -332,10 +332,14 @@ export default function ComponentPanel() {
                             .filter(comp => popularComponents.includes(comp.type))
                             .slice(0, 3)
                             .map((item, index) => (
-                                <div key={index} className="popular-item">
-                                    <span className="popular-icon">{item.icon}</span>
-                                    <span className="popular-name">{item.name}</span>
-                                </div>
+                                <DraggableItem
+                                    key={index}
+                                    type={item.type}
+                                    name={item.name}
+                                    icon={item.icon}
+                                    data={item.data}
+                                    onDragStart={() => recordComponentUsage(item)}
+                                />
                             ))
                         }
                     </div>

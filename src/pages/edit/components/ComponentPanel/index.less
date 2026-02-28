@@ -126,6 +126,28 @@
             display: flex;
             gap: @spacing-sm;
 
+            .draggable-item {
+                flex: 1;
+                min-width: 0;
+                padding: @spacing-xs;
+                background: @bg-dark-3;
+                border-radius: @radius-sm;
+
+                &:hover {
+                    background: @bg-dark-4;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                }
+
+                .draggable-item-icon {
+                    color: @accent-color;
+                }
+
+                .draggable-item-name {
+                    font-size: 10px;
+                }
+            }
+
             .popular-item {
                 display: flex;
                 flex-direction: column;
