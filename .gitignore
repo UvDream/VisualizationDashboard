@@ -39,3 +39,4 @@ dist-ssr
 
 .claude/skills/browser-use
 .claude/skills/skill-creator
+skills-lock.json
