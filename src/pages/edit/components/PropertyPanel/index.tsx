@@ -10,6 +10,7 @@ import ImageListEditor from './ImageListEditor'
 import DataSourceEditor from './DataSourceEditor'
 import ColorArrayEditor from './ColorArrayEditor'
 import ChartThemeEditor from './ChartThemeEditor'
+import InteractionEditor from './InteractionEditor'
 import './index.less'
 
 export default function PropertyPanel() {
@@ -4536,6 +4537,116 @@ export default function PropertyPanel() {
                 </Form>
             )
         }] : []),
+        // 地图轮播高亮配置（mapChart & cityMapChart 专属）
+        ...((selectedComponent.type === 'mapChart' || selectedComponent.type === 'cityMapChart') ? [{
+            key: 'autoHighlight',
+            label: '🔄 轮播高亮',
+            children: (
+                <Form layout="vertical" size="small">
+                    <Form.Item label="开启轮播">
+                        <Switch
+                            checked={selectedComponent.props.autoHighlight || false}
+                            onChange={(checked) => handleChange('props.autoHighlight', checked)}
+                        />
+                    </Form.Item>
+
+                    {selectedComponent.props.autoHighlight && (
+                        <>
+                            <Form.Item label="轮播间隔 (ms)">
+                                <InputNumber
+                                    value={selectedComponent.props.highlightInterval || 2000}
+                                    onChange={(v) => handleChange('props.highlightInterval', v)}
+                                    min={500}
+                                    max={10000}
+                                    step={100}
+                                    style={{ width: '100%' }}
+                                    addonAfter="毫秒"
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="高亮颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.highlightColor || '#FFD700'}
+                                    onChange={(color) => handleChange('props.highlightColor', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="高亮边框颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.highlightBorderColor || '#FFA500'}
+                                    onChange={(color) => handleChange('props.highlightBorderColor', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="高亮边框宽度">
+                                <InputNumber
+                                    value={selectedComponent.props.highlightBorderWidth ?? 2}
+                                    onChange={(v) => handleChange('props.highlightBorderWidth', v)}
+                                    min={0}
+                                    max={10}
+                                    step={1}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="标签颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.highlightLabelColor || '#ffffff'}
+                                    onChange={(color) => handleChange('props.highlightLabelColor', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="标签字号">
+                                <InputNumber
+                                    value={selectedComponent.props.highlightLabelFontSize || 14}
+                                    onChange={(v) => handleChange('props.highlightLabelFontSize', v)}
+                                    min={8}
+                                    max={32}
+                                    step={1}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="阴影模糊">
+                                <InputNumber
+                                    value={selectedComponent.props.highlightShadowBlur ?? 10}
+                                    onChange={(v) => handleChange('props.highlightShadowBlur', v)}
+                                    min={0}
+                                    max={50}
+                                    step={1}
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="阴影颜色">
+                                <ColorPicker
+                                    value={selectedComponent.props.highlightShadowColor || 'rgba(255, 215, 0, 0.6)'}
+                                    onChange={(color) => handleChange('props.highlightShadowColor', color.toHexString())}
+                                    showText
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="显示提示框">
+                                <Switch
+                                    checked={selectedComponent.props.highlightShowTooltip !== false}
+                                    onChange={(checked) => handleChange('props.highlightShowTooltip', checked)}
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="悬停暂停">
+                                <Switch
+                                    checked={selectedComponent.props.highlightPauseOnHover !== false}
+                                    onChange={(checked) => handleChange('props.highlightPauseOnHover', checked)}
+                                />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form>
+            )
+        }] : []),
     ]
 
     const dataContent = (
@@ -4956,6 +5067,7 @@ export default function PropertyPanel() {
                     )}
                 </>
             )}
+
             {selectedComponent.type === 'calendarChart' && selectedComponent.props.dataSource?.type !== 'api' && (
                 <Form.Item label="热力数据">
                     <JsonEditor
@@ -5144,6 +5256,11 @@ export default function PropertyPanel() {
             key: 'data',
             label: '数据',
             children: dataContent,
+        },
+        {
+            key: 'interaction',
+            label: '交互',
+            children: <InteractionEditor componentId={selectedComponent.id} />,
         },
     ]
 

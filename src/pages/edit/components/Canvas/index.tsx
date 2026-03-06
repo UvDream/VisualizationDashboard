@@ -9,6 +9,7 @@ import CanvasHistoryButton from '../FloatingHistoryButton'
 import type { ComponentType, ComponentItem } from '../../types'
 import { defaultConfigs } from '../../config/defaultConfigs'
 import CanvasItem from './CanvasItem'
+import LinkageLines from './LinkageLines'
 import './index.less'
 
 interface CanvasProps {
@@ -445,6 +446,9 @@ export default function Canvas({ previewMode = false }: CanvasProps) {
                         previewMode={previewMode}
                     />
                 ))}
+
+                {/* 联动关系连线可视化（仅编辑模式） */}
+                {!previewMode && <LinkageLines />}
 
                 {/* 渲染吸附辅助线 */}
                 {!previewMode && state.snapLines.map((line, index) => (

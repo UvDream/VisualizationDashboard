@@ -30,9 +30,12 @@ export async function fetchChartData(dataSource: DataSourceConfig): Promise<any>
         }
 
         try {
+            // 获取实际使用的 method，默认为 GET
+            const actionMethod = method || 'GET'
+
             // 构建请求配置
             const requestConfig: RequestInit = {
-                method,
+                method: actionMethod,
                 headers: {
                     'Content-Type': 'application/json',
                     ...headers
@@ -41,16 +44,16 @@ export async function fetchChartData(dataSource: DataSourceConfig): Promise<any>
 
             // 处理请求参数
             let requestUrl = url
-            if (method === 'GET' && params) {
+            if (actionMethod === 'GET' && params) {
                 const searchParams = new URLSearchParams()
                 Object.entries(params).forEach(([key, value]) => {
                     searchParams.append(key, String(value))
                 })
-                requestUrl += `?${searchParams.toString()}`
+                requestUrl += (requestUrl.includes('?') ? '&' : '?') + searchParams.toString()
             }
 
             // 处理请求体
-            if ((method === 'POST' || method === 'PUT') && body) {
+            if ((actionMethod === 'POST' || actionMethod === 'PUT') && body) {
                 requestConfig.body = JSON.stringify(body)
             }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import ReactECharts from 'echarts-for-react'
 import * as echarts from 'echarts'
 import { getMapRegionByName, getMapJsonPath } from '../../utils/mapData'
@@ -7,13 +7,51 @@ interface MapChartProps {
     mapRegion: string
     mapData?: Array<{ name: string; value: number }>
     chartTitle?: string
+    // 轮播高亮配置
+    autoHighlight?: boolean
+    highlightInterval?: number
+    highlightColor?: string
+    highlightBorderColor?: string
+    highlightBorderWidth?: number
+    highlightShowTooltip?: boolean
+    highlightPauseOnHover?: boolean
+    highlightLabelColor?: string
+    highlightLabelFontSize?: number
+    highlightShadowBlur?: number
+    highlightShadowColor?: string
+    // 轮播高亮联动回调
+    onHighlightChange?: (data: { name: string; value: any; dataIndex: number; mapRegion: string }) => void
 }
 
-export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: MapChartProps) {
+export default function MapChart({
+    mapRegion = 'china',
+    mapData,
+    chartTitle,
+    autoHighlight = false,
+    highlightInterval = 2000,
+    highlightColor = '#FFD700',
+    highlightBorderColor = '#FFA500',
+    highlightBorderWidth = 2,
+    highlightShowTooltip = true,
+    highlightPauseOnHover = true,
+    highlightLabelColor = '#fff',
+    highlightLabelFontSize = 14,
+    highlightShadowBlur = 10,
+    highlightShadowColor = 'rgba(255, 215, 0, 0.6)',
+    onHighlightChange,
+}: MapChartProps) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [mapReady, setMapReady] = useState(false)
     const loadedMapsRef = useRef<Set<string>>(new Set())
+    const chartRef = useRef<ReactECharts>(null)
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+    const currentIndexRef = useRef(-1)
+    const isPausedRef = useRef(false)
+    const dataLengthRef = useRef(0)
+    const regionNamesRef = useRef<string[]>([])
+    const onHighlightChangeRef = useRef(onHighlightChange)
+    onHighlightChangeRef.current = onHighlightChange
 
     useEffect(() => {
         let cancelled = false
@@ -30,7 +68,6 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
                 return
             }
 
-            // 如果已经加载过，直接使用
             if (loadedMapsRef.current.has(mapRegion)) {
                 setMapReady(true)
                 setLoading(false)
@@ -40,18 +77,21 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
             try {
                 const url = getMapJsonPath(mapRegion)
                 const response = await fetch(url)
-                
+
                 if (!response.ok) {
                     throw new Error(`加载失败: ${response.status}`)
                 }
-                
+
                 const geoJson = await response.json()
 
                 if (cancelled) return
 
-                // 注册地图
                 echarts.registerMap(mapRegion, geoJson)
                 loadedMapsRef.current.add(mapRegion)
+
+                // 记录地图区域数量和名称列表（用于轮播联动）
+                dataLengthRef.current = geoJson.features?.length || 0
+                regionNamesRef.current = (geoJson.features || []).map((f: any) => f.properties?.name || '')
 
                 setMapReady(true)
                 setLoading(false)
@@ -70,6 +110,111 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
         }
     }, [mapRegion])
 
+    // 轮播高亮逻辑
+    const doHighlight = useCallback(() => {
+        const chart = chartRef.current?.getEchartsInstance()
+        if (!chart) return
+
+        const totalRegions = dataLengthRef.current || (mapData?.length || 0)
+        if (totalRegions === 0) return
+
+        // 取消上一次高亮
+        if (currentIndexRef.current >= 0) {
+            chart.dispatchAction({
+                type: 'downplay',
+                seriesIndex: 0,
+                dataIndex: currentIndexRef.current,
+            })
+            if (highlightShowTooltip) {
+                chart.dispatchAction({
+                    type: 'hideTip',
+                })
+            }
+        }
+
+        // 移到下一个
+        currentIndexRef.current = (currentIndexRef.current + 1) % totalRegions
+
+        // 高亮当前
+        chart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: currentIndexRef.current,
+        })
+
+        if (highlightShowTooltip) {
+            chart.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: currentIndexRef.current,
+            })
+        }
+
+        // 触发联动回调
+        if (onHighlightChangeRef.current) {
+            const idx = currentIndexRef.current
+            const regionName = regionNamesRef.current[idx] || ''
+            const matchedData = mapData?.find(d => d.name === regionName)
+            onHighlightChangeRef.current({
+                name: regionName,
+                value: matchedData?.value ?? null,
+                dataIndex: idx,
+                mapRegion,
+            })
+        }
+    }, [mapData, highlightShowTooltip, mapRegion])
+
+    // 启动/停止轮播
+    useEffect(() => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current)
+            timerRef.current = null
+        }
+
+        if (!autoHighlight || !mapReady) {
+            // 清除残留高亮
+            const chart = chartRef.current?.getEchartsInstance()
+            if (chart && currentIndexRef.current >= 0) {
+                chart.dispatchAction({ type: 'downplay', seriesIndex: 0, dataIndex: currentIndexRef.current })
+                chart.dispatchAction({ type: 'hideTip' })
+            }
+            currentIndexRef.current = -1
+            return
+        }
+
+        const interval = Math.max(500, highlightInterval)
+
+        timerRef.current = setInterval(() => {
+            if (!isPausedRef.current) {
+                doHighlight()
+            }
+        }, interval)
+
+        // 初始触发一次
+        setTimeout(() => doHighlight(), 300)
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current)
+                timerRef.current = null
+            }
+        }
+    }, [autoHighlight, highlightInterval, mapReady, doHighlight])
+
+    // 鼠标悬停暂停处理
+    const handleChartEvents = useCallback((): Record<string, Function> | undefined => {
+        if (!highlightPauseOnHover || !autoHighlight) return undefined
+
+        return {
+            mouseover: () => {
+                isPausedRef.current = true
+            },
+            mouseout: () => {
+                isPausedRef.current = false
+            },
+        }
+    }, [highlightPauseOnHover, autoHighlight])
+
     const getOption = () => {
         const regionConfig = getMapRegionByName(mapRegion)
 
@@ -82,7 +227,10 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
             } : undefined,
             tooltip: {
                 trigger: 'item',
-                formatter: '{b}: {c}'
+                formatter: (params: any) => {
+                    const val = params.value
+                    return `${params.name}: ${val != null && !isNaN(val) ? val : '暂无数据'}`
+                }
             },
             visualMap: {
                 min: 0,
@@ -111,8 +259,18 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
                     borderColor: '#111'
                 },
                 emphasis: {
-                    label: { color: '#fff' },
-                    itemStyle: { areaColor: '#2a333d' }
+                    label: {
+                        color: highlightLabelColor,
+                        fontSize: highlightLabelFontSize,
+                        fontWeight: 'bold',
+                    },
+                    itemStyle: {
+                        areaColor: highlightColor,
+                        borderColor: highlightBorderColor,
+                        borderWidth: highlightBorderWidth,
+                        shadowBlur: highlightShadowBlur,
+                        shadowColor: highlightShadowColor,
+                    }
                 },
                 data: mapData || []
             }]
@@ -155,10 +313,12 @@ export default function MapChart({ mapRegion = 'china', mapData, chartTitle }: M
 
     return (
         <ReactECharts
+            ref={chartRef}
             key={mapRegion}
             option={getOption()}
             style={{ width: '100%', height: '100%' }}
             opts={{ renderer: 'svg' }}
+            onEvents={handleChartEvents()}
         />
     )
 }

@@ -14,6 +14,7 @@ import * as AntdIcons from '@ant-design/icons'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Sphere } from '@react-three/drei'
 import { useEditor } from '../../context/EditorContext'
+import { useInteraction } from '../../hooks/useInteraction'
 import { calculateSnap } from '../../utils/snapping'
 import { getCachedChartOption, getCalendarOption } from '../../utils/chartOptions'
 import { fetchChartData, dataRefreshManager } from '../../utils/dataSource'
@@ -57,12 +58,14 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export default function CanvasItem({ item, onContextMenu, previewMode = false, isInLayoutCell = false }: CanvasItemProps) {
     const { state, selectComponent, selectComponents, moveComponent, updateComponent, setSnapLines } = useEditor()
+    const { triggerInteraction, hasInteractions } = useInteraction(item.id, previewMode)
     const isSelected = state.selectedId === item.id || (state.selectedIds || []).includes(item.id)
     const ref = useRef<HTMLDivElement>(null)
     const [isLocalDragging, setIsLocalDragging] = useState(false)
     const [dynamicData, setDynamicData] = useState<any>(null)
 
-    // 处理数据源获取
+    // 处理数据源获取（JSON序列化依赖确保参数变化时重新请求）
+    const dataSourceKey = JSON.stringify(item.props.dataSource)
     useEffect(() => {
         const loadData = async () => {
             if (item.props.dataSource && item.props.dataSource.type === 'api') {
@@ -90,7 +93,7 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
         return () => {
             dataRefreshManager.clearAutoRefresh(item.id)
         }
-    }, [item.id, item.props.dataSource])
+    }, [item.id, dataSourceKey])
 
     // 获取最终的图表数据
     const getFinalChartData = () => {
@@ -495,6 +498,25 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                         option={chartOption!}
                         style={{ width: '100%', height: '100%' }}
                         opts={{ renderer: 'svg' }}
+                        onEvents={{
+                            click: (params: any) => {
+                                triggerInteraction('click', {
+                                    name: params.name,
+                                    value: params.value,
+                                    seriesName: params.seriesName,
+                                    dataIndex: params.dataIndex,
+                                    data: params.data,
+                                })
+                            },
+                            mouseover: (params: any) => {
+                                triggerInteraction('hover', {
+                                    name: params.name,
+                                    value: params.value,
+                                    seriesName: params.seriesName,
+                                    dataIndex: params.dataIndex,
+                                })
+                            },
+                        }}
                     />
                 )
 
@@ -517,6 +539,25 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                             mapRegion={finalMapProps.mapRegion || 'china'}
                             mapData={finalMapProps.mapData}
                             chartTitle={finalMapProps.chartTitle}
+                            autoHighlight={finalMapProps.autoHighlight}
+                            highlightInterval={finalMapProps.highlightInterval}
+                            highlightColor={finalMapProps.highlightColor}
+                            highlightBorderColor={finalMapProps.highlightBorderColor}
+                            highlightBorderWidth={finalMapProps.highlightBorderWidth}
+                            highlightShowTooltip={finalMapProps.highlightShowTooltip}
+                            highlightPauseOnHover={finalMapProps.highlightPauseOnHover}
+                            highlightLabelColor={finalMapProps.highlightLabelColor}
+                            highlightLabelFontSize={finalMapProps.highlightLabelFontSize}
+                            highlightShadowBlur={finalMapProps.highlightShadowBlur}
+                            highlightShadowColor={finalMapProps.highlightShadowColor}
+                            onHighlightChange={(data) => {
+                                triggerInteraction('autoHighlight', {
+                                    name: data.name,
+                                    value: data.value,
+                                    dataIndex: data.dataIndex,
+                                    mapRegion: data.mapRegion,
+                                })
+                            }}
                         />
                     </Suspense>
                 )
@@ -531,6 +572,25 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
                             chartTitle={finalCityMapProps.chartTitle}
                             showBuiltinData={finalCityMapProps.showBuiltinData !== false}
                             colorScheme={finalCityMapProps.colorScheme || 'blue'}
+                            autoHighlight={finalCityMapProps.autoHighlight}
+                            highlightInterval={finalCityMapProps.highlightInterval}
+                            highlightColor={finalCityMapProps.highlightColor}
+                            highlightBorderColor={finalCityMapProps.highlightBorderColor}
+                            highlightBorderWidth={finalCityMapProps.highlightBorderWidth}
+                            highlightShowTooltip={finalCityMapProps.highlightShowTooltip}
+                            highlightPauseOnHover={finalCityMapProps.highlightPauseOnHover}
+                            highlightLabelColor={finalCityMapProps.highlightLabelColor}
+                            highlightLabelFontSize={finalCityMapProps.highlightLabelFontSize}
+                            highlightShadowBlur={finalCityMapProps.highlightShadowBlur}
+                            highlightShadowColor={finalCityMapProps.highlightShadowColor}
+                            onHighlightChange={(data) => {
+                                triggerInteraction('autoHighlight', {
+                                    name: data.name,
+                                    value: data.value,
+                                    dataIndex: data.dataIndex,
+                                    mapRegion: data.mapRegion,
+                                })
+                            }}
                         />
                     </Suspense>
                 )
@@ -1649,6 +1709,15 @@ export default function CanvasItem({ item, onContextMenu, previewMode = false, i
             onContextMenu={onContextMenu}
         >
             {renderContent()}
+            {/* 联动角标 - 显示联动规则数量 */}
+            {!previewMode && hasInteractions && (
+                <div
+                    className="interaction-badge"
+                    title={`${item.interactions?.length || 0} 条交互规则`}
+                >
+                    ⚡{item.interactions?.length}
+                </div>
+            )}
             {!previewMode && isSelected && (
                 <>
                     <div className="resize-handle top-left" onMouseDown={(e) => handleResizeMouseDown(e, 'top-left')} />

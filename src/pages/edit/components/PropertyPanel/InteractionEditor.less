@@ -1,0 +1,212 @@
+@import '../../../../styles/variables.less';
+
+.interaction-editor {
+    padding: 12px;
+
+    // 联动概览
+    .interaction-summary {
+        display: flex;
+        gap: 16px;
+        padding: 10px 12px;
+        background: rgba(30, 64, 175, 0.08);
+        border: 1px solid rgba(30, 64, 175, 0.2);
+        border-radius: @radius-md;
+        margin-bottom: 12px;
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: @text-secondary;
+
+            strong {
+                color: @text-primary;
+                font-size: 14px;
+            }
+        }
+    }
+
+    // 入站联动区域
+    .incoming-section {
+        margin-bottom: 12px;
+        padding: 8px 10px;
+        background: rgba(16, 185, 129, 0.06);
+        border: 1px solid rgba(16, 185, 129, 0.15);
+        border-radius: @radius-md;
+
+        .section-title {
+            font-size: 12px;
+            color: @text-muted;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .incoming-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 12px;
+
+            .incoming-action {
+                color: @text-secondary;
+                font-size: 11px;
+            }
+        }
+    }
+
+    // 出站联动区域
+    .outgoing-section {
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+
+            .section-title {
+                font-size: 13px;
+                font-weight: 500;
+                color: @text-primary;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+        }
+    }
+
+    // 交互规则卡片
+    .interaction-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .interaction-card {
+        background: @bg-dark-3;
+        border: 1px solid @border-color;
+        border-radius: @radius-md;
+        transition: all @transition-normal;
+
+        &:hover {
+            border-color: @border-hover;
+        }
+
+        &.disabled {
+            opacity: 0.5;
+
+            .card-title-text {
+                text-decoration: line-through;
+            }
+        }
+
+        &.invalid {
+            border-color: @error-color;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .ant-card-head {
+            padding: 0 10px;
+            min-height: 36px;
+            border-bottom: 1px solid @border-color;
+            background: transparent;
+
+            .ant-card-head-title {
+                padding: 6px 0;
+            }
+
+            .ant-card-extra {
+                padding: 6px 0;
+            }
+        }
+
+        .ant-card-body {
+            padding: 10px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+
+            .card-title-icon {
+                color: @primary-light;
+                font-size: 14px;
+            }
+
+            .card-title-text {
+                font-size: 12px;
+                font-weight: 500;
+                color: @text-primary;
+
+                .card-subtitle {
+                    color: @text-muted;
+                    font-weight: 400;
+                    margin-left: 4px;
+                    font-size: 11px;
+                }
+            }
+        }
+
+        .card-extra {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+    }
+
+    // 紧凑展示模式
+    .interaction-compact {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        padding: 2px 0;
+
+        .compact-arrow {
+            color: @text-muted;
+            font-size: 12px;
+        }
+    }
+
+    // 参数映射编辑器
+    .param-mapping-editor {
+        .mapping-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+
+            .mapping-arrow {
+                color: @text-muted;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+        }
+    }
+
+    // Form 覆盖样式
+    .ant-form-item {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .ant-form-item-label > label {
+            color: @text-secondary;
+            font-size: 11px;
+            height: auto;
+        }
+    }
+
+    // 空状态
+    .ant-empty {
+        .ant-empty-image {
+            height: 40px;
+        }
+    }
+}

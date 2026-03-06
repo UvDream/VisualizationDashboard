@@ -146,6 +146,8 @@ export interface DataSourceConfig {
         dataPath?: string // 数据路径，如 'data' 或 'data.list'
         refreshInterval?: number // 自动刷新间隔（秒），0表示不自动刷新
     }
+    // 联动触发时间戳（内部使用，确保 useEffect 能检测到变化并重新请求）
+    _lastInteractionTrigger?: number
 }
 
 // 组件属性（根据类型不同有不同属性）
@@ -354,6 +356,19 @@ export interface ComponentProps {
     selectedProvince?: string // 选择的省份（用于城市区县地图）
     showBuiltinData?: boolean // 是否显示内置数据
     colorScheme?: 'blue' | 'green' | 'red' | 'purple' | 'orange' // 颜色主题
+
+    // 地图轮播高亮配置（mapChart & cityMapChart 共用）
+    autoHighlight?: boolean              // 是否开启轮播高亮
+    highlightInterval?: number           // 轮播间隔时间（毫秒），默认 2000
+    highlightColor?: string              // 高亮区块颜色，默认 '#FFD700'
+    highlightBorderColor?: string        // 高亮边框颜色，默认 '#FFA500'
+    highlightBorderWidth?: number        // 高亮边框宽度，默认 2
+    highlightShowTooltip?: boolean       // 轮播时显示 tooltip，默认 true
+    highlightPauseOnHover?: boolean      // 鼠标悬停时暂停轮播，默认 true
+    highlightLabelColor?: string         // 高亮时标签颜色，默认 '#fff'
+    highlightLabelFontSize?: number      // 高亮时标签字号，默认 14
+    highlightShadowBlur?: number         // 高亮阴影模糊，默认 10
+    highlightShadowColor?: string        // 高亮阴影颜色，默认 'rgba(255, 215, 0, 0.6)'
 
     // 日历热力图属性
     calendarYear?: number // 年份
@@ -599,6 +614,44 @@ export interface ComponentProps {
     labelColor?: string // 标签颜色
     showLabels?: boolean // 显示标签
     separator?: string // 分隔符
+
+    // 交互联动内部属性（运行时由联动系统自动设置）
+    _interactionFilter?: {
+        field: string
+        value: any
+        sourceId: string
+    }
+    _interactionHighlight?: {
+        value: any
+        sourceId: string
+    }
+}
+
+// 交互联动触发事件类型
+export type InteractionTrigger =
+    | 'click'           // 点击
+    | 'hover'           // 悬停
+    | 'change'          // 值变化（输入框、下拉框等）
+    | 'dataLoaded'      // 数据加载完成
+    | 'autoHighlight'   // 地图轮播高亮（自动轮播切换区域时触发）
+
+// 交互联动执行动作类型
+export type InteractionAction =
+    | 'filterData'     // 过滤数据
+    | 'refreshData'    // 刷新数据（重新请求API）
+    | 'setValue'       // 设置目标组件的某个属性值
+    | 'toggleVisible'  // 切换目标组件显隐
+    | 'highlight'      // 高亮目标组件中的对应数据
+
+// 交互联动配置
+export interface InteractionConfig {
+    id: string                              // 联动规则唯一ID
+    trigger: InteractionTrigger             // 触发事件
+    triggerField?: string                   // 触发时传递的字段名（如饼图的name字段）
+    targetId: string                        // 目标组件ID
+    action: InteractionAction               // 执行动作
+    paramMapping?: Record<string, string>   // 参数映射 { 源字段: 目标字段 }
+    enabled?: boolean                       // 是否启用，默认true
 }
 
 // 画布上的组件项
@@ -616,6 +669,8 @@ export interface ComponentItem {
     // 组合支持
     groupId?: string       // 组合ID，同一组合的组件有相同的groupId
     isGroup?: boolean      // 是否为组合（组合中的主组件标记）
+    // 交互联动
+    interactions?: InteractionConfig[]  // 联动配置列表
 }
 
 // 吸附线

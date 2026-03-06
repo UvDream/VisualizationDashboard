@@ -1,0 +1,14 @@
+// 联动关系连线样式
+.linkage-lines-overlay {
+    pointer-events: none;
+
+    // 连线动画
+    path {
+        transition: stroke-opacity 0.2s, stroke-width 0.2s;
+    }
+
+    // 闪电图标动画
+    g>circle {
+        transition: r 0.2s;
+    }
+}
